@@ -11,7 +11,6 @@ public class ConnectionFactory {
 	
 	private ConnectionFactory(){
 		
-		
 		// This will load the MySQL driver, each DB has its own driver
 	      try {
 			Class.forName("com.mysql.jdbc.Driver");
