@@ -17,6 +17,9 @@ import org.gibello.zql.ZqlParser;
 import org.jruby.RubyArray;
 import org.osgi.framework.BundleContext;
 
+import com.br.databaseDDL.DataBase;
+import com.br.utils.CreateSQLModel;
+
 import parser.Teste1;
 
 /**
@@ -64,7 +67,13 @@ public class Activator extends AbstractUIPlugin {
 	
 	testCaller.callParser();
     
+	DataBase dataBase = testCaller.getDataBase();
 	
+	System.out.println("Nome do banco de dados " + dataBase.getDataBaseName());
+	
+	System.out.println("Tables do banco de dados " + dataBase.getDataBaseTables());
+	
+	CreateSQLModel.createModel(dataBase);
 	
 	//de suma import‰ncia quando eu tiver que utilizar para chamar Ruby ou Groovy no eclipse plugin
 //    TesteGroovyAndJRuby te = new TesteGroovyAndJRuby();

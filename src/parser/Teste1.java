@@ -47,6 +47,10 @@ public class Teste1 {
 		return dataBase;
 	}
 	
+	public void setDataBase(DataBase dataBase) {
+		this.dataBase = dataBase;
+	}
+	
 	
 
 	public void callParser() {
@@ -304,11 +308,11 @@ public class Teste1 {
 			}
 
 			// mudar aq
-			DataBase dataBase = new DataBase("projectValter");
+			 this.setDataBase(new DataBase("projectValter"));
 
 			Set<Table> tablesFound = new TreeSet<Table>();
 
-			dataBase.setDataBaseTables(tablesFound);
+			this.getDataBase().setDataBaseTables(tablesFound);
 
 			if (updates.size() > 0) {
 
