@@ -60,7 +60,9 @@ public class Activator extends AbstractUIPlugin {
 		System.out.println("O nome da tabela Ž " + query.getTable());
 	}
 	
-	Teste1.callParser();
+	Teste1 testCaller = new Teste1();
+	
+	testCaller.callParser();
     
     TesteGroovyAndJRuby te = new TesteGroovyAndJRuby();
     System.out.println(te.testeImprimi());

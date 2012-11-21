@@ -39,8 +39,17 @@ import com.br.databaseDDL.DataBase;
 import com.br.databaseDDL.Table;
 
 public class Teste1 {
+	
+	private DataBase dataBase;
+	
+	
+	public DataBase getDataBase() {
+		return dataBase;
+	}
+	
+	
 
-	public static void callParser() {
+	public void callParser() {
 		CharStream stream = new ANTLRStringStream(
 				"public class AlteracaoEmail extends HttpServlet\n" + 
 				"{\n" + 
@@ -607,7 +616,7 @@ public class Teste1 {
 
 	}
 
-	public static void addColumnToClauseUpdate(String tableName,
+	private void addColumnToClauseUpdate(String tableName,
 			Set<Table> tables, ZStatement zStatement) {
 
 		if (tables.contains(new Table(tableName))) {
@@ -675,7 +684,7 @@ public class Teste1 {
 
 	}
 
-	public static void addColumnToClauseSelect(String tableName,
+	private void addColumnToClauseSelect(String tableName,
 			Set<Table> tables, ZStatement zStatement) {
 
 		if (tables.contains(new Table(tableName))) {
@@ -745,7 +754,7 @@ public class Teste1 {
 
 	}
 
-	public static void addColumnToClauseDelete(String tableName,
+	private  void addColumnToClauseDelete(String tableName,
 			Set<Table> tables, ZStatement zStatement) {
 
 		if (tables.contains(new Table(tableName))) {
@@ -788,7 +797,7 @@ public class Teste1 {
 
 	}
 	
-	private static  void getColumnType (Set<Table> tables){
+	private  void getColumnType (Set<Table> tables){
 		
 		Connection connection = ConnectionFactory.getInstance();
 		
