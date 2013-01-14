@@ -21,19 +21,37 @@ import com.br.databaseDDL.Column;
 import com.br.databaseDDL.DataBase;
 import com.br.databaseDDL.Table;
 
+
+/**
+ * @author Rafael Durelli
+ * @see SQLMODEL.sqlmodel.*
+ * @version 1.0
+ * */
 public class CreateSQLModel {
 
+	
+	/**
+	 * This Factory is used to create the SQLmodel with all metadatas related to the databases...
+	 * */
 	private static SqlmodelFactory factory ;
 	
+	
+	/**
+	 * @author rafaeldurelli
+	 * In this block we init the SqlModel by calling the init()
+	 * */
 	static {
 		
 		SqlmodelPackageImpl.init();
 		
 		factory = SqlmodelFactory.eINSTANCE;
 		
-		
 	}
 
+	/**
+	 * @author rafaeldurelli
+	 *  @param SQLMODEL.sqlmodel.DataBase used to instantiate the DataBase metaClasse
+	 * */
 	public static void createModel(DataBase dataBase) {
 		
 		
@@ -67,7 +85,12 @@ public class CreateSQLModel {
 		
 	}
 	
-	
+	/**
+	 * Add tables to an instance of DataBase metaClasse
+	 * @author rafaeldurelli
+	 *  @param SQLMODEL.sqlmodel.DataBase DataBase used to put tables.
+	 *  @param Set<Table> Tables obtained from a database.
+	 * */
 	private static void addTables(Database dataBaseModel, Set<Table> tables){
 		
 		Iterator<Table> iter = tables.iterator();
@@ -94,7 +117,12 @@ public class CreateSQLModel {
 		
 	}
 	
-	
+	/**
+	 * Add columns to an instance of Table metaClasse
+	 * @author rafaeldurelli
+	 *  @param SQLMODEL.sqlmodel.Table table used to put columns.
+	 *  @param Set<Column> Columns obtained from a database.
+	 * */
 	private static void addColumn(SQLMODEL.sqlmodel.Table table,  Set<Column> columns){
 		
 		Iterator<Column> iter = columns.iterator();
