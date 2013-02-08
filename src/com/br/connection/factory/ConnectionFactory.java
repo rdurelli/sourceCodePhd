@@ -49,7 +49,9 @@ public class ConnectionFactory {
 	      
 		
 	}
-	
+	/**
+	 * Method used to get an instance of {@link Connection}
+	 * */
 	public static Connection getInstance(){
 		
 		if (conn == null) {

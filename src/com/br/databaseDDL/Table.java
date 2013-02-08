@@ -2,13 +2,33 @@ package com.br.databaseDDL;
 
 import java.util.Set;
 
+
+/**
+ * @author rafaeldurelli
+ * @version 1.0
+ * This class is used to represent all information related to the Tables available in an specific database
+ * @see DataBase
+ * 
+ * */
+
 public class Table implements Comparable<Table> {
 	
+	
+	/**
+	 * Representing the name of the table
+	 * */
 	private String tableName;
 	
+	
+	/**
+	 * Representing all column that this table owns
+	 * */
 	private Set<Column> columnsTable;
 	
 	
+	/**
+	 * Constructor
+	 * */
 	public Table(String tableName){
 		
 		this.tableName = tableName;

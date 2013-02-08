@@ -96,12 +96,31 @@ public class Activator extends AbstractUIPlugin {
 //		System.out.println(object);
 //		
 //	}
+//  ScriptEngineManager scriptEngineManager = new ScriptEngineManager();
+//  ScriptEngine scriptEngine = scriptEngineManager.getEngineByExtension("rb");
+////  
+//  	InputStream is = getBundle().getEntry("/jruby/tryingNokogiri.rb").openStream();
+//  Reader reader = new InputStreamReader(is);
+////  
+//  scriptEngine.eval(reader);
+//  Invocable invocableEngine = (Invocable)scriptEngine;
+//if (invocableEngine != null) {
+////	 tesate t = new tesate();
 //	 
+//	System.out.println("Deu certo chamar o Nokogiri");
+//		invocableEngine.invokeFunction("test");
+//	System.out.println("Deu certo chamar o Nokogiri");
+////	 RubyArray array = (RubyArray)invocableEngine.invokeFunction("somar", 1, 2, "Durelli");
+//	 for (Object object : array) {
+//		System.out.println(object);
+//		
+//	}
+	 }
 //	 te.apreenderGroovy();
 //// System.out.println(invocableEngine.invokeFunction("somar", 1, 2).getClass());
 // }
     
-  }
+//  }
 
   @Override
   public void stop(BundleContext context) throws Exception {
