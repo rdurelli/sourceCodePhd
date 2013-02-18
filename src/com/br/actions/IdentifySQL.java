@@ -135,6 +135,7 @@ public class IdentifySQL implements IObjectActionDelegate {
 					ResourcesPlugin.getWorkspace().getRoot().getProject(nameOfProject).refreshLocal(IResource.DEPTH_INFINITE, null);
 					
 					
+					
 				}
 				
 				// for (IResource iResource : member) {
