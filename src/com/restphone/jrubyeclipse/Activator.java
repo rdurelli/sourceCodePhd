@@ -62,19 +62,19 @@ public class Activator extends AbstractUIPlugin {
 //		
 //		System.out.println("O nome da tabela Ž " + query.getTable());
 //	}
-	
-	Teste1 testCaller = new Teste1();
-	
-	testCaller.callParser();
-    
-	DataBase dataBase = testCaller.getDataBase();
-	
-	System.out.println("Nome do banco de dados " + dataBase.getDataBaseName());
-	
-	System.out.println("Tables do banco de dados " + dataBase.getDataBaseTables());
-	
-	CreateSQLModel.createModel(dataBase);
-	
+//--------------------------------------------------------------------------------	
+//	Teste1 testCaller = new Teste1();
+//	
+//	testCaller.callParser();
+//    
+//	DataBase dataBase = testCaller.getDataBase();
+//	
+//	System.out.println("Nome do banco de dados " + dataBase.getDataBaseName());
+//	
+//	System.out.println("Tables do banco de dados " + dataBase.getDataBaseTables());
+//	
+//	CreateSQLModel.createModel(dataBase);	
+//--------------------------------------------------------------------------------	
 	//de suma import‰ncia quando eu tiver que utilizar para chamar Ruby ou Groovy no eclipse plugin
 //    TesteGroovyAndJRuby te = new TesteGroovyAndJRuby();
 //    System.out.println(te.testeImprimi());

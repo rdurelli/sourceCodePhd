@@ -43,5 +43,19 @@
          </view>
       </perspectiveExtension>
    </extension>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            adaptable="false"
+            id="TestePlugin.contribution1"
+            objectClass="org.eclipse.jdt.core.IJavaProject">
+       <action
+           label="Action"
+           class="com.br.actions.IdentifySQL"
+           enablesFor="1"
+           id="com.actions.newAction">
+     </action>
+      </objectContribution>
+   </extension>
 
 </plugin>

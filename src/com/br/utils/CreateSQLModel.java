@@ -6,12 +6,15 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.Resource.Factory.Registry;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
+import org.eclipse.jface.dialogs.MessageDialog;
 
 import SQLMODEL.sqlmodel.Database;
 import SQLMODEL.sqlmodel.SqlmodelFactory;
@@ -69,7 +72,7 @@ public class CreateSQLModel {
 		
 		ResourceSet resSet = new ResourceSetImpl();
 		
-		Resource resource = resSet.createResource(URI.createURI("file:/Users/rafaeldurelli/Desktop/sqlmodel/My2.sqlmodel"));
+		Resource resource = resSet.createResource(URI.createURI("file:/Users/rafaeldurelli/Documents/runtime-EclipseApplication/Teste/models/My2.sqlmodel"));
 		
 		// Get the first model element and cast it to the right type, in my
 	    // example everything is hierarchical included in this first node
@@ -77,11 +80,16 @@ public class CreateSQLModel {
 
 	    // Now save the content.
 	    try {
-	      resource.save(Collections.EMPTY_MAP);
+	      
+	    	resource.save(Collections.EMPTY_MAP);
+	    	
+	      
 	    } catch (IOException e) {
-	      // TODO Auto-generated catch block
-	      e.printStackTrace();
+	    	MessageDialog.openError(null, "It was not possible to create the sqlmodel.", "Please vefiry what happened.");
+	    	e.printStackTrace();
 	    }
+	    
+	    MessageDialog.openInformation(null, "The sqlmodel was created in the folder models.", "If the folder named models is not visible, please refresh your project in order to see the sqlmodel.");
 		
 	}
 	
