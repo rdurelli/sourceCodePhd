@@ -91,9 +91,10 @@ public class CreateSQLModel {
 	    }
 	    
 	    MessageDialog.openInformation(null, "The sqlmodel was created in the folder models.", "If the folder named models is not visible, please refresh your project in order to see the sqlmodel.");
-	    ResourceSelectionDialog dialog = new ResourceSelectionDialog(null, ResourcesPlugin.getWorkspace().getRoot(), "Select Resource");
-	    dialog.setTitle("Resource Selection");
-	    dialog.open();
+	    
+	    
+	    
+	    
 	
 	}
 	
