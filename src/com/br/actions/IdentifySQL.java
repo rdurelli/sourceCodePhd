@@ -11,6 +11,10 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+
+import org.eclipse.emf.ecore.resource.Resource;
+
+
 import org.eclipse.emf.ecore.resource.Resource;
 
 import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
@@ -29,6 +33,9 @@ import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
+
+
+import org.eclipse.ui.dialogs.ResourceSelectionDialog;
 
 import org.eclipse.ui.dialogs.ResourceSelectionDialog;
 
@@ -140,6 +147,7 @@ public class IdentifySQL implements IObjectActionDelegate {
 					
 					ResourcesPlugin.getWorkspace().getRoot().getProject(nameOfProject).refreshLocal(IResource.DEPTH_INFINITE, null);
 					
+
 					ResourceSelectionDialog dialog = new ResourceSelectionDialog(this.shell, ResourcesPlugin.getWorkspace().getRoot(), "Select Resource");
 				    dialog.setTitle("Resource Selection");
 				    dialog.open();
@@ -147,6 +155,7 @@ public class IdentifySQL implements IObjectActionDelegate {
 				    IFile arquivoObtido = (IFile) dialog.getResult()[0];
 				    
 				    System.out.println(arquivoObtido.getName());
+
 					
 				}
 				
