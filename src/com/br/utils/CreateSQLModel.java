@@ -15,7 +15,9 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.eclipse.jface.dialogs.MessageDialog;
+
 import org.eclipse.ui.dialogs.ResourceSelectionDialog;
+
 
 import SQLMODEL.sqlmodel.Database;
 import SQLMODEL.sqlmodel.SqlmodelFactory;
@@ -91,10 +93,7 @@ public class CreateSQLModel {
 	    }
 	    
 	    MessageDialog.openInformation(null, "The sqlmodel was created in the folder models.", "If the folder named models is not visible, please refresh your project in order to see the sqlmodel.");
-	    ResourceSelectionDialog dialog = new ResourceSelectionDialog(null, ResourcesPlugin.getWorkspace().getRoot(), "Select Resource");
-	    dialog.setTitle("Resource Selection");
-	    dialog.open();
-	
+
 	}
 	
 	/**
