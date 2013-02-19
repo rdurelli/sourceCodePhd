@@ -15,7 +15,10 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.eclipse.jface.dialogs.MessageDialog;
+<<<<<<< HEAD
 import org.eclipse.ui.dialogs.ResourceSelectionDialog;
+=======
+>>>>>>> fb6fc9846b5c498c6f8b761ae50dafa578bb44cb
 
 import SQLMODEL.sqlmodel.Database;
 import SQLMODEL.sqlmodel.SqlmodelFactory;
@@ -91,11 +94,15 @@ public class CreateSQLModel {
 	    }
 	    
 	    MessageDialog.openInformation(null, "The sqlmodel was created in the folder models.", "If the folder named models is not visible, please refresh your project in order to see the sqlmodel.");
+<<<<<<< HEAD
 	    
 	    
 	    
 	    
 	
+=======
+		
+>>>>>>> fb6fc9846b5c498c6f8b761ae50dafa578bb44cb
 	}
 	
 	/**
