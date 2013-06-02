@@ -18,7 +18,12 @@ Require-Bundle: org.eclipse.core.runtime,
  de.vogella.rcp.plugin.filereader;bundle-version="1.0.0",
  org.eclipse.emf;bundle-version="2.6.0",
  org.eclipse.emf.edit;bundle-version="2.7.2",
- org.eclipse.ui.ide;bundle-version="3.7.0"
+ org.eclipse.ui.ide;bundle-version="3.7.0",
+ org.eclipse.m2m.atl.engine.emfvm;bundle-version="3.2.1",
+ org.eclipse.m2m.atl.sqlmodel2kdmdata;bundle-version="1.0.0",
+ org.eclipse.gmt.modisco.java;bundle-version="0.9.2",
+ org.eclipse.modisco.java.discoverer;bundle-version="0.9.2",
+ org.eclipse.modisco.infra.discovery.core;bundle-version="0.9.2"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ClassPath: .,
  libs/jruby.jar,

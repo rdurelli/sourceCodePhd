@@ -49,13 +49,60 @@
             adaptable="false"
             id="TestePlugin.contribution1"
             objectClass="org.eclipse.jdt.core.IJavaProject">
+       <menu
+             icon="icons/Binoculars.png"
+             id="TestePlugin.menu2"
+             label="Knowledge Discovery"
+             path="additions">
+            <groupMarker
+                  name="content">
+            </groupMarker>
+            <separator
+                  name="additions">
+            </separator>
+         </menu>
        <action
-           label="Action"
-           class="com.br.actions.IdentifySQL"
-           enablesFor="1"
-           id="com.actions.newAction">
+             class="com.br.actions.IdentifySQL"
+             enablesFor="1"
+             icon="icons/database.png"
+             id="com.actions.newAction"
+             label="Discovery SQL MODEL"
+             menubarPath="TestePlugin.menu2/content">
      </action>
+       <action
+             class="com.br.actions.IdentifyJavaModel"
+             enablesFor="1"
+             icon="icons/JavaIcon.gif"
+             id="com.actions.newActionJava"
+             label="Discovery Java MODEL"
+             menubarPath="TestePlugin.menu2/content">
+       </action>
       </objectContribution>
    </extension>
-
+	<extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            id="TestePlugin.contribution2"
+            nameFilter="*.sqlmodel"
+            objectClass="org.eclipse.core.resources.IResource">
+         <menu
+               id="TestePlugin.menu2"
+               label="Discovery"
+               path="additions">
+            <groupMarker
+                  name="content">
+            </groupMarker>
+            <separator
+                  name="additions">
+            </separator>
+         </menu>
+         <action
+               class="com.br.actions.IdentifyKDMData"
+               enablesFor="1"
+               id="TestePlugin.newAction"
+               label=" KDM Data"
+               menubarPath="TestePlugin.menu2/content">
+         </action>
+      </objectContribution>
+   </extension>
 </plugin>

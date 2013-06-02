@@ -60,7 +60,7 @@ public class CreateSQLModel {
 	 * @author rafaeldurelli
 	 *  @param SQLMODEL.sqlmodel.DataBase used to instantiate the DataBase metaClasse
 	 * */
-	public static void createModel(DataBase dataBase) {
+	public static void createModel(DataBase dataBase, String nameProject) {
 		
 		
 		Database dataBaseModel = factory.createDatabase();
@@ -77,7 +77,7 @@ public class CreateSQLModel {
 		
 		ResourceSet resSet = new ResourceSetImpl();
 		
-		Resource resource = resSet.createResource(URI.createURI("file:/Users/rafaeldurelli/Documents/runtime-EclipseApplication/Teste/models/My2.sqlmodel"));
+		Resource resource = resSet.createResource(URI.createURI(nameProject+"/MODELS_PSM_AS_IS/PSM_SQL.sqlmodel"));
 		
 		// Get the first model element and cast it to the right type, in my
 	    // example everything is hierarchical included in this first node

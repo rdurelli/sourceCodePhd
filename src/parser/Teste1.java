@@ -61,9 +61,11 @@ public class Teste1 {
 
 		try {
 
-			parser.blockStatement();
-
-			parser.localVariableDeclaration();
+			parser.compilationUnit();
+			
+//			parser.blockStatement();
+//
+//			parser.localVariableDeclaration();
 
 			Set<String> inserts = parser.getInserts();
 

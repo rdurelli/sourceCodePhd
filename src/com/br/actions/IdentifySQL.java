@@ -1,6 +1,10 @@
 package com.br.actions;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -11,8 +15,11 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 
 
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
 
 import org.eclipse.jdt.core.IJavaProject;
@@ -23,6 +30,11 @@ import org.eclipse.jface.dialogs.MessageDialog;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.m2m.atl.common.ATLExecutionException;
+import org.eclipse.m2m.atl.core.ATLCoreException;
+import org.eclipse.m2m.atl.sqlmodel2kdmdata.files.SQLModel2KDMData;
+import org.eclipse.modisco.infra.discovery.core.exception.DiscoveryException;
+import org.eclipse.modisco.java.discoverer.DiscoverJavaModelFromJavaProject;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
@@ -90,12 +102,18 @@ public class IdentifySQL implements IObjectActionDelegate {
 		
 		boolean result = MessageDialog.openConfirm(this.shell, "Please Confirm", "Are you sure you would like to find all embedded SQL?");
 		
+		String local = null;
+		
 		if(result) {
+		
+			
 			
 			System.out.println("COMECOU a FUNCIONAR");
 
 			String nameOfProject = this.file.getElementName();
 
+			String locationURIoFTheProject = this.file.getResource().getLocationURI().toString();
+			
 			System.out.println("Name of Project " + nameOfProject);
 
 			IFolder folderSRC = this.file.getProject().getFolder("src");
@@ -106,13 +124,27 @@ public class IdentifySQL implements IObjectActionDelegate {
 				IResource member[] = folderSRC.members();
 				System.out.println(member.length);
 
-				IFile file = null;
-				IFolder folder = null;
+//				IFile file = null;
+//				IFolder folder = null;
 
 				
+				System.out.println(" Caminho completo " + this.file.getResource().getLocation() );
+				
+				
+				System.out.println(" Caminho completo Dois " + this.file.getResource().getLocationURI() );
 				
 				ArrayList<String> javaFiles = new ArrayList<String>();
 
+//				DiscoverJavaModelFromJavaProject discoverJava = new DiscoverJavaModelFromJavaProject();
+//				try {
+//					discoverJava.discoverElement(this.file, null);
+//					
+//					System.out.println("FUNCIONOU O java Discover");
+//					
+//				} catch (DiscoveryException e1) {
+//					// TODO Auto-generated catch block
+//					e1.printStackTrace();
+//				}
 				
 				
 				System.out.println("--------------------------------------");
@@ -133,7 +165,9 @@ public class IdentifySQL implements IObjectActionDelegate {
 					
 					DataBase dataBase = teste1.getDataBase();
 					
-					CreateSQLModel.createModel(dataBase);
+					CreateSQLModel.createModel(dataBase, locationURIoFTheProject);
+					
+					
 					
 					ResourcesPlugin.getWorkspace().getRoot().getProject(nameOfProject).refreshLocal(IResource.DEPTH_INFINITE, null);
 					
@@ -144,9 +178,72 @@ public class IdentifySQL implements IObjectActionDelegate {
 				    
 				    IFile arquivoObtido = (IFile) dialog.getResult()[0];
 				    
+				    
+				    
+				    
 				    System.out.println(arquivoObtido.getName());
+				    System.out.println("Location of the file " + arquivoObtido.getLocation());
+				    System.out.println("Full path of the File "+ arquivoObtido.getFullPath());
+				    
+				    local = arquivoObtido.getParent().getLocation().toOSString();
+				    
+				    System.out.println("Location of the Parente "+arquivoObtido.getParent().getLocation());
+				    
+				    org.eclipse.m2m.atl.sqlmodel2kdmdata.files.SQLModel2KDMData runner = null;
+				    try {
+				    	
+				    	runner =  new org.eclipse.m2m.atl.sqlmodel2kdmdata.files.SQLModel2KDMData();
+				    	runner.loadModels(arquivoObtido.getFullPath().toString());
+						runner.doSQLModel2KDMData(new NullProgressMonitor());
+						runner.saveModels(URI.createURI("file:"+arquivoObtido.getParent().getLocation().toString()+""+"/My2TESTENOVO.kdm").toString());
+						System.out.println("Model salvo");
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (ATLExecutionException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (ATLCoreException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 
 					
+				}
+				
+				
+				
+				DiscoverJavaModelFromJavaProject discoverJava = new DiscoverJavaModelFromJavaProject();
+				try {
+					discoverJava.discoverElement(this.file, new NullProgressMonitor());
+					
+					System.out.println("FUNCIONOU O java Discover");
+					
+					Resource javaResource = discoverJava.getTargetModel();
+					
+					javaResource.setURI(URI.createURI(locationURIoFTheProject+"/MODELS_PSM_AS_IS/teste.javaxmi"));
+					
+					
+					// Now save the content.
+				    try {
+				      
+				    	javaResource.save(Collections.EMPTY_MAP);
+				    	
+				      
+				    } catch (IOException e) {
+				    	MessageDialog.openError(null, "It was not possible to create the sqlmodel.", "Please vefiry what happened.");
+				    	e.printStackTrace();
+				    }
+					
+					
+//					FileOutputStream fout = new FileOutputStream(new File (local));
+//					javaResource.save(fout, null);
+//					fout.close();
+					
+				} catch (DiscoveryException e1) {
+					// TODO Auto-generated catch block
+					System.out.println("N‹o FUNCIONOU O java Discover");
+					e1.printStackTrace();
 				}
 				
 				// for (IResource iResource : member) {
