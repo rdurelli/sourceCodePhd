@@ -4,11 +4,23 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Iterator;
 
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
+import org.eclipse.gmt.modisco.java.AbstractTypeDeclaration;
+import org.eclipse.gmt.modisco.java.ClassDeclaration;
+import org.eclipse.gmt.modisco.java.ClassFile;
+import org.eclipse.gmt.modisco.java.Comment;
+import org.eclipse.gmt.modisco.java.Model;
+import org.eclipse.gmt.modisco.java.Package;
+import org.eclipse.gmt.modisco.java.emf.JavaFactory;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
@@ -18,6 +30,9 @@ import org.eclipse.modisco.java.discoverer.DiscoverJavaModelFromJavaProject;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
+
+import com.br.tests.Generation;
+import com.br.utils.CreateCommentOnJavaModelBasedInSqlStatement;
 
 public class IdentifyJavaModel implements IObjectActionDelegate {
 
@@ -37,14 +52,85 @@ public class IdentifyJavaModel implements IObjectActionDelegate {
 		// TODO Auto-generated method stub
 
 		
+		String locationURIoFTheProject = this.file.getResource().getLocationURI().toString();
 		
+		
+		try {
+			IResource resource = this.file.getUnderlyingResource();
+			
+			IMarker marker = resource.createMarker(IMarker.TASK);
+			marker.setAttribute(IMarker.MESSAGE, "This a a task");
+			marker.setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_HIGH);
+			marker.setAttribute(IMarker.LOCATION, this.file.getPath().toOSString());
+//			marker.setAttribute(IMarker., value)
+			
+			IMarker marker2 = resource.createMarker(IMarker.PROBLEM);
+			marker2.setAttribute(IMarker.MESSAGE, "This a Problem");
+			marker2.setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_HIGH);
+			marker2.setAttribute(IMarker.LOCATION, this.file.getPath().toOSString());
+
+//			marker.setAttribute(IMarker., value)
+			
+			
+		} catch (JavaModelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		
+		System.out.println("Location is " + locationURIoFTheProject);
 		
 		System.out.println(" O arquivo selecionado Ž  " + this.file.getPath());
 		
+		Generation generation = new Generation();
+//		
+		Model model = generation.loadTeste();
 		
+		EList<Package> pacotes = model.getOwnedElements();
+		
+//		
+		EList<AbstractTypeDeclaration> classessss = pacotes.get(0).getOwnedElements();
+//		
+		ClassDeclaration eusei = (ClassDeclaration)classessss.get(0);
+//		
+		System.out.println("Eu sei o que tem aqui vamos ver? " + eusei.getName());
+//		
+		Comment comment1  = JavaFactory.eINSTANCE.createLineComment();
+		comment1.setContent("//eu sei que eu estou tentando ...");
+		eusei.getComments().add(comment1);
+//		
+//		
+		System.out.println("A lista de pacote contem " + pacotes);
+//		
+		EList<ClassFile> listassss = model.getClassFiles();
+		
+		System.out.println("A lista Ž " + listassss);
+		
+		for (ClassFile classFile : listassss) {
+			System.out.println("O nome da classe Ž " + classFile.getName());
+		}
+		
+		try {
+			generation.generate();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		System.out.println("DEU CERTO VAI...");
+		
+		
+		
+		CreateCommentOnJavaModelBasedInSqlStatement createComment = new CreateCommentOnJavaModelBasedInSqlStatement();
+		
+		createComment.createCommentOnTheJavaModel(model);
 		//call createJavaModel method to create the Java model
 		
-		createJavaModel();
+//		createJavaModel();
 		
 		
 		
@@ -55,6 +141,7 @@ public class IdentifyJavaModel implements IObjectActionDelegate {
 	private void createJavaModel (){
 		
 		String locationURIoFTheProject = this.file.getResource().getLocationURI().toString();
+		
 		
 		DiscoverJavaModelFromJavaProject discoverJava = new DiscoverJavaModelFromJavaProject();
 		try {
@@ -82,7 +169,7 @@ public class IdentifyJavaModel implements IObjectActionDelegate {
 			
 		} catch (DiscoveryException e1) {
 			// TODO Auto-generated catch block
-			System.out.println("N‹o FUNCIONOU O java Discover");
+			MessageDialog.openError(null, "It was not possible to create the JavaModel.", "Please vefiry what happened.");
 			e1.printStackTrace();
 		}
 		
