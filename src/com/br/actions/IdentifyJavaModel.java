@@ -128,6 +128,13 @@ public class IdentifyJavaModel implements IObjectActionDelegate {
 		CreateCommentOnJavaModelBasedInSqlStatement createComment = new CreateCommentOnJavaModelBasedInSqlStatement();
 		
 		createComment.createCommentOnTheJavaModel(model);
+		
+		
+		
+		System.out.println("Esta agora criando um novo modelo jAva");
+		generation.save(model);
+		
+		
 		//call createJavaModel method to create the Java model
 		
 //		createJavaModel();

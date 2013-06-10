@@ -3,17 +3,24 @@ package com.br.utils;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.gmt.modisco.java.AbstractTypeDeclaration;
+import org.eclipse.gmt.modisco.java.Annotation;
+import org.eclipse.gmt.modisco.java.AnnotationTypeDeclaration;
 import org.eclipse.gmt.modisco.java.BodyDeclaration;
 import org.eclipse.gmt.modisco.java.ClassDeclaration;
 import org.eclipse.gmt.modisco.java.ClassFile;
 import org.eclipse.gmt.modisco.java.Comment;
+import org.eclipse.gmt.modisco.java.Expression;
 import org.eclipse.gmt.modisco.java.FieldDeclaration;
 import org.eclipse.gmt.modisco.java.MethodDeclaration;
 import org.eclipse.gmt.modisco.java.Model;
 import org.eclipse.gmt.modisco.java.Package;
 import org.eclipse.gmt.modisco.java.StringLiteral;
+import org.eclipse.gmt.modisco.java.Type;
+import org.eclipse.gmt.modisco.java.TypeAccess;
+import org.eclipse.gmt.modisco.java.VariableDeclarationFragment;
 import org.eclipse.gmt.modisco.java.emf.JavaFactory;
 import org.eclipse.swt.widgets.Shell;
+import org.jruby.javasupport.Java;
 
 public class CreateCommentOnJavaModelBasedInSqlStatement {
 
@@ -87,6 +94,58 @@ public class CreateCommentOnJavaModelBasedInSqlStatement {
 	}
 	
 	private void deepInFieldDeclaration (FieldDeclaration fieldDeclaration) {
+		
+		TypeAccess typeOfTheFiedl = fieldDeclaration.getType();
+		
+		
+		if(typeOfTheFiedl.getType().getName().equalsIgnoreCase("String")) {
+			
+			
+			VariableDeclarationFragment fragment =  fieldDeclaration.getFragments().get(0);
+			
+			Expression expression = fragment.getInitializer();
+			
+			if (expression instanceof StringLiteral) {
+				
+				StringLiteral stringLiteral = (StringLiteral) expression;
+				
+				
+				Comment newComment0 =  this.createLineComment("//************************Please look at the above statement and then remove it and use the generated code.**********************", fieldDeclaration);
+				Comment newComment1 =  this.createLineComment("//************************Please look at the above statement and then remove it and use the generated code.**********************", fieldDeclaration);
+				Comment newComment2 =  this.createLineComment("//************************Please look at the above statement and then remove it and use the generated code.**********************", fieldDeclaration);
+				
+				fieldDeclaration.getComments().add(newComment0);
+				fieldDeclaration.getComments().add(newComment1);
+				fieldDeclaration.getComments().add(newComment2);
+				
+				
+//				System.out.println("O valor do Field " + stringLiteral.getEscapedValue());
+//				stringLiteral.setEscapedValue(stringLiteral.getEscapedValue()+"//Please remove here and use the generated DAO");
+				
+				
+			}
+			
+			
+		}
+		
+		
+		
+		System.out.println("The Type is.....");
+		System.out.println("The name is "  + typeOfTheFiedl.getType().getName());
+		
+		
+	}
+	
+	private Comment createLineComment (String comment, FieldDeclaration field) {
+		
+		
+		Comment newComment = JavaFactory.eINSTANCE.createLineComment();
+		
+		newComment.setContent(comment);
+		newComment.setOriginalCompilationUnit(field.getOriginalCompilationUnit());
+		
+		
+		return newComment;
 		
 		
 	}

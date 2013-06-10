@@ -3,6 +3,8 @@ package com.br.tests;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
@@ -19,7 +21,6 @@ import org.eclipse.gmt.modisco.java.generation.files.GenerateJavaExtended;
 
 public class Generation {
 
-	
 	
 	
 	public Model loadTeste(){
@@ -77,5 +78,30 @@ public class Generation {
 	}
 	
 	
+	public void save(Model model)  {
+		
+		
+		JavaPackage.eINSTANCE.eClass();
+		
+		Resource.Factory.Registry reg = Resource.Factory.Registry.INSTANCE;
+	    Map<String, Object> m = reg.getExtensionToFactoryMap();
+	    m.put("website", new XMIResourceFactoryImpl());
+		
+	    // Obtain a new resource set
+	    ResourceSet resSet = new ResourceSetImpl();
+	    
+	    Resource resource = resSet.createResource(URI.createURI("file:/Users/rafaeldurelli/Documents/workspace/GeneratingJavaFromJavaModel/website/novo/novo.javaxmi"));
+		
+	    resource.getContents().add(model);
+	    
+	    try {
+			
+	    	resource.save(Collections.EMPTY_MAP);
+	    	
+		} catch (IOException e) {
+			// TODO: handle exception
+		}
+		
+	}
 	
 }
