@@ -127,4 +127,6 @@ public abstract class StatementCRUD {
 		
 	}
 	
+	public abstract String getTableName(String statmentUpdate) ;
+	
 }

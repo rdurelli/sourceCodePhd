@@ -20,22 +20,19 @@ public class StatementSelect extends StatementCRUD {
 
 	@Override
 	public void createStatement(Set<String> selects, DataBase dataBase) {
-		
-		
+
 		StatementCRUD.selects = selects;
-		
-		//System.out.println("Entrou no Select ");
-		
+
+		// System.out.println("Entrou no Select ");
+
 		// instanciate the SQL parser to get the information
 		ZqlParser parserSQL = new ZqlParser();
 
 		// iterate over all update statements found in the source code
 		for (String select : selects) {
 
-			
 			// call the SQLParser to verify the SQL obtained
-			parserSQL.initParser(new ByteArrayInputStream(select
-					.getBytes()));
+			parserSQL.initParser(new ByteArrayInputStream(select.getBytes()));
 
 			try {
 
@@ -52,35 +49,36 @@ public class StatementSelect extends StatementCRUD {
 
 					// get the name of the Table used in the ZQuery
 					// statement
-					
+
 					List<?> tableSelect = sqlSelect.getFrom();
-					
-					
-					//coloquei isso aqui, pq eu s— consegui pensar como pegar SELECT do tipo SELECT alunoID, alunoName from ALUNO where etc.. 
-					//n‹o consigo pegar com o FROM tem duas tabelas...
-					if (! (tableSelect.size() > 1)) {
-					
-					String tableName = tableSelect.get(0).toString()
-							.toUpperCase();
 
-					// use the name of the table obtained and
-					// instantiate a Table class
-					Table table = new Table(tableName);
+					// coloquei isso aqui, pq eu s— consegui pensar como pegar
+					// SELECT do tipo SELECT alunoID, alunoName from ALUNO where
+					// etc..
+					// n‹o consigo pegar com o FROM tem duas tabelas...
+					if (!(tableSelect.size() > 1)) {
 
-					// add the Table instance to the Set<Table>.
-					// It is worth highlighted that I have choose to
-					// Upper case the table name and put it to an Set..
-					// once Set does't permit identical objects
-					dataBase.getDataBaseTables().add(table);
+						String tableName = tableSelect.get(0).toString()
+								.toUpperCase();
 
-					Set<Column> columnsFound = new TreeSet<Column>();
+						// use the name of the table obtained and
+						// instantiate a Table class
+						Table table = new Table(tableName);
 
-					table.setColumnsTable(columnsFound);
+						// add the Table instance to the Set<Table>.
+						// It is worth highlighted that I have choose to
+						// Upper case the table name and put it to an Set..
+						// once Set does't permit identical objects
+						dataBase.getDataBaseTables().add(table);
 
-					addColumnToClauseSelect(tableName,
-							dataBase.getDataBaseTables(), sqlStatement);
+						Set<Column> columnsFound = new TreeSet<Column>();
 
-				}
+						table.setColumnsTable(columnsFound);
+
+						addColumnToClauseSelect(tableName,
+								dataBase.getDataBaseTables(), sqlStatement);
+
+					}
 				}
 
 			} catch (ParseException e) {
@@ -90,17 +88,13 @@ public class StatementSelect extends StatementCRUD {
 
 		}
 
-
-		//tem que colocar isso para obter o tipo da coluna.
+		// tem que colocar isso para obter o tipo da coluna.
 		getColumnType(dataBase.getDataBaseTables());
-		
-	
-
 
 	}
-	
-	private void addColumnToClauseSelect(String tableName,
-			Set<Table> tables, ZStatement zStatement) {
+
+	private void addColumnToClauseSelect(String tableName, Set<Table> tables,
+			ZStatement zStatement) {
 
 		if (tables.contains(new Table(tableName))) {
 
@@ -151,8 +145,8 @@ public class StatementSelect extends StatementCRUD {
 										}
 
 										table.getColumnsTable()
-										.add(new Column(
-												createTheColumnName));
+												.add(new Column(
+														createTheColumnName));
 									}
 
 								}
@@ -167,6 +161,55 @@ public class StatementSelect extends StatementCRUD {
 
 		}
 
+	}
+
+	@Override
+	public String getTableName(String statmentSelect) {
+
+		
+		String tableName = null;
+		// instanciate the SQL parser to get the information
+		ZqlParser parserSQL = new ZqlParser();
+
+		// call the SQLParser to verify the SQL obtained
+		parserSQL
+				.initParser(new ByteArrayInputStream(statmentSelect.getBytes()));
+
+		// read the statement and transform it to ZStatement,
+		// afterwards it is casted to ZUpdate
+		ZStatement sqlStatement;
+		try {
+			sqlStatement = parserSQL.readStatement();
+			// cast the ZStatement to ZUpdate to get the information
+			// in the Update clause
+			if (sqlStatement instanceof ZQuery) {
+
+				// where the cast really occurs
+				ZQuery sqlSelect = (ZQuery) sqlStatement;
+
+				// get the name of the Table used in the ZQuery
+				// statement
+
+				List<?> tableSelect = sqlSelect.getFrom();
+
+				// coloquei isso aqui, pq eu s— consegui pensar como pegar
+				// SELECT do tipo SELECT alunoID, alunoName from ALUNO where
+				// etc..
+				// n‹o consigo pegar com o FROM tem duas tabelas...
+				if (!(tableSelect.size() > 1)) {
+
+					tableName = tableSelect.get(0).toString()
+							.toUpperCase();
+
+				}
+
+			}
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return tableName;
 	}
 
 }

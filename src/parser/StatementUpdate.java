@@ -176,4 +176,42 @@ public class StatementUpdate extends StatementCRUD {
 
 	}
 
+	public String getTableName(String statmentUpdate) {
+
+		String tableName = null;
+
+		// instanciate the SQL parser to get the information
+		ZqlParser parserSQL = new ZqlParser();
+
+		// call the SQLParser to verify the SQL obtained
+		parserSQL
+				.initParser(new ByteArrayInputStream(statmentUpdate.getBytes()));
+
+		try {
+
+			// read the statement and transform it to ZStatement,
+			// afterwards it is casted to ZUpdate
+			ZStatement sqlStatement = parserSQL.readStatement();
+
+			// cast the ZStatement to ZUpdate to get the information
+			// in the Update clause
+			if (sqlStatement instanceof ZUpdate) {
+
+				// where the cast really occurs
+				ZUpdate sqlUpdate = (ZUpdate) sqlStatement;
+
+				// get the name of the Table used in the UPDATE
+				// statement
+				tableName = sqlUpdate.getTable().toUpperCase();
+
+			}
+
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return tableName;
+	}
+
 }

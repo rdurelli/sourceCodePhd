@@ -155,5 +155,43 @@ public class StatementDelete extends StatementCRUD {
 		}
 
 	}
+	
+	@Override
+	public String getTableName(String statmentDelete) {
+
+		String tableName = null;
+		// instanciate the SQL parser to get the information
+		ZqlParser parserSQL = new ZqlParser();
+
+		// call the SQLParser to verify the SQL obtained
+		parserSQL
+				.initParser(new ByteArrayInputStream(statmentDelete.getBytes()));
+
+		try {
+
+			// read the statement and transform it to ZStatement,
+			// afterwards it is casted to ZUpdate
+			ZStatement sqlStatement = parserSQL.readStatement();
+
+			// cast the ZStatement to ZUpdate to get the information
+			// in the Update clause
+			if (sqlStatement instanceof ZDelete) {
+
+				// where the cast really occurs
+				ZDelete sqlDelete = (ZDelete) sqlStatement;
+
+				// get the name of the Table used in the UPDATE
+				// statement
+				tableName = sqlDelete.getTable().toUpperCase();
+
+			}
+
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return tableName;
+	}
 
 }
