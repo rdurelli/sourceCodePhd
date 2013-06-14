@@ -1,8 +1,5 @@
 package com.br.utils;
 
-import groovy.text.SimpleTemplateEngine;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -10,24 +7,22 @@ import java.util.regex.Pattern;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.gmt.modisco.java.AbstractTypeDeclaration;
-import org.eclipse.gmt.modisco.java.Annotation;
-import org.eclipse.gmt.modisco.java.AnnotationTypeDeclaration;
+import org.eclipse.gmt.modisco.java.Block;
 import org.eclipse.gmt.modisco.java.BodyDeclaration;
 import org.eclipse.gmt.modisco.java.ClassDeclaration;
-import org.eclipse.gmt.modisco.java.ClassFile;
 import org.eclipse.gmt.modisco.java.Comment;
 import org.eclipse.gmt.modisco.java.Expression;
 import org.eclipse.gmt.modisco.java.FieldDeclaration;
 import org.eclipse.gmt.modisco.java.MethodDeclaration;
 import org.eclipse.gmt.modisco.java.Model;
 import org.eclipse.gmt.modisco.java.Package;
+import org.eclipse.gmt.modisco.java.Statement;
 import org.eclipse.gmt.modisco.java.StringLiteral;
-import org.eclipse.gmt.modisco.java.Type;
+import org.eclipse.gmt.modisco.java.TryStatement;
 import org.eclipse.gmt.modisco.java.TypeAccess;
 import org.eclipse.gmt.modisco.java.VariableDeclarationFragment;
-import org.eclipse.gmt.modisco.java.emf.JavaFactory;
+import org.eclipse.gmt.modisco.java.VariableDeclarationStatement;
 import org.eclipse.swt.widgets.Shell;
-import org.jruby.javasupport.Java;
 
 import parser.StatementDelete;
 import parser.StatementSelect;
@@ -76,8 +71,12 @@ public class CreateCommentOnJavaModelBasedInSqlStatement {
 					if (bodyDeclaration instanceof FieldDeclaration) {
 
 						FieldDeclaration fieldDeclaration = (FieldDeclaration) bodyDeclaration;
-
-						this.deepInFieldDeclaration(fieldDeclaration);
+						
+						DeepInFieldDeclaration deepInField = new DeepInFieldDeclaration(fieldDeclaration.getOriginalCompilationUnit(), fieldDeclaration);
+						
+						deepInField.deep();
+						
+//						this.deepInFieldDeclaration(fieldDeclaration);
 
 					} else if (bodyDeclaration instanceof MethodDeclaration) {
 
@@ -97,124 +96,189 @@ public class CreateCommentOnJavaModelBasedInSqlStatement {
 
 	}
 
-	private void deepInFieldDeclaration(FieldDeclaration fieldDeclaration) {
+//	private void deepInFieldDeclaration(FieldDeclaration fieldDeclaration) {
+//
+//		TypeAccess typeOfTheFiedl = fieldDeclaration.getType();
+//
+//		if (typeOfTheFiedl.getType().getName().equalsIgnoreCase("String")) {
+//
+//			VariableDeclarationFragment fragment = fieldDeclaration
+//					.getFragments().get(0);
+//
+//			Expression expression = fragment.getInitializer();
+//
+//			if (expression instanceof StringLiteral) {
+//
+//				//Class that contains all comment to be added...
+//				CreateCommentFieldDeclaration createCommentFieldDeclaration = new CreateCommentFieldDeclaration();
+//				
+//				StringLiteral stringLiteral = (StringLiteral) expression;
+//
+//				System.out.println("O valor do Field "
+//						+ stringLiteral.getEscapedValue());
+//
+//				String lineSeparator = System.getProperty("line.separator")
+//						+ " ";
+//
+//				// regex para obter somente update statement
+//				Pattern patternUpdate = Pattern.compile("^\\W\\s*update",
+//						Pattern.CASE_INSENSITIVE);
+//
+//				Matcher matcherUpdate = patternUpdate.matcher(stringLiteral
+//						.getEscapedValue());
+//
+//				if (matcherUpdate.find()) {
+//
+//					this.addUpdateCommentInTheModel(stringLiteral, lineSeparator, createCommentFieldDeclaration, fieldDeclaration);
+//
+//				}
+//				
+//				//regex para obter somente delele statement
+//				Pattern patternDelete = Pattern.compile("^\\W\\s*delete", Pattern.CASE_INSENSITIVE);
+//				
+//				Matcher matcherDelete = patternDelete.matcher(stringLiteral
+//						.getEscapedValue());
+//				
+//				if (matcherDelete.find()) {
+//					
+//					this.addDeleteCommentInTheModel(stringLiteral, lineSeparator, createCommentFieldDeclaration, fieldDeclaration);
+//					
+//				}
+//				
+//				//regex para obter somente select
+//		    	Pattern patternSelect = Pattern.compile("^\\W\\s*select", Pattern.CASE_INSENSITIVE);
+//		    	
+//				Matcher matcher = patternSelect.matcher(stringLiteral
+//						.getEscapedValue());
+//				
+//				if(matcher.find()) {
+//				
+//					this.addSelectCommentInTheModel(stringLiteral, lineSeparator, createCommentFieldDeclaration, fieldDeclaration);
+//				
+//				}
+//
+//				// stringLiteral.setEscapedValue(stringLiteral.getEscapedValue()+"//Please remove here and use the generated DAO");
+//
+//			}
+//
+//		}
+//
+//		System.out.println("The Type is.....");
+//		System.out.println("The name is " + typeOfTheFiedl.getType().getName());
+//
+//	}
+	
+	
 
-		TypeAccess typeOfTheFiedl = fieldDeclaration.getType();
 
-		if (typeOfTheFiedl.getType().getName().equalsIgnoreCase("String")) {
+	private void addDeleteCommentInTheModel (StringLiteral stringLiteral, String lineSeparator, CreateCommentVariableDeclarationStatement createComment, VariableDeclarationStatement variableDeclaration) {
+		
+		String newDelete = stringLiteral.getEscapedValue().trim().replaceFirst("\\s*delete", "delete").replace('"', ' ').replaceAll("\\+"+lineSeparator, "").replaceAll("\\s+", " ").replaceAll("\\+\\D*?\\+", " ")+";";
+		
+		StatementDelete statementDelete = new StatementDelete();
+		
+		String tableName = statementDelete.getTableName(newDelete);
+		
+		List<Comment> comments = createComment.createCommentDAODelete(tableName,
+				variableDeclaration);
 
-			VariableDeclarationFragment fragment = fieldDeclaration
-					.getFragments().get(0);
-
-			Expression expression = fragment.getInitializer();
-
-			if (expression instanceof StringLiteral) {
-
-				//Class that contains all comment to be added...
-				CreateCommentFieldDeclaration createCommentFieldDeclaration = new CreateCommentFieldDeclaration();
-				
-				StringLiteral stringLiteral = (StringLiteral) expression;
-
-				System.out.println("O valor do Field "
-						+ stringLiteral.getEscapedValue());
-
-				String lineSeparator = System.getProperty("line.separator")
-						+ " ";
-
-				// regex para obter somente update statement
-				Pattern patternUpdate = Pattern.compile("^\\W\\s*update",
-						Pattern.CASE_INSENSITIVE);
-
-				Matcher matcherUpdate = patternUpdate.matcher(stringLiteral
-						.getEscapedValue());
-
-				if (matcherUpdate.find()) {
-
-					String newUpdate = stringLiteral.getEscapedValue().trim()
-							.replaceFirst("\\s*update", "update")
-							.replace('"', ' ')
-							.replaceAll("\\+" + lineSeparator, "")
-							.replaceAll("\\s+", " ")
-							.replaceAll("\\+\\D*?\\+", " ")
-							+ ";";
-
-					System.out.println("The new UPDATE is " + newUpdate);
-
-					StatementUpdate statementUpdate = new StatementUpdate();
-
-					String tableName = statementUpdate.getTableName(newUpdate);
-
-					// this.cleanComment(fieldDeclaration);//limpa todos os
-					// comentarios antes de adicionar o meu.
-
-				
-					List<Comment> comments = createCommentFieldDeclaration.createCommentDAOUpdate(tableName,
-							fieldDeclaration);
-
-					for (Comment comment : comments) {
-						fieldDeclaration.getComments().add(comment);
-					}
-
-				}
-				
-				//regex para obter somente delele statement
-				Pattern patternDelete = Pattern.compile("^\\W\\s*delete", Pattern.CASE_INSENSITIVE);
-				
-				Matcher matcherDelete = patternDelete.matcher(stringLiteral
-						.getEscapedValue());
-				
-				if (matcherDelete.find()) {
-					
-					String newDelete = stringLiteral.getEscapedValue().trim().replaceFirst("\\s*delete", "delete").replace('"', ' ').replaceAll("\\+"+lineSeparator, "").replaceAll("\\s+", " ").replaceAll("\\+\\D*?\\+", " ")+";";
-					
-					StatementDelete statementDelete = new StatementDelete();
-					
-					String tableName = statementDelete.getTableName(newDelete);
-					
-					List<Comment> comments = createCommentFieldDeclaration.createCommentDAODelete(tableName,
-							fieldDeclaration);
-
-					for (Comment comment : comments) {
-						fieldDeclaration.getComments().add(comment);
-					}
-					
-				}
-				
-				//regex para obter somente select
-		    	Pattern pattern = Pattern.compile("^\\W\\s*select", Pattern.CASE_INSENSITIVE);
-				
-				Matcher matcher = pattern.matcher(stringLiteral
-						.getEscapedValue());
-				
-				if(matcher.find()) {
-				
-					String newSelect = stringLiteral.getEscapedValue().trim().replaceFirst("\\s*select", "select").replace('"', ' ').replaceAll("\\+"+lineSeparator, "").replaceAll("\\s+", " ").replaceAll("\\+\\D*?\\+", " ")+";";
-					
-					StatementSelect statementSelect = new StatementSelect();
-					
-					String tableName = statementSelect.getTableName(newSelect);
-					
-					List<Comment> comments = createCommentFieldDeclaration.createCommentDAOSelect(tableName, fieldDeclaration);
-					
-					for (Comment comment : comments) {
-						fieldDeclaration.getComments().add(comment);
-					}
-					
-				
-				
-				}
-
-				// stringLiteral.setEscapedValue(stringLiteral.getEscapedValue()+"//Please remove here and use the generated DAO");
-
-			}
-
+		for (Comment comment : comments) {
+			variableDeclaration.getComments().add(comment);
 		}
-
-		System.out.println("The Type is.....");
-		System.out.println("The name is " + typeOfTheFiedl.getType().getName());
-
+		
+		
 	}
+	
+	private void addDeleteCommentInTheModel (StringLiteral stringLiteral, String lineSeparator, CreateCommentFieldDeclaration createCommentFieldDeclaration, FieldDeclaration fieldDeclaration) {
+		
+		String newDelete = stringLiteral.getEscapedValue().trim().replaceFirst("\\s*delete", "delete").replace('"', ' ').replaceAll("\\+"+lineSeparator, "").replaceAll("\\s+", " ").replaceAll("\\+\\D*?\\+", " ")+";";
+		
+		StatementDelete statementDelete = new StatementDelete();
+		
+		String tableName = statementDelete.getTableName(newDelete);
+		
+		List<Comment> comments = createCommentFieldDeclaration.createCommentDAODelete(tableName,
+				fieldDeclaration);
 
+		for (Comment comment : comments) {
+			fieldDeclaration.getComments().add(comment);
+		}
+		
+		
+	}
+	
+	private void addUpdateCommentInTheModel(StringLiteral stringLiteral, String lineSeparator, CreateCommentFieldDeclaration createCommentFieldDeclaration, FieldDeclaration fieldDeclaration) {
+		
+		String newUpdate = stringLiteral.getEscapedValue().trim().replaceFirst("\\s*update", "update").replace('"', ' ').replaceAll("\\+" + lineSeparator, "").replaceAll("\\s+", " ").replaceAll("\\+\\D*?\\+", " ")+ ";";
+
+		System.out.println("The new UPDATE is " + newUpdate);
+
+		StatementUpdate statementUpdate = new StatementUpdate();
+
+		String tableName = statementUpdate.getTableName(newUpdate);
+	
+		List<Comment> comments = createCommentFieldDeclaration.createCommentDAOUpdate(tableName,
+				fieldDeclaration);
+
+		for (Comment comment : comments) {
+			fieldDeclaration.getComments().add(comment);
+		}
+		
+	}
+	
+	private void addUpdateCommentInTheModel(StringLiteral stringLiteral, String lineSeparator, CreateCommentVariableDeclarationStatement createComment, VariableDeclarationStatement variableDeclaration) {
+		
+		String newUpdate = stringLiteral.getEscapedValue().trim().replaceFirst("\\s*update", "update").replace('"', ' ').replaceAll("\\+" + lineSeparator, "").replaceAll("\\s+", " ").replaceAll("\\+\\D*?\\+", " ")+ ";";
+
+		System.out.println("The new UPDATE is " + newUpdate);
+
+		StatementUpdate statementUpdate = new StatementUpdate();
+
+		String tableName = statementUpdate.getTableName(newUpdate);
+	
+		List<Comment> comments = createComment.createCommentDAOUpdate(tableName,
+				variableDeclaration);
+
+		for (Comment comment : comments) {
+			variableDeclaration.getComments().add(comment);
+		}
+		
+	}
+	
+	private void addSelectCommentInTheModel(StringLiteral stringLiteral, String lineSeparator, CreateCommentFieldDeclaration createCommentFieldDeclaration, FieldDeclaration fieldDeclaration) {
+		
+		String newSelect = stringLiteral.getEscapedValue().trim().replaceFirst("\\s*select", "select").replace('"', ' ').replaceAll("\\+"+lineSeparator, "").replaceAll("\\s+", " ").replaceAll("\\+\\D*?\\+", " ")+";";
+		
+		StatementSelect statementSelect = new StatementSelect();
+		
+		String tableName = statementSelect.getTableName(newSelect);
+		
+		List<Comment> comments = createCommentFieldDeclaration.createCommentDAOSelect(tableName, fieldDeclaration);
+		
+		for (Comment comment : comments) {
+			fieldDeclaration.getComments().add(comment);
+		}
+		
+		
+	}
+	
+	private void addSelectCommentInTheModel(StringLiteral stringLiteral, String lineSeparator, CreateCommentVariableDeclarationStatement createComment, VariableDeclarationStatement variableDeclaration) {
+		
+		String newSelect = stringLiteral.getEscapedValue().trim().replaceFirst("\\s*select", "select").replace('"', ' ').replaceAll("\\+"+lineSeparator, "").replaceAll("\\s+", " ").replaceAll("\\+\\D*?\\+", " ")+";";
+		
+		StatementSelect statementSelect = new StatementSelect();
+		
+		String tableName = statementSelect.getTableName(newSelect);
+		
+		List<Comment> comments = createComment.createCommentDAOSelect(tableName, variableDeclaration);
+		
+		for (Comment comment : comments) {
+			variableDeclaration.getComments().add(comment);
+		}
+		
+		
+	}
+	
 	private void cleanComment(FieldDeclaration fieldDeclaration) {
 
 		EList<Comment> comments = fieldDeclaration.getComments();
@@ -225,133 +289,144 @@ public class CreateCommentOnJavaModelBasedInSqlStatement {
 
 	}
 
-	
-//	private List<Comment> createCommentDAODelete (String tableOfTheDeleteStatement, FieldDeclaration field) {
-//		
-//		List<Comment> comments = new ArrayList<Comment>();
-//
-//		Comment newComment_1 = this.createLineComment("//*******************************************************************************",field);
-//		Comment newComment_2 = this.createLineComment("// Please look at the above SQL DELETE statement and then see where it is been used.      ",field);
-//		Comment newComment_3 = this.createLineComment("// Furthermore, remove it and use the generated code. For instance:				 ",field);
-//		Comment newComment1 = this.createLineComment("//(i) Firstly create an instance of the "+ tableOfTheDeleteStatement.substring(0, 1).toUpperCase() + tableOfTheDeleteStatement.substring(1).toLowerCase()+ " object ", field);
-//		Comment newComment2 = this.createLineComment("//(ii) Secondly, set all attributes of this object that you would like to delete",field);
-//		Comment newComment3 = this.createLineComment("//(iii) Thirdly, create an instance of the "+ "JDBC"+ tableOfTheDeleteStatement.substring(0, 1).toUpperCase()+ tableOfTheDeleteStatement.substring(1).toLowerCase()+ "DAO object", field);
-//		Comment newComment4 = this.createLineComment("//(iv) Fourthly, call the method delete", field);
-//		Comment newComment5 = this.createLineComment("//Source-code example:",field);
-//		Comment newComment6 = this.createLineComment("//	"+ tableOfTheDeleteStatement.substring(0, 1).toUpperCase()+ tableOfTheDeleteStatement.substring(1).toLowerCase()+ " arg = new "+ tableOfTheDeleteStatement.substring(0, 1).toUpperCase()+ tableOfTheDeleteStatement.substring(1).toLowerCase() + "();",field);
-//		Comment newComment7 = this.createLineComment("//	arg.setSomething();",field);
-//		Comment newComment8 = this.createLineComment("//	JDBC"+ tableOfTheDeleteStatement.substring(0, 1).toUpperCase()+ tableOfTheDeleteStatement.substring(1).toLowerCase()+ "DAO argDAO = new " + "JDBC"+ tableOfTheDeleteStatement.substring(0, 1).toUpperCase()+ tableOfTheDeleteStatement.substring(1).toLowerCase()+ "DAO();	", field);
-//		Comment newComment9 = this.createLineComment("//	argDAO.delete(arg);",field);
-//		Comment newComment10 = this.createLineComment("//********************************************************************************",field);
-//
-//		comments.add(newComment_1);
-//		comments.add(newComment_2);
-//		comments.add(newComment_3);
-//		comments.add(newComment1);
-//		comments.add(newComment2);
-//		comments.add(newComment3);
-//		comments.add(newComment4);
-//		comments.add(newComment5);
-//		comments.add(newComment6);
-//		comments.add(newComment7);
-//		comments.add(newComment8);
-//		comments.add(newComment9);
-//		comments.add(newComment10);
-//
-//		return comments;
-//	}
-	
-//	private List<Comment> createCommentDAOUpdate(
-//			String tableOfTheUpdataStatement, FieldDeclaration field) {
-//
-//		List<Comment> comments = new ArrayList<Comment>();
-//
-//		Comment newComment_1 = this
-//				.createLineComment(
-//						"//*******************************************************************************",
-//						field);
-//		Comment newComment_2 = this
-//				.createLineComment(
-//						"// Please look at the above SQL UPDATE statement and then see where it is been used.      ",
-//						field);
-//		Comment newComment_3 = this
-//				.createLineComment(
-//						"// Furthermore, remove it and use the generated code. For instance:				 ",
-//						field);
-//		Comment newComment1 = this.createLineComment(
-//				"//(i) Firstly create an instance of the "
-//						+ tableOfTheUpdataStatement.substring(0, 1)
-//								.toUpperCase()
-//						+ tableOfTheUpdataStatement.substring(1).toLowerCase()
-//						+ " object ", field);
-//		Comment newComment2 = this
-//				.createLineComment(
-//						"//(ii) Secondly, set all attributes of this object that you would like to update",
-//						field);
-//		Comment newComment3 = this.createLineComment(
-//				"//(iii) Thirdly, create an instance of the "
-//						+ "JDBC"
-//						+ tableOfTheUpdataStatement.substring(0, 1)
-//								.toUpperCase()
-//						+ tableOfTheUpdataStatement.substring(1).toLowerCase()
-//						+ "DAO object", field);
-//		Comment newComment4 = this.createLineComment(
-//				"//(iv) Fourthly, call the method update", field);
-//		Comment newComment5 = this.createLineComment("//Source-code example:",
-//				field);
-//		Comment newComment6 = this.createLineComment("//	"
-//				+ tableOfTheUpdataStatement.substring(0, 1).toUpperCase()
-//				+ tableOfTheUpdataStatement.substring(1).toLowerCase()
-//				+ " arg = new "
-//				+ tableOfTheUpdataStatement.substring(0, 1).toUpperCase()
-//				+ tableOfTheUpdataStatement.substring(1).toLowerCase() + "();",
-//				field);
-//		Comment newComment7 = this.createLineComment("//	arg.setSomething();",
-//				field);
-//		Comment newComment8 = this.createLineComment("//	JDBC"
-//				+ tableOfTheUpdataStatement.substring(0, 1).toUpperCase()
-//				+ tableOfTheUpdataStatement.substring(1).toLowerCase()
-//				+ "DAO argDAO = new " + "JDBC"
-//				+ tableOfTheUpdataStatement.substring(0, 1).toUpperCase()
-//				+ tableOfTheUpdataStatement.substring(1).toLowerCase()
-//				+ "DAO();	", field);
-//		Comment newComment9 = this.createLineComment("//	argDAO.update(arg);",
-//				field);
-//		Comment newComment10 = this
-//				.createLineComment(
-//						"//********************************************************************************",
-//						field);
-//
-//		comments.add(newComment_1);
-//		comments.add(newComment_2);
-//		comments.add(newComment_3);
-//		comments.add(newComment1);
-//		comments.add(newComment2);
-//		comments.add(newComment3);
-//		comments.add(newComment4);
-//		comments.add(newComment5);
-//		comments.add(newComment6);
-//		comments.add(newComment7);
-//		comments.add(newComment8);
-//		comments.add(newComment9);
-//		comments.add(newComment10);
-//
-//		return comments;
-//	}
-
-//	private Comment createLineComment(String comment, FieldDeclaration field) {
-//
-//		Comment newComment = JavaFactory.eINSTANCE.createLineComment();
-//
-//		newComment.setContent(comment);
-//		newComment.setOriginalCompilationUnit(field
-//				.getOriginalCompilationUnit());
-//
-//		return newComment;
-//
-//	}
 
 	private void deepInMethodDeclaration(MethodDeclaration methodDeclaration) {
+		
+		
+		
+		if (methodDeclaration.getBody() != null) {
+		
+			Block blockMethod = methodDeclaration.getBody();
+			
+			
+			System.out.println("O block Ž " + blockMethod);
+			
+			System.out.println(" statements of this block " + blockMethod.getStatements());
+			
+			
+			EList<Statement> statementsOfTheMethod = blockMethod.getStatements();
+//			
+			for (Statement statement : statementsOfTheMethod) {
+				if (statement instanceof VariableDeclarationStatement) {
+					
+					
+					
+					VariableDeclarationStatement variableDeclarationStatement = (VariableDeclarationStatement) statement;
+					
+					DeepInVariableDeclarationStatement deepVariable = new DeepInVariableDeclarationStatement(variableDeclarationStatement.getOriginalCompilationUnit(), variableDeclarationStatement);
+					deepVariable.deep();
+					
+					System.out.println("O variableDeclaration is " + variableDeclarationStatement.getFragments().get(0).getName());
+					
+					System.out.println(" O type is " + variableDeclarationStatement.getType().getType().getName());
+					
+					
+//					//get the type to validade if it is an instance of Connection, ResultSet, PreparementStatement or Statement;
+//					String type  = variableDeclarationStatement.getType().getType().getName();
+//					
+//					TypeAccess typeAcess = variableDeclarationStatement.getType();
+//					
+//					CreateCommentVariableDeclarationStatement ccVariableDeclaration = new CreateCommentVariableDeclarationStatement();
+//					
+//					if (type.equalsIgnoreCase("Connection")) {
+//						
+//						ccVariableDeclaration.createCommentIfConnection(variableDeclarationStatement, typeAcess);
+//						
+//					} else if (type.equalsIgnoreCase("ResultSet")) {
+//						
+//						ccVariableDeclaration.createCommentIfResultSet(variableDeclarationStatement, typeAcess);
+//						
+//					} else if (type.equalsIgnoreCase("PreparedStatement")) {
+//						
+//						ccVariableDeclaration.createCommentIfPreparementStatement(variableDeclarationStatement, typeAcess);
+//						
+//					} else if (type.equalsIgnoreCase("Statement")) {
+//						
+//						ccVariableDeclaration.createCommentIfJDBCStatement(variableDeclarationStatement, typeAcess);
+//						
+//					} else if (type.equalsIgnoreCase("String")) {
+//						
+//						VariableDeclarationFragment fragment = variableDeclarationStatement.getFragments().get(0);
+//						
+//						Expression expression = fragment.getInitializer();
+//
+//						if (expression instanceof StringLiteral) {
+//
+//							//Class that contains all comment to be added...in the VariableDeclarationStatement
+//							CreateCommentVariableDeclarationStatement createCommentFieldDeclaration = new CreateCommentVariableDeclarationStatement();
+//							
+//							StringLiteral stringLiteral = (StringLiteral) expression;
+//
+//							System.out.println("O valor do Field "
+//									+ stringLiteral.getEscapedValue());
+//
+//							String lineSeparator = System.getProperty("line.separator")
+//									+ " ";
+//
+//							// regex para obter somente update statement
+//							Pattern patternUpdate = Pattern.compile("^\\W\\s*update",
+//									Pattern.CASE_INSENSITIVE);
+//
+//							Matcher matcherUpdate = patternUpdate.matcher(stringLiteral
+//									.getEscapedValue());
+//
+//							if (matcherUpdate.find()) {
+//
+//								this.addUpdateCommentInTheModel(stringLiteral, lineSeparator, createCommentFieldDeclaration, variableDeclarationStatement);
+//
+//							}
+//							
+							//regex para obter somente delele statement
+//							Pattern patternDelete = Pattern.compile("^\\W\\s*delete", Pattern.CASE_INSENSITIVE);
+//							
+//							Matcher matcherDelete = patternDelete.matcher(stringLiteral
+//									.getEscapedValue());
+//							
+//							if (matcherDelete.find()) {
+//								
+//								this.addDeleteCommentInTheModel(stringLiteral, lineSeparator, createCommentFieldDeclaration, variableDeclarationStatement);
+//								
+//							}
+//							
+//							//regex para obter somente select
+//					    	Pattern patternSelect = Pattern.compile("^\\W\\s*select", Pattern.CASE_INSENSITIVE);
+//					    	
+//							Matcher matcher = patternSelect.matcher(stringLiteral
+//									.getEscapedValue());
+//							
+//							if(matcher.find()) {
+//							
+//								this.addSelectCommentInTheModel(stringLiteral, lineSeparator, createCommentFieldDeclaration, variableDeclarationStatement);
+//							
+//							}
+
+							// stringLiteral.setEscapedValue(stringLiteral.getEscapedValue()+"//Please remove here and use the generated DAO");
+
+//						}
+						
+						
+//					}
+					
+					
+				} else if (statement instanceof TryStatement) {
+					
+					TryStatement tryStatement = (TryStatement) statement;
+					
+					System.out.println(" Aqui Ž o TRYYYY " + tryStatement);
+					
+					DeepInTryStatement deepInTryStatement = new DeepInTryStatement(statement.getOriginalCompilationUnit(), tryStatement);
+					
+					
+				}
+			}
+			
+			
+		}
+		
+		
+		
+		
+//		
 
 	}
 

@@ -1,18 +1,73 @@
 package com.br.utils;
 
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.gmt.modisco.java.Comment;
-import org.eclipse.gmt.modisco.java.FieldDeclaration;
+import org.eclipse.gmt.modisco.java.TypeAccess;
 import org.eclipse.gmt.modisco.java.VariableDeclarationStatement;
 import org.eclipse.gmt.modisco.java.emf.JavaFactory;
 
-public class CreateCommentFieldDeclaration extends CreateComment implements CommentsInTheModelFieldDeclaration{
+public class CreateCommentVariableDeclarationStatement extends CreateComment
+		implements CommentsInTheModelVariableDeclarationStatement {
 
+	@Override
+	public void createCommentIfConnection(
+			VariableDeclarationStatement variable, TypeAccess type) {
+		
+		Comment newCommentVariableDeclarationStatement = this.createLineComment("// " + variable.getFragments().get(0).getName() + " is a possible concern to be removed");
+		variable.getComments().add(newCommentVariableDeclarationStatement);
+		
+		Comment newCommentType = this.createLineComment("// " + type.getType().getName() + " is a possible concern to be removed");
+		type.getComments().add(newCommentType);
+		
+		
+		
+	}
+
+	@Override
+	public void createCommentIfResultSet(
+			VariableDeclarationStatement variable, TypeAccess type) {
+		
+		Comment newCommentVariableDeclarationStatement = this.createLineComment("// " + variable.getFragments().get(0).getName() + " is a possible concern to be removed");
+		variable.getComments().add(newCommentVariableDeclarationStatement);
+		
+		Comment newCommentType = this.createLineComment("// " + type.getType().getName() + " is a possible concern to be removed");
+		type.getComments().add(newCommentType);
+		
+		
+	
+	}
+
+	@Override
+	public void createCommentIfPreparementStatement(
+			VariableDeclarationStatement variable, TypeAccess type) {
+		
+		
+		Comment newCommentVariableDeclarationStatement = this.createLineComment("// " + variable.getFragments().get(0).getName() + " is a possible concern to be removed");
+		variable.getComments().add(newCommentVariableDeclarationStatement);
+		
+		Comment newCommentType = this.createLineComment("// " + type.getType().getName() + " is a possible concern to be removed");
+		type.getComments().add(newCommentType);
+		
+
+	}
+
+	@Override
+	public void createCommentIfJDBCStatement(
+			VariableDeclarationStatement variable, TypeAccess type) {
+		
+		Comment newCommentVariableDeclarationStatement = this.createLineComment("// " + variable.getFragments().get(0).getName() + " is a possible concern to be removed");
+		variable.getComments().add(newCommentVariableDeclarationStatement);
+		
+		Comment newCommentType = this.createLineComment("// " + type.getType().getName() + " is a possible concern to be removed");
+		type.getComments().add(newCommentType);
+		
+	}
 	
 	@Override
-	public List<Comment> createCommentDAODelete (String tableOfTheDeleteStatement, FieldDeclaration field) {
+	public List<Comment> createCommentDAODelete (String tableOfTheDeleteStatement, VariableDeclarationStatement field) {
 		
 		List<Comment> comments = new ArrayList<Comment>();
 
@@ -48,7 +103,7 @@ public class CreateCommentFieldDeclaration extends CreateComment implements Comm
 	}
 	
 	@Override
-	public List<Comment> createCommentDAOUpdate(String tableOfTheUpdataStatement, FieldDeclaration field) {
+	public List<Comment> createCommentDAOUpdate(String tableOfTheUpdataStatement, VariableDeclarationStatement field) {
 
 		List<Comment> comments = new ArrayList<Comment>();
 
@@ -85,7 +140,7 @@ public class CreateCommentFieldDeclaration extends CreateComment implements Comm
 	
 	
 	@Override
-	public List<Comment> createCommentDAOSelect (String tableOfTheDeleteStatement, FieldDeclaration field) {
+	public List<Comment> createCommentDAOSelect (String tableOfTheDeleteStatement, VariableDeclarationStatement field) {
 		
 		List<Comment> comments = new ArrayList<Comment>();
 
@@ -121,7 +176,8 @@ public class CreateCommentFieldDeclaration extends CreateComment implements Comm
 	}
 	
 	
-	private Comment createLineComment(String comment, FieldDeclaration field) {
+
+	private Comment createLineComment(String comment, VariableDeclarationStatement field) {
 
 		Comment newComment = JavaFactory.eINSTANCE.createLineComment();
 
@@ -134,5 +190,14 @@ public class CreateCommentFieldDeclaration extends CreateComment implements Comm
 	}
 	
 	
+	private Comment createLineComment(String comment) {
+
+		Comment newComment = JavaFactory.eINSTANCE.createLineComment();
+
+		newComment.setContent(comment);
+
+		return newComment;
+
+	}
 
 }
