@@ -66,40 +66,6 @@ public class ConnectionFactory {
 		
 	}
 	
-	public static void teste (){
-		
-		String sql = "INSERT INTO ALUNO (name, lastName, RA, id) values (?, ?, ?, ?)";
-		
-		PreparedStatement stmt = null;
-		
-//		private  String name;
-//
-//		private  String lastName;
-//
-//		private  String RA;
-//
-//		private  Integer id;
-		
-		try {
-			stmt = getInstance().prepareStatement(sql);
-			stmt.setString(1, "Rafael");
-			stmt.setString(2, "Durelli");
-			stmt.setString(3, "383488");
-			stmt.setInt(4, 1);
-			
-			stmt.execute();
-			stmt.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		
-	}
-	
-	public static void main(String[] args) {
-		teste();
-	}
 	
 
 }

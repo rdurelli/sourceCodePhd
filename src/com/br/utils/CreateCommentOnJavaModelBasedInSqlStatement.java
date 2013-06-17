@@ -82,9 +82,13 @@ public class CreateCommentOnJavaModelBasedInSqlStatement {
 
 						MethodDeclaration methodDeclaration = (MethodDeclaration) bodyDeclaration;
 
-						this.deepInMethodDeclaration(methodDeclaration);
+						DeepInMethodDeclaration deepInMethod = new DeepInMethodDeclaration(methodDeclaration.getOriginalCompilationUnit(), methodDeclaration);
+						
+						deepInMethod.deep();
+						
+//						this.deepInMethodDeclaration(methodDeclaration);
 
-						System.out.println("Yeap i'am a Method");
+//						System.out.println("Yeap i'am a Method");
 
 					}
 
@@ -296,6 +300,8 @@ public class CreateCommentOnJavaModelBasedInSqlStatement {
 		
 		if (methodDeclaration.getBody() != null) {
 		
+		
+			
 			Block blockMethod = methodDeclaration.getBody();
 			
 			
