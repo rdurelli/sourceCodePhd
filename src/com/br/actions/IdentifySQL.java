@@ -35,6 +35,8 @@ import org.eclipse.m2m.atl.core.ATLCoreException;
 import org.eclipse.m2m.atl.sqlmodel2kdmdata.files.SQLModel2KDMData;
 import org.eclipse.modisco.infra.discovery.core.exception.DiscoveryException;
 import org.eclipse.modisco.java.discoverer.DiscoverJavaModelFromJavaProject;
+import org.eclipse.modisco.java.discoverer.DiscoverKDMModelFromJavaProject;
+import org.eclipse.modisco.kdm.source.discoverer.DiscoverSourceModelFromJavaElement;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
@@ -96,6 +98,10 @@ public class IdentifySQL implements IObjectActionDelegate {
 		}
 
 	}
+	
+	
+	
+	
 
 	@Override
 	public void run(IAction action) {
@@ -161,112 +167,112 @@ public class IdentifySQL implements IObjectActionDelegate {
 					
 					Teste1 teste1 = new Teste1();
 					
+					
+					//TODO MUDAR AQUI s— esta pegando o primeiro arquivo .JAva
 					teste1.callParser(javaFiles.get(0));
 					
 					DataBase dataBase = teste1.getDataBase();
 					
 					CreateSQLModel.createModel(dataBase, locationURIoFTheProject);
-					
-					
-					
-					ResourcesPlugin.getWorkspace().getRoot().getProject(nameOfProject).refreshLocal(IResource.DEPTH_INFINITE, null);
-					
 
-					ResourceSelectionDialog dialog = new ResourceSelectionDialog(this.shell, ResourcesPlugin.getWorkspace().getRoot(), "Select Resource");
-				    dialog.setTitle("Resource Selection");
-				    dialog.open();
+					ResourcesPlugin.getWorkspace().getRoot().getProject(this.file.getElementName()).refreshLocal(IResource.DEPTH_INFINITE, null);
+					
+					
+					
+					
+					//use this dialog em algum lugar..
+//					ResourceSelectionDialog dialog = new ResourceSelectionDialog(this.shell, ResourcesPlugin.getWorkspace().getRoot(), "Select Resource");
+//				    dialog.setTitle("Resource Selection");
+//				    dialog.open();
+//				    
+//				    IFile arquivoObtido = (IFile) dialog.getResult()[0];
+//				    
 				    
-				    IFile arquivoObtido = (IFile) dialog.getResult()[0];
 				    
 				    
-				    
-				    
-				    System.out.println(arquivoObtido.getName());
-				    System.out.println("Location of the file " + arquivoObtido.getLocation());
-				    System.out.println("Full path of the File "+ arquivoObtido.getFullPath());
-				    
-				    local = arquivoObtido.getParent().getLocation().toOSString();
-				    
-				    System.out.println("Location of the Parente "+arquivoObtido.getParent().getLocation());
-				    
-				    org.eclipse.m2m.atl.sqlmodel2kdmdata.files.SQLModel2KDMData runner = null;
-				    try {
-				    	
-				    	runner =  new org.eclipse.m2m.atl.sqlmodel2kdmdata.files.SQLModel2KDMData();
-				    	runner.loadModels(arquivoObtido.getFullPath().toString());
-						runner.doSQLModel2KDMData(new NullProgressMonitor());
-						runner.saveModels(URI.createURI("file:"+arquivoObtido.getParent().getLocation().toString()+""+"/My2TESTENOVO.kdm").toString());
-						System.out.println("Model salvo");
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (ATLExecutionException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (ATLCoreException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+//				    System.out.println(arquivoObtido.getName());
+//				    System.out.println("Location of the file " + arquivoObtido.getLocation());
+//				    System.out.println("Full path of the File "+ arquivoObtido.getFullPath());
+//				    
+//				    local = arquivoObtido.getParent().getLocation().toOSString();
+//				    
+//				    System.out.println("Location of the Parente "+arquivoObtido.getParent().getLocation());
+//				    
+					
+					
+					//usar isso aqui para transformar o SQLMOdel para o KDMDATA
+//				    org.eclipse.m2m.atl.sqlmodel2kdmdata.files.SQLModel2KDMData runner = null;
+//				    try {
+//				    	
+//				    	runner =  new org.eclipse.m2m.atl.sqlmodel2kdmdata.files.SQLModel2KDMData();
+////				    	runner.loadModels(arquivoObtido.getFullPath().toString());
+//						runner.doSQLModel2KDMData(new NullProgressMonitor());
+////						runner.saveModels(URI.createURI("file:"+arquivoObtido.getParent().getLocation().toString()+""+"/KDMDATA.kdm").toString());
+//						System.out.println("Model salvo");
+//					} catch (IOException e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					} catch (ATLExecutionException e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					} catch (ATLCoreException e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}
 
 					
 				}
 				
 				
+//				DiscoverSourceModelFromJavaElement discoverKDM  = new DiscoverSourceModelFromJavaElement();
 				
-				DiscoverJavaModelFromJavaProject discoverJava = new DiscoverJavaModelFromJavaProject();
-				try {
-					discoverJava.discoverElement(this.file, new NullProgressMonitor());
-					
-					System.out.println("FUNCIONOU O java Discover");
-					
-					Resource javaResource = discoverJava.getTargetModel();
-					
-					javaResource.setURI(URI.createURI(locationURIoFTheProject+"/MODELS_PSM_AS_IS/teste.javaxmi"));
-					
-					
-					// Now save the content.
-				    try {
-				      
-				    	javaResource.save(Collections.EMPTY_MAP);
-				    	
-				      
-				    } catch (IOException e) {
-				    	MessageDialog.openError(null, "It was not possible to create the sqlmodel.", "Please vefiry what happened.");
-				    	e.printStackTrace();
-				    }
-					
-					
-//					FileOutputStream fout = new FileOutputStream(new File (local));
-//					javaResource.save(fout, null);
-//					fout.close();
-					
-				} catch (DiscoveryException e1) {
-					// TODO Auto-generated catch block
-					System.out.println("N‹o FUNCIONOU O java Discover");
-					e1.printStackTrace();
-				}
+//				DiscoverKDMModelFromJavaProject discoverKDMModel =  new DiscoverKDMModelFromJavaProject();
 				
-				// for (IResource iResource : member) {
-				// if (iResource instanceof IFile) {
-				// file = (IFile) iResource;
-				// System.out.println("---------------------------------------");
-				// System.out.println("Nome " + file.getName());
-				// System.out.println("Path " + file.getFullPath());
-				// System.out.println("Location " + file.getLocation());
-				// System.out.println("Extension " + file.getFileExtension());
-				// System.out.println("---------------------------------------");
-				// }
-				// else if (iResource instanceof IFolder) {
-				//
-				// folder = (IFolder) iResource;
-				//
-				// System.out.println("---------------------------------------");
-				// System.out.println("FOLDER NAME "+ folder.getName());
-				// System.out.println("FOLDER NAME "+ folder.members().length);
-				//
-				// }
-				// }
-
+//				discoverKDM.discoverElement(this.file, new NullProgressMonitor());
+//				
+//				discoverKDMModel.discoverElement(file, new NullProgressMonitor());
+//				
+//				
+//				Resource kdmModel = discoverKDMModel.getTargetModel();
+//				
+//				kdmModel.setURI(URI.createURI(locationURIoFTheProject+"/MODELS_PSM_AS_IS/kdmMODEL.kdm"));
+				
+//				System.out.println("Funcionou o KDM DISCOVER");
+				
+//				Resource kdmResource = discoverKDM.getTargetModel();
+				
+//				kdmResource .setURI(URI.createURI(locationURIoFTheProject+"/MODELS_PSM_AS_IS/kdmSource.kdm"));
+//				
+//				DiscoverJavaModelFromJavaProject discoverJava = new DiscoverJavaModelFromJavaProject();
+//				try {
+//					discoverJava.discoverElement(this.file, new NullProgressMonitor());
+//					
+//					System.out.println("FUNCIONOU O java Discover");
+//					
+//					Resource javaResource = discoverJava.getTargetModel();
+//					
+//					javaResource.setURI(URI.createURI(locationURIoFTheProject+"/MODELS_PSM_AS_IS/teste.javaxmi"));
+//					
+//				
+//				    try {
+//				      
+//				    	javaResource.save(Collections.EMPTY_MAP);
+//				    	kdmResource.save(Collections.EMPTY_MAP);
+//				    	kdmModel.save(Collections.EMPTY_MAP);
+//				      
+//				    } catch (IOException e) {
+//				    	MessageDialog.openError(null, "It was not possible to create the sqlmodel.", "Please vefiry what happened.");
+//				    	e.printStackTrace();
+//				    }
+//					
+//					
+////										
+//				} catch (DiscoveryException e1) {
+//					System.out.println("N‹o FUNCIONOU O java Discover");
+//					e1.printStackTrace();
+//				}
+//		
+//
 			} catch (CoreException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

@@ -34,7 +34,7 @@ public class CreateKDMDataModel {
 			runner = new SQLModel2KDMData();
 			String fullPathOfModelIn = modelIN.getFullPath().toString();
 			
-			URI placeToSaveModelOUT = URI.createURI("file:"+modelIN.getParent().getLocation().toString()+""+"/kdmdata.kdm");
+			URI placeToSaveModelOUT = URI.createURI("file:"+modelIN.getParent().getLocation().toString()+""+"/KDMMDATA.kdm");
 			
 			String nameOfProject = modelIN.getProject().getName();
 			

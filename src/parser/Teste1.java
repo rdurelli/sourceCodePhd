@@ -69,7 +69,7 @@ public class Teste1 {
 
 			Set<String> inserts = parser.getInserts();
 
-			System.err.println("Quantos Inserts " + inserts.size());// TODO
+			System.err.println("Quantos Inserts " + inserts.size());// TODO Ter que colocar o INSERT para funcionar
 
 			Set<String> selects = parser.getSelects();
 
@@ -99,7 +99,7 @@ public class Teste1 {
 				System.err.println("Updates " + string);
 			}
 
-			// mudar aq
+			// mudar aq TODO MUDAR AQUI
 			this.setDataBase(new DataBase("projectValter"));
 
 			Set<Table> tablesFound = new TreeSet<Table>();
@@ -130,6 +130,7 @@ public class Teste1 {
 				sele.createStatement(selects, dataBase);
 
 			}
+			//TODO tenho que colocar aqui para pegar os INSERTS
 
 			// HashMap<String, String> names = parser.getNames();
 			// System.out.println("AQUI "+ names.get("class_name"));

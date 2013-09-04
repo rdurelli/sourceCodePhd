@@ -30,9 +30,13 @@ public class StatementSelect extends StatementCRUD {
 
 		// iterate over all update statements found in the source code
 		for (String select : selects) {
-
+			
+			String[] selectWithoutWHERE = select.split("(?i)where");
+			
+			String selectWithoutWHEREAndReady = selectWithoutWHERE[0].concat(";");
+			
 			// call the SQLParser to verify the SQL obtained
-			parserSQL.initParser(new ByteArrayInputStream(select.getBytes()));
+			parserSQL.initParser(new ByteArrayInputStream(selectWithoutWHEREAndReady.getBytes()));
 
 			try {
 
@@ -69,15 +73,51 @@ public class StatementSelect extends StatementCRUD {
 						// It is worth highlighted that I have choose to
 						// Upper case the table name and put it to an Set..
 						// once Set does't permit identical objects
-						dataBase.getDataBaseTables().add(table);
+						if (dataBase.getDataBaseTables().add(table)) { //TODO coloquei aqui uma restrição. Ou seja, somente irá pegar as colunas se a tabela não já existir dentro do CONJUNTO (SET)
 
-						Set<Column> columnsFound = new TreeSet<Column>();
+							Set<Column> columnsFound = new TreeSet<Column>();
 
-						table.setColumnsTable(columnsFound);
+							table.setColumnsTable(columnsFound);
 
-						addColumnToClauseSelect(tableName,
-								dataBase.getDataBaseTables(), sqlStatement);
+//							addColumnToClauseSelect(tableName,
+//									dataBase.getDataBaseTables(), sqlStatement);
+						
+					}
 
+					}
+					else {
+						
+						
+						System.out.println("ENCONTROU UMA TABELA MAIOR");
+						System.out.println("O Table é MAIOR");
+						
+//						for (int i = 0; i < tableSelect.size(); i++) {
+//							
+//							String tableName = tableSelect.get(i).toString().toUpperCase();
+//							
+//							// use the name of the table obtained and
+//							// instantiate a Table class
+//							Table table = new Table(tableName);
+//
+//							// add the Table instance to the Set<Table>.
+//							// It is worth highlighted that I have choose to
+//							// Upper case the table name and put it to an Set..
+//							// once Set does't permit identical objects
+//							if (dataBase.getDataBaseTables().add(table)) { //TODO coloquei aqui uma restrição. Ou seja, somente irá pegar as colunas se a tabela não já existir dentro do CONJUNTO (SET)
+//
+//								Set<Column> columnsFound = new TreeSet<Column>();
+//
+//								table.setColumnsTable(columnsFound);
+//
+//								addColumnToClauseSelect(tableName,
+//										dataBase.getDataBaseTables(), sqlStatement);
+//							
+//						}
+//							
+//						}
+						
+						
+						
 					}
 				}
 

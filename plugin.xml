@@ -77,6 +77,22 @@
              label="Discovery Java MODEL"
              menubarPath="TestePlugin.menu2/content">
        </action>
+       <action
+             class="com.br.actions.IdentifyKDMModel"
+             enablesFor="1"
+             icon="icons/Binoculars.png"
+             id="com.actions.newActionKDMModel"
+             label="Discovery KDM MODEL"
+             menubarPath="TestePlugin.menu2/content">
+       </action>
+       <action
+             class="com.br.actions.IdentifyKDMSource"
+             enablesFor="1"
+             icon="icons/Binoculars.png"
+             id="com.actions.newActionKDMSOURCE"
+             label="Discovery KDM SOURCE"
+             menubarPath="TestePlugin.menu2/content">
+       </action>
       </objectContribution>
    </extension>
 	<extension

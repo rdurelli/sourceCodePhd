@@ -137,7 +137,7 @@ public class IdentifyJavaModel implements IObjectActionDelegate {
 		
 		//call createJavaModel method to create the Java model
 		
-//		createJavaModel();
+		createJavaModel();
 		
 		
 		
@@ -158,7 +158,7 @@ public class IdentifyJavaModel implements IObjectActionDelegate {
 			
 			Resource javaResource = discoverJava.getTargetModel();
 			
-			javaResource.setURI(URI.createURI(locationURIoFTheProject+"/MODELS_PSM_AS_IS/teste.javaxmi"));
+			javaResource.setURI(URI.createURI(locationURIoFTheProject+"/MODELS_PSM_AS_IS/javaModel.javaxmi"));
 			
 			
 			// Now save the content.

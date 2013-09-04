@@ -57,15 +57,16 @@ public class StatementDelete extends StatementCRUD {
 					// It is worth highlighted that I have choose to
 					// Upper case the table name and put it to an Set..
 					// once Set does't permit identical objects
-					dataBase.getDataBaseTables().add(table);
+					if (dataBase.getDataBaseTables().add(table)) {//TODO coloquei dentro do IF para verificar se a tabela j‡ existe...
 
-					Set<Column> columnsFound = new TreeSet<Column>();
+						Set<Column> columnsFound = new TreeSet<Column>();
 
-					table.setColumnsTable(columnsFound);
+						table.setColumnsTable(columnsFound);
 
-					addColumnToClauseDelete(tableName,
-							dataBase.getDataBaseTables(), sqlStatement);
+//						addColumnToClauseDelete(tableName,
+//								dataBase.getDataBaseTables(), sqlStatement);
 
+					}
 				}
 
 			} catch (ParseException e) {

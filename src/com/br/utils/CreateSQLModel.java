@@ -77,7 +77,7 @@ public class CreateSQLModel {
 		
 		ResourceSet resSet = new ResourceSetImpl();
 		
-		Resource resource = resSet.createResource(URI.createURI(nameProject+"/MODELS_PSM_AS_IS/PSM_SQL.sqlmodel"));
+		Resource resource = resSet.createResource(URI.createURI(nameProject+"/MODELS_PSM_AS_IS/SQLMODEL.sqlmodel"));
 		
 		// Get the first model element and cast it to the right type, in my
 	    // example everything is hierarchical included in this first node
