@@ -64,7 +64,7 @@
        <action
              class="com.br.actions.IdentifySQL"
              enablesFor="1"
-             icon="icons/database.png"
+             icon="icons/1378475458_stock_data-edit-sql-query.png"
              id="com.actions.newAction"
              label="Discovery SQL MODEL"
              menubarPath="TestePlugin.menu2/content">
@@ -72,7 +72,7 @@
        <action
              class="com.br.actions.IdentifyJavaModel"
              enablesFor="1"
-             icon="icons/JavaIcon.gif"
+             icon="icons/1378475440_Java.png"
              id="com.actions.newActionJava"
              label="Discovery Java MODEL"
              menubarPath="TestePlugin.menu2/content">
@@ -80,7 +80,7 @@
        <action
              class="com.br.actions.IdentifyKDMModel"
              enablesFor="1"
-             icon="icons/Binoculars.png"
+             icon="icons/1378475289_54.png"
              id="com.actions.newActionKDMModel"
              label="Discovery KDM MODEL"
              menubarPath="TestePlugin.menu2/content">
@@ -88,7 +88,7 @@
        <action
              class="com.br.actions.IdentifyKDMSource"
              enablesFor="1"
-             icon="icons/Binoculars.png"
+             icon="icons/1378475289_54.png"
              id="com.actions.newActionKDMSOURCE"
              label="Discovery KDM SOURCE"
              menubarPath="TestePlugin.menu2/content">
@@ -102,8 +102,9 @@
             nameFilter="*.sqlmodel"
             objectClass="org.eclipse.core.resources.IResource">
          <menu
+               icon="icons/1378476394_stock_navigator-shift-up.png"
                id="TestePlugin.menu2"
-               label="Discovery"
+               label="TransformSQLModel2KDMData"
                path="additions">
             <groupMarker
                   name="content">
@@ -115,10 +116,39 @@
          <action
                class="com.br.actions.IdentifyKDMData"
                enablesFor="1"
+               icon="icons/1378475289_54.png"
                id="TestePlugin.newAction"
                label=" KDM Data"
                menubarPath="TestePlugin.menu2/content">
          </action>
       </objectContribution>
    </extension>
+ <extension
+       point="org.eclipse.ui.popupMenus">
+    <objectContribution
+          adaptable="false"
+          id="TestePlugin.contribution3"
+          objectClass="org.eclipse.jdt.core.IJavaProject">
+       <menu
+             icon="icons/1378477584_puzzle.png"
+             id="TestePlugin.menu3"
+             label="Modernization"
+             path="additions">
+          <groupMarker
+                name="content">
+          </groupMarker>
+          <separator
+                name="additions">
+          </separator>
+       </menu>
+       <action
+             class="com.br.actions.ReestructuringToDAO"
+             enablesFor="1"
+             icon="icons/1378475289_54.png"
+             id="com.actions.newActionReestructuring"
+             label="Modernize2DAO"
+             menubarPath="TestePlugin.menu3/content">
+       </action>
+    </objectContribution>
+ </extension>
 </plugin>

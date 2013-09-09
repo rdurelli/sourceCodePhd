@@ -22,6 +22,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 
+import com.br.tests.Generation;
+import com.br.utils.LocationOfFiles;
+
 public class IdentifyKDMModel implements IObjectActionDelegate {
 
 
@@ -66,9 +69,17 @@ public class IdentifyKDMModel implements IObjectActionDelegate {
 		
 		Resource kdmModel = discoverKDMModel.getTargetModel();
 		
-		kdmModel.setURI(URI.createURI(locationURIoFTheProject+"/MODELS_PIM/KDMMODEL.kdm"));
+		LocationOfFiles.LOCATION_KDM_MODEL_CREATED = locationURIoFTheProject+"/MODELS_PIM/KDMMODEL.kdm";
+		
+		kdmModel.setURI(URI.createURI(LocationOfFiles.LOCATION_KDM_MODEL_CREATED));
 		
 		kdmModel.save(Collections.EMPTY_MAP);
+		
+		
+		//I just put this here
+		Generation generation = new Generation();
+		
+		generation.generate();
 		
 		
 	}

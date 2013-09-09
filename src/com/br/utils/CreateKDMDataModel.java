@@ -8,6 +8,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.m2m.atl.common.ATLExecutionException;
 import org.eclipse.m2m.atl.core.ATLCoreException;
@@ -29,12 +30,25 @@ public class CreateKDMDataModel {
 	 */
 	public static void createModel(IFile modelIN) {
 		
+
+		
+		
+		
+		
+		
+		String locationURIoFTheProject =  modelIN.getProject().getLocationURI().toString();
+		
+		
+		
 		SQLModel2KDMData runner;
 		try {
 			runner = new SQLModel2KDMData();
 			String fullPathOfModelIn = modelIN.getFullPath().toString();
 			
-			URI placeToSaveModelOUT = URI.createURI("file:"+modelIN.getParent().getLocation().toString()+""+"/KDMMDATA.kdm");
+			
+//			kdmResource .setURI(URI.createURI(locationURIoFTheProject+"/MODELS_PIM/KDMSource.kdm"));
+			
+			URI placeToSaveModelOUT = URI.createURI(locationURIoFTheProject+""+"/MODELS_PIM/KDMMDATA.kdm");
 			
 			String nameOfProject = modelIN.getProject().getName();
 			
