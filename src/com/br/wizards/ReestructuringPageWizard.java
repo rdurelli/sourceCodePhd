@@ -30,6 +30,10 @@ public class ReestructuringPageWizard extends WizardPage implements Listener{
 
 	private Button btnModernizeToRestufull;
 	
+	private Button btnCheckButton;
+	
+	private Boolean generateAndroid = false;
+	
 	IStatus destinationStatus;
 	
 	/**
@@ -142,6 +146,11 @@ public class ReestructuringPageWizard extends WizardPage implements Listener{
 		btnModernizeToRestufull.setBounds(0, 61, 121, 18);
 		btnModernizeToRestufull.setText("Modernize to RESTUFULL");
 		
+		btnCheckButton = new Button(container, SWT.CHECK);
+		btnCheckButton.setEnabled(false);
+		btnCheckButton.setBounds(20, 176, 375, 18);
+		btnCheckButton.setText("Would you like to create an Android Application to test the REST?");
+		
 		
 		
 	}
@@ -163,6 +172,10 @@ public class ReestructuringPageWizard extends WizardPage implements Listener{
 	
 	public Button getBtnModernizeToRestufull() {
 		return btnModernizeToRestufull;
+	}
+	
+	public Button getBtnCheckButton() {
+		return btnCheckButton;
 	}
 
 	@Override
@@ -198,6 +211,18 @@ public class ReestructuringPageWizard extends WizardPage implements Listener{
 	    applyToStatusLine(findMostSevere());
 	    getWizard().getContainer().updateButtons();
 	    
+	    if (event.widget == btnModernizeToRestufull) {
+	    	
+	    	this.btnCheckButton.setEnabled(true);
+	    	
+	    	
+	    }
+	    
+	    if (event.widget == btnRadioButton || event.widget == btnModernizeToJpa) {
+	    	
+	    	this.btnCheckButton.setEnabled(false);
+	    	
+	    }
 		
 		
 	}
