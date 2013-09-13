@@ -1,4 +1,4 @@
-package com.br.actions;
+package com.br.utils;
 
 public class TransformKDMDataToUML {
 
