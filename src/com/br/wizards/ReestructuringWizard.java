@@ -1,9 +1,12 @@
 package com.br.wizards;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.wizard.Wizard;
 
+import com.br.utils.ProjectSelectedToModernize;
 import com.br.utils.ReestructuringToBeRealized;
 
 public class ReestructuringWizard extends Wizard {
@@ -56,6 +59,69 @@ public class ReestructuringWizard extends Wizard {
 		System.out.println("RESt " + ReestructuringToBeRealized.modernizeToRESTFULL);
 		
 		System.out.println("REStMobile " + ReestructuringToBeRealized.modernizeToRESTFULLMobile);
+		
+		
+		
+		Job job = new Job("Modernizing the Project: " + ProjectSelectedToModernize.projectSelected.getElementName()) {
+			  @Override
+			  protected IStatus run(IProgressMonitor monitor) {
+				// Set total number of work units
+					monitor.beginTask("Modernizing", 1000);
+	 
+					for (int i = 0; i < 1000; i++) {
+						try {
+							Thread.sleep(1000);
+							
+							if (i < 150) {
+								
+								monitor.subTask("Getting all information" + i);
+								
+							} else if ( ( i > 150 ) && (i < 200) ) {
+								
+								monitor.subTask("Reading the KDM information" + i);
+								
+							} else if ( ( i > 200 ) && (i < 230) ) {
+								
+								monitor.subTask("Starting the algorithm" + i);
+								
+							} else if ( ( i > 230 ) && (i < 300) ) {
+								
+								monitor.subTask("Creating all entities" + i);
+								
+							} else if ( ( i > 300 ) && (i < 350) ) {
+								
+								monitor.subTask("Creating all Packages" + i);
+								
+							} else if ( ( i > 350 ) && (i < 453) ) {
+								
+								monitor.subTask("Creating all ClassUnits" + i);
+								
+							} else if ( ( i > 453 ) && (i < 550) ) {
+								
+								monitor.subTask("Creating all MethodsUnits and RelationShips" + i);
+								
+	
+							} else {
+								
+								monitor.subTask("Performing the algorithm" + i);
+								
+							}
+							
+							
+							// Report that 10 units are done
+							monitor.worked(1);
+						} catch (InterruptedException e1) {
+							e1.printStackTrace();
+						}
+					}
+					return Status.OK_STATUS;
+				}
+			};
+
+			// Start the Job
+			job.schedule(); 
+		
+		
 		
 		return true;
 	}
