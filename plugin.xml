@@ -80,7 +80,7 @@
        <action
              class="com.br.actions.IdentifyKDMModel"
              enablesFor="1"
-             icon="icons/1378475289_54.png"
+             icon="icons/4328.png"
              id="com.actions.newActionKDMModel"
              label="Discovery KDM MODEL"
              menubarPath="TestePlugin.menu2/content">
@@ -88,7 +88,7 @@
        <action
              class="com.br.actions.IdentifyKDMSource"
              enablesFor="1"
-             icon="icons/1378475289_54.png"
+             icon="icons/4328.png"
              id="com.actions.newActionKDMSOURCE"
              label="Discovery KDM SOURCE"
              menubarPath="TestePlugin.menu2/content">
@@ -102,7 +102,7 @@
             nameFilter="*.sqlmodel"
             objectClass="org.eclipse.core.resources.IResource">
          <menu
-               icon="icons/1378476394_stock_navigator-shift-up.png"
+               icon="icons/4188.png"
                id="TestePlugin.menu2"
                label="TransformSQLModel2KDMData"
                path="additions">
@@ -130,7 +130,7 @@
           id="TestePlugin.contribution3"
           objectClass="org.eclipse.jdt.core.IJavaProject">
        <menu
-             icon="icons/1378477584_puzzle.png"
+             icon="icons/5124.png"
              id="TestePlugin.menu3"
              label="Modernization"
              path="additions">
@@ -144,7 +144,7 @@
        <action
              class="com.br.actions.ReestructuringToDAO"
              enablesFor="1"
-             icon="icons/1378475289_54.png"
+             icon="icons/4416.png"
              id="com.actions.newActionReestructuring"
              label="Modernize2DAO"
              menubarPath="TestePlugin.menu3/content">
