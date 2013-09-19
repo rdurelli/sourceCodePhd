@@ -65,10 +65,13 @@ public class UtilJavaModel {
 				"xmi", xmiResourceFactoryImpl);
 
 
+		
+		String projectToPutTheNewSourceCode = ProjectSelectedToModernize.projectSelected.getProject().getLocationURI().toString().split("file:")[1];
+		
 		String locationOfTheNewJAvaModelWithComment = ProjectSelectedToModernize.projectSelected.getProject().getLocationURI().toString();
 
 		GenerateJavaExtended javaGenerator = new GenerateJavaExtended(URI.createURI(locationOfTheNewJAvaModelWithComment+"/MODELS_PSM_TO_BE/newJavaModel.javaxmi"),
-				new File("/Users/rafaeldurelli/Desktop/src/codigoGerado"), new ArrayList<Object>()); 
+				new File(projectToPutTheNewSourceCode+"/src-gen"), new ArrayList<Object>()); 
 
 
 		System.out.println("Esta gerando...");		

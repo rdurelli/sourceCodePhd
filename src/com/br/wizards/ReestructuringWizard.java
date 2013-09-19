@@ -1,5 +1,7 @@
 package com.br.wizards;
 
+import java.io.IOException;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -159,6 +161,13 @@ public class ReestructuringWizard extends Wizard {
 		createComment.createCommentOnTheJavaModel(modelToBeCommented);
 		
 		utilJavaModel.save(modelToBeCommented);
+		
+		try {
+			utilJavaModel.generateNewSourceCode();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	
 		
 	}

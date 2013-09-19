@@ -54,7 +54,7 @@ public class CreateUMLModelBasedOnKDMModel {
 		System.out.println("Localization of KDM Model" + kdmModelLocation);
 		
 		
-		System.out.println("O Arquivo cortado agora Ž o seguinte. " + kdmModelLocation.split("file:")[1]);
+		
 		
 //		System.out.println("O nome do arquivo Ž " + file.getName());
 		
