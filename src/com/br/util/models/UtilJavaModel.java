@@ -98,6 +98,3 @@ public class UtilJavaModel {
 	}
 
 }
-
-
-}
