@@ -1,11 +1,16 @@
 package com.br.wizards;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.gmt.modisco.java.Model;
 import org.eclipse.jface.wizard.Wizard;
 
+import com.br.util.models.UtilJavaModel;
+import com.br.utils.CreateCommentOnJavaModelBasedInSqlStatement;
 import com.br.utils.CreateUMLModelBasedOnKDMDATA;
 import com.br.utils.CreateUMLModelBasedOnKDMModel;
 import com.br.utils.ProjectSelectedToModernize;
@@ -126,11 +131,36 @@ public class ReestructuringWizard extends Wizard {
 			CreateUMLModelBasedOnKDMDATA.createModel();
 			CreateUMLModelBasedOnKDMModel.createModel();
 			
+			this.generateNewJavaModelWithComment();
+			
+			
 			System.out.println("Criou os dois modelos");
 		
 		
 		
 		return true;
+	}
+	
+	
+	private void generateNewJavaModelWithComment() {
+		
+		IResource resrouce = ProjectSelectedToModernize.projectSelected.getProject().findMember("/MODELS_PSM_AS_IS/javaModel.javaxmi");
+		
+		IFile fileToBeRead = (IFile) resrouce;
+		
+		
+		
+		UtilJavaModel utilJavaModel = new UtilJavaModel();
+		
+		Model modelToBeCommented =  utilJavaModel.load(fileToBeRead.getLocationURI().toString());
+		
+		CreateCommentOnJavaModelBasedInSqlStatement createComment = new CreateCommentOnJavaModelBasedInSqlStatement();
+		
+		createComment.createCommentOnTheJavaModel(modelToBeCommented);
+		
+		utilJavaModel.save(modelToBeCommented);
+	
+		
 	}
 	
 	

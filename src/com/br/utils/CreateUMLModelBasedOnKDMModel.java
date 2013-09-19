@@ -37,6 +37,7 @@ public class CreateUMLModelBasedOnKDMModel {
 		
 		IFile fileToBeRead = (IFile) resrouce;
 		
+		System.out.println(" O caminho relativo Ž o seguinte " + fileToBeRead.getProjectRelativePath());
 		
 		System.out.println("O resource transformado em File Ž " + fileToBeRead.getName());
 		
@@ -51,6 +52,9 @@ public class CreateUMLModelBasedOnKDMModel {
 //		IFile file = (IFile) workspaceRoot.findMember(kdmModelLocation+"/MODELS_PIM/KDMMODEL.kdm");
 		
 		System.out.println("Localization of KDM Model" + kdmModelLocation);
+		
+		
+		System.out.println("O Arquivo cortado agora Ž o seguinte. " + kdmModelLocation.split("file:")[1]);
 		
 //		System.out.println("O nome do arquivo Ž " + file.getName());
 		

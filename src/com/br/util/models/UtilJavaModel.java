@@ -17,12 +17,15 @@ import org.eclipse.gmt.modisco.java.Model;
 import org.eclipse.gmt.modisco.java.emf.JavaPackage;
 import org.eclipse.gmt.modisco.java.generation.files.GenerateJavaExtended;
 
+import com.br.utils.ProjectSelectedToModernize;
+
 public class UtilJavaModel {
 
 
 	public Model load(String javaModelFullPath){
 
-
+		
+		
 		JavaPackage.eINSTANCE.eClass();
 
 		Resource.Factory.Registry reg = Resource.Factory.Registry.INSTANCE;
@@ -38,6 +41,10 @@ public class UtilJavaModel {
 		// Get the first model element and cast it to the right type, in my
 		// example everything is hierarchical included in this first node
 		System.out.println(resource.getContents().get(0).toString());
+		
+		
+		System.out.println("Deu certo o cara chamaou corretamente");
+		
 		return (Model) resource.getContents().get(0);
 	}
 
@@ -58,8 +65,9 @@ public class UtilJavaModel {
 				"xmi", xmiResourceFactoryImpl);
 
 
+		String locationOfTheNewJAvaModelWithComment = ProjectSelectedToModernize.projectSelected.getProject().getLocationURI().toString();
 
-		GenerateJavaExtended javaGenerator = new GenerateJavaExtended(URI.createFileURI("/Users/rafaeldurelli/Documents/workspace/GeneratingJavaFromJavaModel/website/novo/novo.javaxmi"),
+		GenerateJavaExtended javaGenerator = new GenerateJavaExtended(URI.createURI(locationOfTheNewJAvaModelWithComment+"/MODELS_PSM_TO_BE/newJavaModel.javaxmi"),
 				new File("/Users/rafaeldurelli/Desktop/src/codigoGerado"), new ArrayList<Object>()); 
 
 
@@ -83,7 +91,11 @@ public class UtilJavaModel {
 		// Obtain a new resource set
 		ResourceSet resSet = new ResourceSetImpl();
 
-		Resource resource = resSet.createResource(URI.createURI("file:/Users/rafaeldurelli/Documents/workspace/GeneratingJavaFromJavaModel/website/novo/novo.javaxmi"));
+//		ProjectSelectedToModernize.projectSelected.getProject().getF
+		
+		String locationOfTheNewJAvaModelWithComment = ProjectSelectedToModernize.projectSelected.getProject().getLocationURI().toString();
+		
+		Resource resource = resSet.createResource(URI.createURI(locationOfTheNewJAvaModelWithComment+"/MODELS_PSM_TO_BE/newJavaModel.javaxmi"));
 
 		resource.getContents().add(model);
 
