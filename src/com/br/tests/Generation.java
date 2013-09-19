@@ -64,7 +64,7 @@ public class Generation {
 		//Generate_JavaStructures jcva = new Generate_JavaStructures(modelURI, targetFolder, arguments)
 		
 		
-		GenerateJavaExtended javaGenerator = new GenerateJavaExtended(URI.createFileURI("/Users/rafaeldurelli/Documents/workspace/GeneratingJavaFromJavaModel/website/teste.javaxmi"),
+		GenerateJavaExtended javaGenerator = new GenerateJavaExtended(URI.createFileURI("/Users/rafaeldurelli/Documents/workspace/GeneratingJavaFromJavaModel/website/novo/novo.javaxmi"),
 				new File("/Users/rafaeldurelli/Desktop/src/codigoGerado"), new ArrayList<Object>()); 
 		
 		//Generate_JavaStructures javaGenerator = new Generate_JavaStructures(

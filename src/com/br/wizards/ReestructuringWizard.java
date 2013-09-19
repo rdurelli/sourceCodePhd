@@ -7,6 +7,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.wizard.Wizard;
 
 import com.br.utils.CreateUMLModelBasedOnKDMDATA;
+import com.br.utils.CreateUMLModelBasedOnKDMModel;
 import com.br.utils.ProjectSelectedToModernize;
 import com.br.utils.ReestructuringToBeRealized;
 
@@ -123,6 +124,9 @@ public class ReestructuringWizard extends Wizard {
 			job.schedule();
 			
 			CreateUMLModelBasedOnKDMDATA.createModel();
+			CreateUMLModelBasedOnKDMModel.createModel();
+			
+			System.out.println("Criou os dois modelos");
 		
 		
 		

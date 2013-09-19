@@ -114,14 +114,7 @@ public class IdentifyJavaModel implements IObjectActionDelegate {
 			System.out.println("O nome da classe Ž " + classFile.getName());
 		}
 		
-		try {
-			generation.generate();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		
-		System.out.println("DEU CERTO VAI...");
 		
 		
 		
@@ -134,6 +127,15 @@ public class IdentifyJavaModel implements IObjectActionDelegate {
 		System.out.println("Esta agora criando um novo modelo jAva");
 		generation.save(model);
 		
+		
+		try {
+			generation.generate();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		System.out.println("DEU CERTO VAI...");
 		
 		//call createJavaModel method to create the Java model
 		
