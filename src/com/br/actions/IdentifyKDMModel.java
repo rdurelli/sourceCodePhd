@@ -69,7 +69,7 @@ public class IdentifyKDMModel implements IObjectActionDelegate {
 		
 		Resource kdmModel = discoverKDMModel.getTargetModel();
 		
-		LocationOfFiles.LOCATION_KDM_MODEL_CREATED = locationURIoFTheProject+"/MODELS_PIM/KDMMODEL.kdm";
+		LocationOfFiles.LOCATION_KDM_MODEL_CREATED = locationURIoFTheProject+"/MODELS_PIM/KDMMODEL.xmi";
 		
 		kdmModel.setURI(URI.createURI(LocationOfFiles.LOCATION_KDM_MODEL_CREATED));
 		
