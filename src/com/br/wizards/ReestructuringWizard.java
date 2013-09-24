@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -16,6 +18,8 @@ import org.eclipse.gmt.modisco.omg.kdm.code.ClassUnit;
 import org.eclipse.gmt.modisco.omg.kdm.code.CodeElement;
 import org.eclipse.gmt.modisco.omg.kdm.code.CodeFactory;
 import org.eclipse.gmt.modisco.omg.kdm.code.CodeModel;
+import org.eclipse.gmt.modisco.omg.kdm.code.FloatType;
+import org.eclipse.gmt.modisco.omg.kdm.code.IntegerType;
 import org.eclipse.gmt.modisco.omg.kdm.code.Package;
 import org.eclipse.gmt.modisco.omg.kdm.code.StorableKind;
 import org.eclipse.gmt.modisco.omg.kdm.code.StorableUnit;
@@ -154,16 +158,22 @@ public class ReestructuringWizard extends Wizard {
 			// Start the Job
 			job.schedule();
 			
+			createAlunoNoKDM();
+			
 			CreateUMLModelBasedOnKDMDATA.createModel();
-			CreateUMLModelBasedOnKDMModel.createModel();
+			
 			
 			this.generateNewJavaModelWithComment();
 			
 			
 			System.out.println("Criou os dois modelos");
 		
-			createAlunoNoKDM();
+			CreateUMLModelBasedOnKDMModel.createModel();
+			
 		
+			
+			
+			
 		return true;
 	}
 	
@@ -215,6 +225,16 @@ public class ReestructuringWizard extends Wizard {
 		
 		
 		testeKDM.save(segment);
+		
+		try {
+			ResourcesPlugin.getWorkspace().getRoot().getProject(ProjectSelectedToModernize.projectSelected.getProject().getName()).refreshLocal(IResource.DEPTH_INFINITE, null);
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+			
+		
 		
 	}
 	

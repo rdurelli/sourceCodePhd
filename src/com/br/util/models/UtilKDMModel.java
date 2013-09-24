@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -18,6 +19,18 @@ import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
 import org.eclipse.gmt.modisco.java.Model;
 import org.eclipse.gmt.modisco.java.emf.JavaPackage;
 import org.eclipse.gmt.modisco.java.generation.files.GenerateJavaExtended;
+import org.eclipse.gmt.modisco.omg.kdm.code.AbstractCodeElement;
+import org.eclipse.gmt.modisco.omg.kdm.code.BooleanType;
+import org.eclipse.gmt.modisco.omg.kdm.code.CharType;
+import org.eclipse.gmt.modisco.omg.kdm.code.CodeModel;
+import org.eclipse.gmt.modisco.omg.kdm.code.FloatType;
+import org.eclipse.gmt.modisco.omg.kdm.code.IntegerType;
+import org.eclipse.gmt.modisco.omg.kdm.code.LanguageUnit;
+import org.eclipse.gmt.modisco.omg.kdm.code.OctetType;
+import org.eclipse.gmt.modisco.omg.kdm.code.PrimitiveType;
+import org.eclipse.gmt.modisco.omg.kdm.code.StringType;
+import org.eclipse.gmt.modisco.omg.kdm.code.VoidType;
+import org.eclipse.gmt.modisco.omg.kdm.kdm.KDMModel;
 import org.eclipse.gmt.modisco.omg.kdm.kdm.KdmPackage;
 import org.eclipse.gmt.modisco.omg.kdm.kdm.Segment;
 
@@ -47,11 +60,95 @@ public Segment load(String KDMModelFullPath){
 		System.out.println(resource.getContents().get(0).toString());
 		
 		
-		System.out.println("Deu certo o cara chamaou corretamente");
-		
 		return (Segment) resource.getContents().get(0);
 	}
 
+
+	
+	/**
+	 * 
+	 * 
+	 * @author rafaeldurelli
+	 * @param segment obtem o KDM do projeto para obter os tipos primitivos.
+	 * @param name - você deve passar os nomes dos primitivos para recuperar: int, long, double, short, float, boolean, void, char, byte, string
+	 * @return  PrimitiveType - deve-se fazer um cast de acordo com o type de primitive que vc deseja obter.
+	 * */
+	public PrimitiveType getPrimitiveType (Segment segment, String name) {
+		
+		EList<KDMModel> models =  segment.getModel();
+		
+		CodeModel codeModel = null;
+		
+		LanguageUnit languageUnit = null;
+		
+		PrimitiveType typeToReturn = null;
+		
+		if (models.get(0) instanceof CodeModel) {
+			
+			
+			codeModel = (CodeModel) models.get(0);
+		
+			EList<AbstractCodeElement> codeElements = codeModel.getCodeElement();
+			
+			for (AbstractCodeElement abstractCodeElement : codeElements) {
+				
+				if (abstractCodeElement instanceof LanguageUnit) {
+					
+					languageUnit = (LanguageUnit) abstractCodeElement;
+					
+					EList<AbstractCodeElement> primitives = languageUnit.getCodeElement();
+					
+					
+					for (AbstractCodeElement abstractCodeElement2 : primitives) {
+						
+						if (( abstractCodeElement2 instanceof IntegerType ) && ( (IntegerType)abstractCodeElement2).getName().equalsIgnoreCase(name) ) {
+							
+							typeToReturn = (IntegerType) abstractCodeElement2;
+							
+							
+						}
+						else if (( abstractCodeElement2 instanceof FloatType ) && ( (FloatType)abstractCodeElement2).getName().equalsIgnoreCase(name)) {
+							
+							typeToReturn = (FloatType) abstractCodeElement2;
+							
+						}
+						else if (( abstractCodeElement2 instanceof BooleanType ) && ( (BooleanType)abstractCodeElement2).getName().equalsIgnoreCase(name)) {
+							
+							typeToReturn = (BooleanType) abstractCodeElement2;
+							
+						}
+						else if (( abstractCodeElement2 instanceof VoidType ) && ( (VoidType)abstractCodeElement2).getName().equalsIgnoreCase(name)) {
+							
+							typeToReturn = (VoidType) abstractCodeElement2;
+							
+						}
+						else if (( abstractCodeElement2 instanceof CharType ) && ( (CharType)abstractCodeElement2).getName().equalsIgnoreCase(name)) {
+							
+							typeToReturn = (CharType) abstractCodeElement2;
+							
+						}
+						else if (( abstractCodeElement2 instanceof OctetType ) && ( (OctetType)abstractCodeElement2).getName().equalsIgnoreCase(name)) {
+							
+							typeToReturn = (OctetType) abstractCodeElement2;
+							
+						}
+						else if (( abstractCodeElement2 instanceof StringType ) && ( (StringType)abstractCodeElement2).getName().equalsIgnoreCase(name)) {
+							
+							typeToReturn = (StringType) abstractCodeElement2;
+							
+						}
+						
+						
+					}
+					
+				}
+				
+			}
+			
+		}
+		
+		return typeToReturn;
+	}
 
 	
 	//this method is used to generate source-code based on the Java model as input.
