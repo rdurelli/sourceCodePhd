@@ -33,7 +33,7 @@ public class CreateUMLModelBasedOnKDMModel {
 		IWorkspaceRoot workspaceRoot = workspace.getRoot();
 		
 		
-		IResource resrouce = ProjectSelectedToModernize.projectSelected.getProject().findMember("/MODELS_PIM/KDMMODEL.xmi");
+		IResource resrouce = ProjectSelectedToModernize.projectSelected.getProject().findMember("/MODELS_PIM/KDMMODEL_NEW.xmi");
 		
 		IFile fileToBeRead = (IFile) resrouce;
 		

@@ -35,6 +35,13 @@ public class Teste1 {
 
 	private DataBase dataBase;
 
+	
+	public Teste1(DataBase dataBase) {
+		// TODO Auto-generated constructor stub
+		
+		this.dataBase = dataBase;
+	}
+	
 	public DataBase getDataBase() {
 		return dataBase;
 	}
@@ -99,12 +106,17 @@ public class Teste1 {
 				System.err.println("Updates " + string);
 			}
 
+			
+			//TODO mudar aqui. Primeiro Passo
+			//TODO Passar o DataBase já como parementro para a execução desse método.
+			//TODO Passar tbm um Set<Table> tablesFound já setado no DataBase.
+			
 			// mudar aq TODO MUDAR AQUI
-			this.setDataBase(new DataBase("projectValter"));
+//			this.setDataBase(new DataBase("projectValter"));
+//
+//			Set<Table> tablesFound = new TreeSet<Table>();
 
-			Set<Table> tablesFound = new TreeSet<Table>();
-
-			this.getDataBase().setDataBaseTables(tablesFound);
+//			this.getDataBase().setDataBaseTables(tablesFound);
 
 			if (updates.size() > 0) {
 

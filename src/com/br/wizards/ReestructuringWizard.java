@@ -1,6 +1,7 @@
 package com.br.wizards;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -8,10 +9,31 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.gmt.modisco.java.Model;
+import org.eclipse.gmt.modisco.omg.kdm.code.AbstractCodeElement;
+import org.eclipse.gmt.modisco.omg.kdm.code.ClassUnit;
+import org.eclipse.gmt.modisco.omg.kdm.code.CodeElement;
+import org.eclipse.gmt.modisco.omg.kdm.code.CodeFactory;
+import org.eclipse.gmt.modisco.omg.kdm.code.CodeModel;
+import org.eclipse.gmt.modisco.omg.kdm.code.Package;
+import org.eclipse.gmt.modisco.omg.kdm.code.StorableKind;
+import org.eclipse.gmt.modisco.omg.kdm.code.StorableUnit;
+import org.eclipse.gmt.modisco.omg.kdm.core.KDMEntity;
+import org.eclipse.gmt.modisco.omg.kdm.kdm.Attribute;
+import org.eclipse.gmt.modisco.omg.kdm.kdm.KDMModel;
+import org.eclipse.gmt.modisco.omg.kdm.kdm.KdmFactory;
+import org.eclipse.gmt.modisco.omg.kdm.kdm.KdmPackage;
+import org.eclipse.gmt.modisco.omg.kdm.kdm.Segment;
+import org.eclipse.gmt.modisco.omg.kdm.source.InventoryModel;
+import org.eclipse.gmt.modisco.omg.kdm.source.SourceFactory;
+import org.eclipse.gmt.modisco.omg.kdm.source.SourceFile;
+import org.eclipse.gmt.modisco.omg.kdm.source.SourceRef;
+import org.eclipse.gmt.modisco.omg.kdm.source.SourceRegion;
 import org.eclipse.jface.wizard.Wizard;
 
 import com.br.util.models.UtilJavaModel;
+import com.br.util.models.UtilKDMModel;
 import com.br.utils.CreateCommentOnJavaModelBasedInSqlStatement;
 import com.br.utils.CreateUMLModelBasedOnKDMDATA;
 import com.br.utils.CreateUMLModelBasedOnKDMModel;
@@ -22,6 +44,8 @@ public class ReestructuringWizard extends Wizard {
 
 	
 	protected ReestructuringPageWizard page;
+	
+	private ClassUnit StringToBeUsed = null;
 	
 	public ReestructuringWizard() {
 		super();
@@ -138,11 +162,236 @@ public class ReestructuringWizard extends Wizard {
 			
 			System.out.println("Criou os dois modelos");
 		
-		
+			createAlunoNoKDM();
 		
 		return true;
 	}
 	
+	
+	
+	private void createAlunoNoKDM () {
+		
+		UtilKDMModel testeKDM = new UtilKDMModel();
+		
+		
+		IResource resrouce = ProjectSelectedToModernize.projectSelected.getProject().findMember("/MODELS_PIM/KDMMODEL.xmi");
+		
+		IFile fileToBeRead = (IFile) resrouce;
+		
+		Segment segment = testeKDM.load(fileToBeRead.getLocationURI().toString());
+		
+		List<KDMModel> models = segment.getModel();
+		
+		for (KDMModel kdmModel : models) {
+			System.out.println("O nome dos segmentos s‹o " + kdmModel.getName());
+		}
+		
+		CodeModel codeModel = (CodeModel) models.get(0);
+		
+		Package packageKDM = (Package) codeModel.getCodeElement().get(0);
+		
+//		ClassUnit classUnit = (ClassUnit) packageKDM.getCodeElement().get(0);
+//		
+//		System.out.println("O nome da classe Ž " + classUnit.getName());
+//		
+//		System.out.println("A class Ž abstract? " + classUnit.getIsAbstract());
+//		
+//		System.out.println("A class Ž abstract? " + classUnit.getIsAbstract());
+		
+		CodeModel codeModelExternals = (CodeModel) models.get(1);
+		
+		this.StringToBeUsed = this.getStringType(codeModelExternals);
+		
+		this.criarClassUNITAluno(packageKDM);
+		
+		
+		InventoryModel invent = (InventoryModel) models.get(2);
+		
+		invent.getInventoryElement().add(this.criarSourceFile());
+		
+		
+		
+		
+		
+		
+		testeKDM.save(segment);
+		
+	}
+	
+	
+	private Attribute criarAttribute () {
+		
+		
+		Attribute attibute = KdmFactory.eINSTANCE.createAttribute();
+		
+		attibute.setTag("export");
+		
+		attibute.setValue("public");
+		
+		return attibute;
+		
+	}
+	
+	
+	
+	private SourceFile criarSourceFile () {
+		
+		
+		
+		SourceFile sourceFile = SourceFactory.eINSTANCE.createSourceFile();
+		
+		sourceFile.setName("Aluno.java");
+		
+		sourceFile.setPath("/Users/rafaeldurelli/Documents/runtime-EclipseApplication/Legacy_System_To_Test/src/Aluno.java");
+		
+		sourceFile.setLanguage("java");
+		
+		
+		return sourceFile;
+		
+	}
+	
+	private SourceRegion criarSourceRegion () {
+		
+		SourceRegion sourceRegion = SourceFactory.eINSTANCE.createSourceRegion();
+		
+		sourceRegion.setLanguage("java");
+		
+		sourceRegion.setFile(this.criarSourceFile());
+		
+		return sourceRegion;
+		
+		
+		
+	}
+	
+	private SourceRef criarSource ( ) {
+		
+		SourceRef sourceRef = SourceFactory.eINSTANCE.createSourceRef();
+		
+		sourceRef.setLanguage("java");
+		
+		sourceRef.getRegion().add(this.criarSourceRegion());
+		
+		return sourceRef;
+		
+	}
+	
+	private void criarClassUNITAluno (Package packageKDM) {
+		
+		
+		
+		
+		
+		ClassUnit classUnitALUNO = CodeFactory.eINSTANCE.createClassUnit();
+		
+		classUnitALUNO.setIsAbstract(false);
+		
+		classUnitALUNO.setName("Aluno");
+		
+	
+		
+		classUnitALUNO.getAttribute().add(criarAttribute());
+		
+		
+//		classUnitALUNO.getSource()
+		
+		classUnitALUNO.getSource().add(this.criarSource());
+		
+		
+		String[] attributes = {"RA", "id", "lastName", "name"};
+		
+		for (int i = 0; i < attributes.length; i++) {
+		
+			this.criarAttibutoName(classUnitALUNO, attributes[i]);
+			
+		}
+		
+		
+		
+		packageKDM.getCodeElement().add(classUnitALUNO);
+		
+		
+		
+		
+	}
+	
+	private void criarAttibutoName(ClassUnit classUnit, String name) {
+		
+		StorableUnit storableUnit = CodeFactory.eINSTANCE.createStorableUnit();
+		
+		storableUnit.setName(name);
+		
+		storableUnit.setKind(StorableKind.GLOBAL);
+		
+		storableUnit.getAttribute().add(this.criarAttibuteForName());
+		
+//		storableUnit.getSource().add(classUnit.getSource().get(0));
+		
+		storableUnit.setType(this.StringToBeUsed);
+		
+		classUnit.getCodeElement().add(storableUnit);
+		
+		System.out.println("A String obtida " +  this.StringToBeUsed.getName());
+		
+	}
+	
+	
+	private ClassUnit getStringType (CodeModel codeModel) {
+		
+		
+		ClassUnit stringToBeRetorned = null;
+		
+		EList<AbstractCodeElement> codeElements = codeModel.getCodeElement();
+		
+		for (AbstractCodeElement abstractCodeElement : codeElements) {
+			
+			if (abstractCodeElement instanceof Package) {
+				
+				EList<AbstractCodeElement> packages = ((Package) abstractCodeElement).getCodeElement();
+				
+				for (AbstractCodeElement abstractCodeElement2 : packages) {
+					
+					if ( ( abstractCodeElement2 instanceof Package ) && ((Package) abstractCodeElement2).getName().equalsIgnoreCase("lang") ) {
+						
+						
+						EList<AbstractCodeElement> stuffs = ((Package) abstractCodeElement2).getCodeElement();
+						
+						for (AbstractCodeElement abstractCodeElement3 : stuffs) {
+							
+							if (( abstractCodeElement3 instanceof ClassUnit ) && ( ((ClassUnit) abstractCodeElement3).getName().equalsIgnoreCase("String") )) {
+								
+								stringToBeRetorned = (ClassUnit) abstractCodeElement3;
+								
+							}
+							
+						}
+						
+					}
+					
+					
+				}
+				
+				
+				
+			}
+			
+		}
+		
+		return stringToBeRetorned;
+		
+	}
+	
+	private Attribute criarAttibuteForName () {
+		
+		Attribute att = KdmFactory.eINSTANCE.createAttribute();
+		
+		att.setTag("export");
+		att.setValue("private");
+		
+		return att;
+		
+	}
 	
 	private void generateNewJavaModelWithComment() {
 		

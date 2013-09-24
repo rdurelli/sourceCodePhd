@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 
 import org.eclipse.core.resources.IFile;
@@ -46,7 +48,9 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.dialogs.ResourceSelectionDialog;
 
 import com.br.databaseDDL.DataBase;
+import com.br.databaseDDL.Table;
 import com.br.utils.CreateSQLModel;
+import com.br.utils.ProjectSelectedToModernize;
 
 import parser.Teste1;
 
@@ -141,6 +145,8 @@ public class IdentifySQL implements IObjectActionDelegate {
 				
 				ArrayList<String> javaFiles = new ArrayList<String>();
 
+				
+				
 //				DiscoverJavaModelFromJavaProject discoverJava = new DiscoverJavaModelFromJavaProject();
 //				try {
 //					discoverJava.discoverElement(this.file, null);
@@ -165,11 +171,32 @@ public class IdentifySQL implements IObjectActionDelegate {
 					
 				}else {
 					
-					Teste1 teste1 = new Teste1();
 					
+					
+					//Agora devemos criar um DataBase Classe
+					String dataBaseProject = this.file.getProject().getName();
+					
+					DataBase dataBaseNew = new DataBase(dataBaseProject);
+					
+					Set<Table> tablesFound = new TreeSet<Table>();
+					dataBaseNew.setDataBaseTables(tablesFound);
+					
+					Teste1 teste1 = new Teste1(dataBaseNew);
+					
+//					DataBase("projectValter")
 					
 					//TODO MUDAR AQUI s— esta pegando o primeiro arquivo .JAva
-					teste1.callParser(javaFiles.get(0));
+					
+					
+					for (String string : javaFiles) {
+					
+						
+						System.out.println("O nomes das classes s‹o as seguintes..." + string);
+						teste1.callParser(string);
+						
+						
+					}
+					
 					
 					DataBase dataBase = teste1.getDataBase();
 					
