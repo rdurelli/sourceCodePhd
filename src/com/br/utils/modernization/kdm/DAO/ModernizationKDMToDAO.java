@@ -1,5 +1,6 @@
 package com.br.utils.modernization.kdm.DAO;
 
+import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.emf.common.util.EList;
@@ -20,8 +21,14 @@ import org.eclipse.gmt.modisco.omg.kdm.source.SourceRegion;
 
 import com.br.databaseDDL.Column;
 import com.br.databaseDDL.DataBase;
+import com.br.databaseDDL.Table;
 import com.br.util.models.UtilKDMModel;
 
+
+/**
+ * @author rafaeldurelli
+ * @since 20/09/2013
+ * */
 public class ModernizationKDMToDAO {
 
 	
@@ -55,7 +62,7 @@ public class ModernizationKDMToDAO {
 		
 		this.segment = segment;//associar o segmento para usar durante essa classInteira.
 			
-		
+		CodeModel codeModel = (CodeModel) this.segment.getModel().get(0);//pega o primeiro CodeModel para colocar as novas Entities que ser‹o criadas....
 		
 		return null;		
 		
@@ -75,7 +82,18 @@ public class ModernizationKDMToDAO {
 		
 		
 		EList<AbstractCodeElement> codeElements = codeModel.getCodeElement();
+//			devemos chamar agora o method createClassUnit passando o nome do banco de dados e um Set contendo todas as colunas daquele banco de dados...
+		
+		Iterator<Table> tables = dataBase.getDataBaseTables().iterator();
+		
+		while (tables.hasNext()) {
 			
+			Table table = (Table) tables.next();
+			
+			this.createClassUnit(packageCreated, table.getTableName(), table.getColumnsTable());
+			
+			
+		}
 		
 	}
 	
@@ -88,6 +106,12 @@ public class ModernizationKDMToDAO {
 		classUnitToBeCreated.getAttribute().add(this.createAttibuteToPutInTheClassUnit());
 		classUnitToBeCreated.getSource().add(this.criarSource(nameOFTheTableToBeClass));
 		
+		Iterator<Column> columns = columnsToBeAttribute.iterator();
+		
+		while (columns.hasNext()) {
+			Column column = (Column) columns.next();
+			this.criarStorableUnit(classUnitToBeCreated, column.getColumnName(), column.getColumnType());
+		}
 		
 		
 		

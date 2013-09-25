@@ -176,7 +176,10 @@ public class IdentifySQL implements IObjectActionDelegate {
 					//Agora devemos criar um DataBase Classe
 					String dataBaseProject = this.file.getProject().getName();
 					
-					DataBase dataBaseNew = new DataBase(dataBaseProject);
+					
+					
+					
+					DataBase dataBaseNew = DataBase.getInstance(dataBaseProject);
 					
 					Set<Table> tablesFound = new TreeSet<Table>();
 					dataBaseNew.setDataBaseTables(tablesFound);

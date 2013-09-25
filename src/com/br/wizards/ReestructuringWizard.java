@@ -256,8 +256,6 @@ public class ReestructuringWizard extends Wizard {
 	
 	private SourceFile criarSourceFile () {
 		
-		
-		
 		SourceFile sourceFile = SourceFactory.eINSTANCE.createSourceFile();
 		
 		sourceFile.setName("Aluno.java");

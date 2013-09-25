@@ -22,10 +22,28 @@ public class DataBase {
 	private Set<Table> dataBaseTables;
 	
 	
+	private static DataBase instance;
+	
+	
+	public static DataBase getInstance(String name) {
+		
+		
+		if (( instance == null ) && ( name != null )) {
+			
+			instance = new DataBase(name);
+			
+			return instance;	
+		}
+		
+		return instance;
+		
+		
+	}
+	
 	/**
 	 * Construct
 	 * */
-	public DataBase(String dataBaseName){
+	private  DataBase(String dataBaseName){
 		
 		this.dataBaseName = dataBaseName;
 		
