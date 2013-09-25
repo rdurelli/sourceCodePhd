@@ -25,6 +25,8 @@ public class DataBase {
 	private static DataBase instance;
 	
 	
+	
+	//quando vc passar null ao inves do nome do dataBase significa que vc s— quer a instancia....e vc j‡ sabe que ele j‡ foi criado em algum lugar...
 	public static DataBase getInstance(String name) {
 		
 		

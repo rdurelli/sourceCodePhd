@@ -64,7 +64,10 @@ public class ModernizationKDMToDAO {
 			
 		CodeModel codeModel = (CodeModel) this.segment.getModel().get(0);//pega o primeiro CodeModel para colocar as novas Entities que ser‹o criadas....
 		
-		return null;		
+		
+		this.createEntities(codeModel, dataBase);
+		
+		return this.segment;		
 		
 	} 
 	
@@ -113,7 +116,7 @@ public class ModernizationKDMToDAO {
 			this.criarStorableUnit(classUnitToBeCreated, column.getColumnName(), column.getColumnType());
 		}
 		
-		
+		packageCreated.getCodeElement().add(classUnitToBeCreated);
 		
 	}
 	

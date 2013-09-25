@@ -36,6 +36,7 @@ import org.eclipse.gmt.modisco.omg.kdm.source.SourceRef;
 import org.eclipse.gmt.modisco.omg.kdm.source.SourceRegion;
 import org.eclipse.jface.wizard.Wizard;
 
+import com.br.databaseDDL.DataBase;
 import com.br.util.models.UtilJavaModel;
 import com.br.util.models.UtilKDMModel;
 import com.br.utils.CreateCommentOnJavaModelBasedInSqlStatement;
@@ -43,6 +44,7 @@ import com.br.utils.CreateUMLModelBasedOnKDMDATA;
 import com.br.utils.CreateUMLModelBasedOnKDMModel;
 import com.br.utils.ProjectSelectedToModernize;
 import com.br.utils.ReestructuringToBeRealized;
+import com.br.utils.modernization.kdm.DAO.ModernizationKDMToDAO;
 
 public class ReestructuringWizard extends Wizard {
 
@@ -158,7 +160,29 @@ public class ReestructuringWizard extends Wizard {
 			// Start the Job
 			job.schedule();
 			
-			createAlunoNoKDM();
+			
+			DataBase mey = DataBase.getInstance(null);
+			
+			IResource resrouce = ProjectSelectedToModernize.projectSelected.getProject().findMember("/MODELS_PIM/KDMMODEL.xmi");
+			
+			IFile fileToBeReadKDM = (IFile) resrouce;
+			
+			ModernizationKDMToDAO modernizationKDM2DAO = new ModernizationKDMToDAO();
+			
+			Segment segmentNew = modernizationKDM2DAO.start(fileToBeReadKDM.getLocationURI().toString(), mey);
+			
+			UtilKDMModel testeKDM = new UtilKDMModel();
+			
+			testeKDM.save(segmentNew);
+			
+			try {
+				ResourcesPlugin.getWorkspace().getRoot().getProject(ProjectSelectedToModernize.projectSelected.getProject().getName()).refreshLocal(IResource.DEPTH_INFINITE, null);
+			} catch (CoreException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+//			createAlunoNoKDM();
 			
 			CreateUMLModelBasedOnKDMDATA.createModel();
 			
@@ -170,7 +194,11 @@ public class ReestructuringWizard extends Wizard {
 		
 			CreateUMLModelBasedOnKDMModel.createModel();
 			
-		
+//			DataBase mey = DataBase.getInstance(null);
+			
+			System.out.println("O DataBase obtido pelo singleton foi " + mey.getDataBaseName());
+			
+			System.out.println("O DataBase obtido pelo singleton foi " + mey.getDataBaseTables());
 			
 			
 			
