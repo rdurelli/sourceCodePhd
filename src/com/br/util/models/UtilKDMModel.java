@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
@@ -22,11 +23,13 @@ import org.eclipse.gmt.modisco.java.generation.files.GenerateJavaExtended;
 import org.eclipse.gmt.modisco.omg.kdm.code.AbstractCodeElement;
 import org.eclipse.gmt.modisco.omg.kdm.code.BooleanType;
 import org.eclipse.gmt.modisco.omg.kdm.code.CharType;
+import org.eclipse.gmt.modisco.omg.kdm.code.ClassUnit;
 import org.eclipse.gmt.modisco.omg.kdm.code.CodeModel;
 import org.eclipse.gmt.modisco.omg.kdm.code.FloatType;
 import org.eclipse.gmt.modisco.omg.kdm.code.IntegerType;
 import org.eclipse.gmt.modisco.omg.kdm.code.LanguageUnit;
 import org.eclipse.gmt.modisco.omg.kdm.code.OctetType;
+import org.eclipse.gmt.modisco.omg.kdm.code.Package;
 import org.eclipse.gmt.modisco.omg.kdm.code.PrimitiveType;
 import org.eclipse.gmt.modisco.omg.kdm.code.StringType;
 import org.eclipse.gmt.modisco.omg.kdm.code.VoidType;
@@ -150,6 +153,57 @@ public Segment load(String KDMModelFullPath){
 		return typeToReturn;
 	}
 
+	//TODO verificar como esse metodo esta implementado. Eu lembro que eu forço ele começar com o codeModelCorreto. Verificar isso antes de chamar ele.
+	public ClassUnit getStringType (Segment segment) {
+		
+		
+		List<KDMModel> models = segment.getModel();
+		
+		CodeModel codeModel = (CodeModel) models.get(1);
+		
+		
+		ClassUnit stringToBeRetorned = null;
+		
+		EList<AbstractCodeElement> codeElements = codeModel.getCodeElement();
+		
+		for (AbstractCodeElement abstractCodeElement : codeElements) {
+			
+			if (abstractCodeElement instanceof Package) {
+				
+				EList<AbstractCodeElement> packages = ((Package) abstractCodeElement).getCodeElement();
+				
+				for (AbstractCodeElement abstractCodeElement2 : packages) {
+					
+					if ( ( abstractCodeElement2 instanceof Package ) && ((Package) abstractCodeElement2).getName().equalsIgnoreCase("lang") ) {
+						
+						
+						EList<AbstractCodeElement> stuffs = ((Package) abstractCodeElement2).getCodeElement();
+						
+						for (AbstractCodeElement abstractCodeElement3 : stuffs) {
+							
+							if (( abstractCodeElement3 instanceof ClassUnit ) && ( ((ClassUnit) abstractCodeElement3).getName().equalsIgnoreCase("String") )) {
+								
+								stringToBeRetorned = (ClassUnit) abstractCodeElement3;
+								
+							}
+							
+						}
+						
+					}
+					
+					
+				}
+				
+				
+				
+			}
+			
+		}
+		
+		return stringToBeRetorned;
+		
+	}
+	
 	
 	//this method is used to generate source-code based on the Java model as input.
 	public void generateNewSourceCode() throws IOException {
