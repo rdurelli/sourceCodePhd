@@ -1,5 +1,6 @@
 package com.br.utils.modernization.kdm.DAO;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -8,9 +9,18 @@ import org.eclipse.gmt.modisco.omg.kdm.code.AbstractCodeElement;
 import org.eclipse.gmt.modisco.omg.kdm.code.ClassUnit;
 import org.eclipse.gmt.modisco.omg.kdm.code.CodeFactory;
 import org.eclipse.gmt.modisco.omg.kdm.code.CodeModel;
+import org.eclipse.gmt.modisco.omg.kdm.code.ExportKind;
+import org.eclipse.gmt.modisco.omg.kdm.code.Implements;
+import org.eclipse.gmt.modisco.omg.kdm.code.InterfaceUnit;
+import org.eclipse.gmt.modisco.omg.kdm.code.MethodKind;
+import org.eclipse.gmt.modisco.omg.kdm.code.MethodUnit;
 import org.eclipse.gmt.modisco.omg.kdm.code.Package;
+import org.eclipse.gmt.modisco.omg.kdm.code.ParameterKind;
+import org.eclipse.gmt.modisco.omg.kdm.code.ParameterUnit;
+import org.eclipse.gmt.modisco.omg.kdm.code.Signature;
 import org.eclipse.gmt.modisco.omg.kdm.code.StorableKind;
 import org.eclipse.gmt.modisco.omg.kdm.code.StorableUnit;
+import org.eclipse.gmt.modisco.omg.kdm.code.VoidType;
 import org.eclipse.gmt.modisco.omg.kdm.kdm.Attribute;
 import org.eclipse.gmt.modisco.omg.kdm.kdm.KdmFactory;
 import org.eclipse.gmt.modisco.omg.kdm.kdm.Segment;
@@ -67,6 +77,20 @@ public class ModernizationKDMToDAO {
 		
 		this.createEntities(codeModel, dataBase);
 		
+//		primeira refatoração FEITA devo arrumar isso aqui..
+		
+		Package packageTesteRefactoring = (Package) codeModel.getCodeElement().get(0);
+		
+		ClassUnit classUnitTesteRefactorin = (ClassUnit)packageTesteRefactoring.getCodeElement().get(0);
+		
+		StorableUnit novo = (StorableUnit)classUnitTesteRefactorin.getCodeElement().get(0);
+		
+		Package dao = (Package) codeModel.getCodeElement().get(2);
+		
+		ClassUnit classTObePut = (ClassUnit) dao.getCodeElement().get(0);
+		
+		classTObePut.getCodeElement().add(novo);
+		
 		return this.segment;		
 		
 	} 
@@ -93,14 +117,56 @@ public class ModernizationKDMToDAO {
 			
 			Table table = (Table) tables.next();
 			
-			this.createClassUnit(packageCreated, table.getTableName(), table.getColumnsTable());
-			
+			ClassUnit classCreated =  this.createClassUnit(packageCreated, table.getTableName(), table.getColumnsTable());
+			this.createInterfaceUnit(packageCreated, table.getTableName(), classCreated);
 			
 		}
 		
 	}
 	
-	private void createClassUnit (Package packageCreated, String nameOFTheTableToBeClass, Set<Column> columnsToBeAttribute ) {
+	private void createInterfaceUnit (Package packageCreated, String nameOfTheTableToBeInterfaceUnitDAO, ClassUnit classCreated) {
+		
+		InterfaceUnit interfaceUnitToBeCreated = CodeFactory.eINSTANCE.createInterfaceUnit();
+		
+		interfaceUnitToBeCreated.setName(nameOfTheTableToBeInterfaceUnitDAO+"DAO");
+		
+		interfaceUnitToBeCreated.getAttribute().add(this.createAttributeToPutInTheInterfaceUnit());
+		
+		interfaceUnitToBeCreated.getSource().add(this.criarSource(nameOfTheTableToBeInterfaceUnitDAO));
+		
+		interfaceUnitToBeCreated.getCodeElement().add(this.createMethodUnitSave(interfaceUnitToBeCreated, classCreated));
+		
+		packageCreated.getCodeElement().add(interfaceUnitToBeCreated);
+		
+		this.createClassUnitJDBCDAO(packageCreated, nameOfTheTableToBeInterfaceUnitDAO, interfaceUnitToBeCreated);
+		
+	}
+	
+	private void createClassUnitJDBCDAO (Package packageCreated, String nameOfTheTableToBeClass, InterfaceUnit interfaceUnit) {
+		
+		ClassUnit classUnitToBeCreated = CodeFactory.eINSTANCE.createClassUnit();
+		classUnitToBeCreated.setName("JDBC"+nameOfTheTableToBeClass+"DAO");
+		classUnitToBeCreated.setIsAbstract(false);
+		classUnitToBeCreated.getAttribute().add(this.createAttibuteToPutInTheClassUnit());
+		classUnitToBeCreated.getSource().add(this.criarSource(nameOfTheTableToBeClass));
+		
+		classUnitToBeCreated.getCodeRelation().add(this.createCodeRelationImplements(classUnitToBeCreated, interfaceUnit));
+		
+		packageCreated.getCodeElement().add(classUnitToBeCreated);
+		
+	}
+	
+	private Implements createCodeRelationImplements (ClassUnit classUnit, InterfaceUnit interfaceUnit) {
+		
+		Implements implementsRelationShip = CodeFactory.eINSTANCE.createImplements();
+		
+		implementsRelationShip.setTo(interfaceUnit);
+		implementsRelationShip.setFrom(classUnit);
+		
+		return implementsRelationShip;
+	}
+	
+	private ClassUnit createClassUnit (Package packageCreated, String nameOFTheTableToBeClass, Set<Column> columnsToBeAttribute ) {
 		
 		ClassUnit classUnitToBeCreated = CodeFactory.eINSTANCE.createClassUnit();
 		
@@ -118,6 +184,20 @@ public class ModernizationKDMToDAO {
 		
 		packageCreated.getCodeElement().add(classUnitToBeCreated);
 		
+		return classUnitToBeCreated;
+		
+	}
+	
+	private Attribute createAttributeToPutInTheInterfaceUnit () {
+		
+		
+		Attribute attibute = KdmFactory.eINSTANCE.createAttribute();
+		
+		attibute.setTag("export");
+		
+		attibute.setValue("public");
+		
+		return attibute;
 	}
 	
 	private Attribute createAttibuteToPutInTheClassUnit () {
@@ -152,8 +232,9 @@ public class ModernizationKDMToDAO {
 		SourceRegion sourceRegion = SourceFactory.eINSTANCE.createSourceRegion();
 		
 		sourceRegion.setLanguage("java");
-		
+//		O File não esta sendo criado no modelo, tentar verificar o motivo...
 		sourceRegion.setFile(this.criarSourceFile(nameOFTheTableToBeClass));
+		
 		
 		return sourceRegion;
 		
@@ -235,6 +316,77 @@ public class ModernizationKDMToDAO {
 		
 	}
 	
+	private Attribute criarAttibuteForMethodUnit () {
+		
+		Attribute att = KdmFactory.eINSTANCE.createAttribute();
+		
+		att.setTag("export");
+		att.setValue("private");
+		
+		return att;
+		
+	}
+	
+	private MethodUnit createMethodUnitSave (InterfaceUnit interfaceUnitToPutTheMethod, ClassUnit classUnitToBeSaved) {
+		
+		MethodUnit methodUnitSave = CodeFactory.eINSTANCE.createMethodUnit();
+		methodUnitSave.setName("save");
+		methodUnitSave.setKind(MethodKind.METHOD);
+		methodUnitSave.setExport(ExportKind.PUBLIC);
+		methodUnitSave.getAttribute().add(this.criarAttibuteForMethodUnit());
+		methodUnitSave.getSource().add(this.criarSource(interfaceUnitToPutTheMethod.getName()));
+		methodUnitSave.setType(this.createSignatureSave(classUnitToBeSaved));
+		methodUnitSave.getCodeElement().add(this.createSignatureSave(classUnitToBeSaved));
+		
+		interfaceUnitToPutTheMethod.getCodeElement().add(methodUnitSave);
+		
+		
+		//colocar dentro do InterfaceUnit:D
+		return methodUnitSave;
+	}
+	
+	private Signature createSignatureSave (ClassUnit classToBeTyped) {
+		
+		Signature signature = CodeFactory.eINSTANCE.createSignature();
+		signature.setName("save");
+		
+		signature.getParameterUnit().add(this.createFirstParameterUnitForSignatureSave(classToBeTyped));
+		//colocar aqui o parameterUnit
+		signature.getParameterUnit().add(this.createSecondParameterUnitForSignatureSave(classToBeTyped));
+
+		return signature;
+	}
+	
+	private  ParameterUnit createFirstParameterUnitForSignatureSave (ClassUnit classToBeType) {
+		
+		ParameterUnit parameterUnit = CodeFactory.eINSTANCE.createParameterUnit();
+		
+		parameterUnit.getSource().add(this.criarSource(classToBeType.getName()));
+		
+		parameterUnit.setKind(ParameterKind.RETURN);
+		
+		VoidType voidType = (VoidType) util.getPrimitiveType(segment, "void");
+		
+		parameterUnit.setType(voidType);
+		
+		return parameterUnit;
+		
+	}
+	
+	private ParameterUnit createSecondParameterUnitForSignatureSave (ClassUnit classToBeTyped) {
+		
+		ParameterUnit parameterUnit = CodeFactory.eINSTANCE.createParameterUnit();
+		
+		parameterUnit.setName(classToBeTyped.getName().toLowerCase());
+		
+		parameterUnit.getSource().add(this.criarSource(classToBeTyped.getName()));
+		
+		parameterUnit.setKind(ParameterKind.UNKNOWN);
+		
+		parameterUnit.setType(classToBeTyped);
+		
+		return parameterUnit;
+	}
 	
 	
 }
