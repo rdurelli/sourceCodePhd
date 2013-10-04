@@ -20,6 +20,7 @@ import org.eclipse.gmt.modisco.omg.kdm.code.ParameterUnit;
 import org.eclipse.gmt.modisco.omg.kdm.code.Signature;
 import org.eclipse.gmt.modisco.omg.kdm.code.StorableKind;
 import org.eclipse.gmt.modisco.omg.kdm.code.StorableUnit;
+import org.eclipse.gmt.modisco.omg.kdm.code.TemplateType;
 import org.eclipse.gmt.modisco.omg.kdm.code.VoidType;
 import org.eclipse.gmt.modisco.omg.kdm.kdm.Attribute;
 import org.eclipse.gmt.modisco.omg.kdm.kdm.KdmFactory;
@@ -118,39 +119,57 @@ public class ModernizationKDMToDAO {
 			Table table = (Table) tables.next();
 			
 			ClassUnit classCreated =  this.createClassUnit(packageCreated, table.getTableName(), table.getColumnsTable());
-			this.createInterfaceUnit(packageCreated, table.getTableName(), classCreated);
+			this.createInterfaceUnit(packageCreated, classCreated);
 			
 		}
 		
 	}
 	
-	private void createInterfaceUnit (Package packageCreated, String nameOfTheTableToBeInterfaceUnitDAO, ClassUnit classCreated) {
+	private void createInterfaceUnit (Package packageCreated, ClassUnit classCreated) {
 		
 		InterfaceUnit interfaceUnitToBeCreated = CodeFactory.eINSTANCE.createInterfaceUnit();
 		
-		interfaceUnitToBeCreated.setName(nameOfTheTableToBeInterfaceUnitDAO+"DAO");
+		interfaceUnitToBeCreated.setName(classCreated.getName()+"DAO");
 		
 		interfaceUnitToBeCreated.getAttribute().add(this.createAttributeToPutInTheInterfaceUnit());
 		
-		interfaceUnitToBeCreated.getSource().add(this.criarSource(nameOfTheTableToBeInterfaceUnitDAO));
+		interfaceUnitToBeCreated.getSource().add(this.criarSource(classCreated.getName()));
 		
-		interfaceUnitToBeCreated.getCodeElement().add(this.createMethodUnitSave(interfaceUnitToBeCreated, classCreated));
+		interfaceUnitToBeCreated.getCodeElement().add(this.createMethodUnitSaveOrDeleteOrUpdateOrFindOrSelectToTheInterfaceUnit("save",interfaceUnitToBeCreated, classCreated));
+		
+		interfaceUnitToBeCreated.getCodeElement().add(this.createMethodUnitSaveOrDeleteOrUpdateOrFindOrSelectToTheInterfaceUnit("delete",interfaceUnitToBeCreated, classCreated));
+		
+		interfaceUnitToBeCreated.getCodeElement().add(this.createMethodUnitSaveOrDeleteOrUpdateOrFindOrSelectToTheInterfaceUnit("update",interfaceUnitToBeCreated, classCreated));
+		
+		interfaceUnitToBeCreated.getCodeElement().add(this.createMethodUnitSaveOrDeleteOrUpdateOrFindOrSelectToTheInterfaceUnit("find",interfaceUnitToBeCreated, classCreated));
+	
+		interfaceUnitToBeCreated.getCodeElement().add(this.createMethodUnitSaveOrDeleteOrUpdateOrFindOrSelectToTheInterfaceUnit("select",interfaceUnitToBeCreated, classCreated));
 		
 		packageCreated.getCodeElement().add(interfaceUnitToBeCreated);
 		
-		this.createClassUnitJDBCDAO(packageCreated, nameOfTheTableToBeInterfaceUnitDAO, interfaceUnitToBeCreated);
+		this.createClassUnitJDBCDAO(packageCreated, classCreated, interfaceUnitToBeCreated);
 		
 	}
 	
-	private void createClassUnitJDBCDAO (Package packageCreated, String nameOfTheTableToBeClass, InterfaceUnit interfaceUnit) {
+	private void createClassUnitJDBCDAO (Package packageCreated, ClassUnit nameOfTheTableToBeClass, InterfaceUnit interfaceUnit) {
 		
 		ClassUnit classUnitToBeCreated = CodeFactory.eINSTANCE.createClassUnit();
-		classUnitToBeCreated.setName("JDBC"+nameOfTheTableToBeClass+"DAO");
+		classUnitToBeCreated.setName("JDBC"+nameOfTheTableToBeClass.getName()+"DAO");
 		classUnitToBeCreated.setIsAbstract(false);
 		classUnitToBeCreated.getAttribute().add(this.createAttibuteToPutInTheClassUnit());
-		classUnitToBeCreated.getSource().add(this.criarSource(nameOfTheTableToBeClass));
+		classUnitToBeCreated.getSource().add(this.criarSource(nameOfTheTableToBeClass.getName()));
 		
 		classUnitToBeCreated.getCodeRelation().add(this.createCodeRelationImplements(classUnitToBeCreated, interfaceUnit));
+		
+		classUnitToBeCreated.getCodeElement().add(this.createMethodUnitSaveOrDeleteOrUpdateOrFindOrSelectToTheClassUnit("save",classUnitToBeCreated, nameOfTheTableToBeClass));
+		
+		classUnitToBeCreated.getCodeElement().add(this.createMethodUnitSaveOrDeleteOrUpdateOrFindOrSelectToTheClassUnit("delete",classUnitToBeCreated, nameOfTheTableToBeClass));
+		
+		classUnitToBeCreated.getCodeElement().add(this.createMethodUnitSaveOrDeleteOrUpdateOrFindOrSelectToTheClassUnit("update",classUnitToBeCreated, nameOfTheTableToBeClass));
+		
+		classUnitToBeCreated.getCodeElement().add(this.createMethodUnitSaveOrDeleteOrUpdateOrFindOrSelectToTheClassUnit("find",classUnitToBeCreated, nameOfTheTableToBeClass));
+	
+		classUnitToBeCreated.getCodeElement().add(this.createMethodUnitSaveOrDeleteOrUpdateOrFindOrSelectToTheClassUnit("select",classUnitToBeCreated, nameOfTheTableToBeClass));
 		
 		packageCreated.getCodeElement().add(classUnitToBeCreated);
 		
@@ -327,16 +346,16 @@ public class ModernizationKDMToDAO {
 		
 	}
 	
-	private MethodUnit createMethodUnitSave (InterfaceUnit interfaceUnitToPutTheMethod, ClassUnit classUnitToBeSaved) {
+	private MethodUnit createMethodUnitSaveOrDeleteOrUpdateOrFindOrSelectToTheInterfaceUnit (String saveOrDelete, InterfaceUnit interfaceUnitToPutTheMethod, ClassUnit classUnitToBeSaved) {
 		
 		MethodUnit methodUnitSave = CodeFactory.eINSTANCE.createMethodUnit();
-		methodUnitSave.setName("save");
+		methodUnitSave.setName(saveOrDelete);
 		methodUnitSave.setKind(MethodKind.METHOD);
 		methodUnitSave.setExport(ExportKind.PUBLIC);
 		methodUnitSave.getAttribute().add(this.criarAttibuteForMethodUnit());
 		methodUnitSave.getSource().add(this.criarSource(interfaceUnitToPutTheMethod.getName()));
-		methodUnitSave.setType(this.createSignatureSave(classUnitToBeSaved));
-		methodUnitSave.getCodeElement().add(this.createSignatureSave(classUnitToBeSaved));
+		methodUnitSave.setType(this.createTypeSignature(saveOrDelete, classUnitToBeSaved));
+		methodUnitSave.getCodeElement().add(this.createSignatureSave( saveOrDelete, classUnitToBeSaved));
 		
 		interfaceUnitToPutTheMethod.getCodeElement().add(methodUnitSave);
 		
@@ -345,10 +364,42 @@ public class ModernizationKDMToDAO {
 		return methodUnitSave;
 	}
 	
-	private Signature createSignatureSave (ClassUnit classToBeTyped) {
+	private MethodUnit createMethodUnitSaveOrDeleteOrUpdateOrFindOrSelectToTheClassUnit (String saveOrDeleteOrUpdateOrFindOrSelect, ClassUnit classUnitJDBC, ClassUnit classUnitToBeSaved) {
+		
+		MethodUnit methodUnitSave = CodeFactory.eINSTANCE.createMethodUnit();
+		methodUnitSave.setName(saveOrDeleteOrUpdateOrFindOrSelect);
+		methodUnitSave.setKind(MethodKind.METHOD);
+		methodUnitSave.setExport(ExportKind.PUBLIC);
+		methodUnitSave.getAttribute().add(this.criarAttibuteForMethodUnit());
+		methodUnitSave.getSource().add(this.criarSource(classUnitJDBC.getName()));
+		methodUnitSave.setType(this.createTypeSignature(saveOrDeleteOrUpdateOrFindOrSelect, classUnitToBeSaved));
+		methodUnitSave.getCodeElement().add(this.createSignatureSave( saveOrDeleteOrUpdateOrFindOrSelect, classUnitToBeSaved));
+		
+		classUnitJDBC.getCodeElement().add(methodUnitSave);
+		
+		
+		//colocar dentro do InterfaceUnit:D
+		return methodUnitSave;
+	}
+	
+	
+	private Signature createTypeSignature (String saveOrDelete, ClassUnit classToBeType) {
 		
 		Signature signature = CodeFactory.eINSTANCE.createSignature();
-		signature.setName("save");
+		signature.setName(saveOrDelete);
+		
+		signature.getParameterUnit().add(this.createFirstParameterUnitForSignatureSave(classToBeType));
+		//colocar aqui o parameterUnit
+		signature.getParameterUnit().add(this.createSecondParameterUnitForSignatureSave(classToBeType));
+
+		return signature;
+		
+	}
+	
+	private Signature createSignatureSave (String saveOrDelete, ClassUnit classToBeTyped) {
+		
+		Signature signature = CodeFactory.eINSTANCE.createSignature();
+		signature.setName(saveOrDelete);
 		
 		signature.getParameterUnit().add(this.createFirstParameterUnitForSignatureSave(classToBeTyped));
 		//colocar aqui o parameterUnit

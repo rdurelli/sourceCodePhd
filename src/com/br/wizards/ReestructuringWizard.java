@@ -45,6 +45,7 @@ import com.br.utils.CreateUMLModelBasedOnKDMModel;
 import com.br.utils.ProjectSelectedToModernize;
 import com.br.utils.ReestructuringToBeRealized;
 import com.br.utils.modernization.kdm.DAO.ModernizationKDMToDAO;
+import com.br.utils.modernization.kdm.DAO.ModernizationKDMToJPA;
 
 public class ReestructuringWizard extends Wizard {
 
@@ -167,14 +168,47 @@ public class ReestructuringWizard extends Wizard {
 			
 			IFile fileToBeReadKDM = (IFile) resrouce;
 			
-			ModernizationKDMToDAO modernizationKDM2DAO = new ModernizationKDMToDAO();
+			ModernizationKDMToDAO modernizationKDM2DAO = null;
 			
-			Segment segmentNew = modernizationKDM2DAO.start(fileToBeReadKDM.getLocationURI().toString(), mey);
+			ModernizationKDMToJPA modernizationKDM2JPA = null;
 			
-			UtilKDMModel testeKDM = new UtilKDMModel();
+//			ModernizationKDMToRESTFULL modernizationKDM2RESTFULL = null;
 			
-			testeKDM.save(segmentNew);
+			if (ReestructuringToBeRealized.modernizeToDAO == true) {
+				
+				modernizationKDM2DAO = new ModernizationKDMToDAO();
+				
+				Segment segmentNew = modernizationKDM2DAO.start(fileToBeReadKDM.getLocationURI().toString(), mey);
+				
+				UtilKDMModel testeKDM = new UtilKDMModel();
+				
+				testeKDM.save(segmentNew);
+				
+			} else if (ReestructuringToBeRealized.modernizeToJPA == true) {
+				
+				modernizationKDM2JPA = new ModernizationKDMToJPA();
+				
+				Segment segmentNew = modernizationKDM2JPA.start(fileToBeReadKDM.getLocationURI().toString(), mey);
+				
+				UtilKDMModel testeKDM = new UtilKDMModel();
+				
+				testeKDM.save(segmentNew);
+				
+			} else if (ReestructuringToBeRealized.modernizeToRESTFULL == true) {
+				
+//				COLOCAR AQUI A FUNCIONACIDADE PARA CRIAR O RESTFULL NO KDM....
+				
+				
+			}
 			
+			
+			
+//			Segment segmentNew = modernizationKDM2DAO.start(fileToBeReadKDM.getLocationURI().toString(), mey);
+//			
+//			UtilKDMModel testeKDM = new UtilKDMModel();
+//			
+//			testeKDM.save(segmentNew);
+//			
 			try {
 				ResourcesPlugin.getWorkspace().getRoot().getProject(ProjectSelectedToModernize.projectSelected.getProject().getName()).refreshLocal(IResource.DEPTH_INFINITE, null);
 			} catch (CoreException e) {
