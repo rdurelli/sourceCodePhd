@@ -35,9 +35,31 @@ public class DeepInFieldDeclaration {
 
 	public void deep () {
 		
+		//get the type to validade if it is an instance of Connection, ResultSet, PreparementStatement or Statement;
+				String type  = fieldDeclaration.getType().getType().getName();
+				
+				TypeAccess typeAcess = fieldDeclaration.getType();
+		
 		TypeAccess typeOfTheFiedl = this.fieldDeclaration.getType();
-
-		if (typeOfTheFiedl.getType().getName().equalsIgnoreCase("String")) {
+		
+		
+		if (type.equalsIgnoreCase("Connection")) {
+			
+			createCommentFieldDeclaration.createCommentIfConnection(fieldDeclaration, typeOfTheFiedl);
+			
+		} else if (type.equalsIgnoreCase("ResultSet")) {
+			
+			createCommentFieldDeclaration.createCommentIfResultSet(fieldDeclaration, typeOfTheFiedl);
+			
+		} else if (type.equalsIgnoreCase("PreparedStatement")) {
+			
+			createCommentFieldDeclaration.createCommentIfPreparementStatement(fieldDeclaration, typeOfTheFiedl);
+			
+		} else if (type.equalsIgnoreCase("Statement")) {
+			
+			createCommentFieldDeclaration.createCommentIfJDBCStatement(fieldDeclaration, typeOfTheFiedl);
+			
+		} else if (typeOfTheFiedl.getType().getName().equalsIgnoreCase("String")) {
 
 			VariableDeclarationFragment fragment = fieldDeclaration
 					.getFragments().get(0);

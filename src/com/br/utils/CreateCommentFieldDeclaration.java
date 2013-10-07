@@ -5,11 +5,71 @@ import java.util.List;
 
 import org.eclipse.gmt.modisco.java.Comment;
 import org.eclipse.gmt.modisco.java.FieldDeclaration;
+import org.eclipse.gmt.modisco.java.TypeAccess;
 import org.eclipse.gmt.modisco.java.VariableDeclarationStatement;
 import org.eclipse.gmt.modisco.java.emf.JavaFactory;
 
 public class CreateCommentFieldDeclaration extends CreateComment implements CommentsInTheModelFieldDeclaration{
 
+	
+	
+	@Override
+	public void createCommentIfConnection(
+			FieldDeclaration  variable, TypeAccess type) {
+		
+		Comment newCommentVariableDeclarationStatement = this.createLineComment("// " +type.getType().getName() +" "+ variable.getFragments().get(0).getName() + " is a possible concern to be removed ");
+		variable.getComments().add(newCommentVariableDeclarationStatement);
+		
+		
+//		n‹o usar n‹o esta funcionando verificar o motivo
+//		Comment newCommentType = this.createLineComment("// " + type.getType().getName() + " is a possible concern to be removed ", variable);
+//		type.getComments().add(newCommentType);
+		
+		
+	}
+
+	@Override
+	public void createCommentIfResultSet(
+			FieldDeclaration variable, TypeAccess type) {
+		
+		Comment newCommentVariableDeclarationStatement = this.createLineComment("// " +type.getType().getName() +" "+ variable.getFragments().get(0).getName() + " is a possible concern to be removed ");
+		variable.getComments().add(newCommentVariableDeclarationStatement);
+//		
+//		n‹o usar n‹o esta funcionando verificar o motivo
+//		Comment newCommentType = this.createLineComment("// " + type.getType().getName() + " is a possible concern to be removed", variable);
+//		type.getComments().add(newCommentType);
+//		
+		
+	
+	}
+
+	@Override
+	public void createCommentIfPreparementStatement(
+			FieldDeclaration variable, TypeAccess type) {
+		
+		
+		Comment newCommentVariableDeclarationStatement = this.createLineComment("// " +type.getType().getName() +" "+ variable.getFragments().get(0).getName() + " is a possible concern to be removed ");
+		variable.getComments().add(newCommentVariableDeclarationStatement);
+//		n‹o usar n‹o esta funcionando verificar o motivo
+//		Comment newCommentType = this.createLineComment("// " + type.getType().getName() + " is a possible concern to be removed");
+//		type.getComments().add(newCommentType);
+//		
+
+	}
+
+	@Override
+	public void createCommentIfJDBCStatement(
+			FieldDeclaration variable, TypeAccess type) {
+		
+		Comment newCommentVariableDeclarationStatement = this.createLineComment("// " +type.getType().getName() +" "+ variable.getFragments().get(0).getName() + " is a possible concern to be removed ");
+		variable.getComments().add(newCommentVariableDeclarationStatement);
+		
+		//n‹o usar n‹o esta funcionando verificar o motivo
+//		Comment newCommentType = this.createLineComment("// " + type.getType().getName() + " is a possible concern to be removed", variable);
+//		type.getComments().add(newCommentType);
+		
+	}
+	
 	
 	@Override
 	public List<Comment> createCommentDAODelete (String tableOfTheDeleteStatement, FieldDeclaration field) {
@@ -142,6 +202,18 @@ public class CreateCommentFieldDeclaration extends CreateComment implements Comm
 		return comments;
 	}
 	
+	
+	
+	
+	private Comment createLineComment(String comment) {
+
+		Comment newComment = JavaFactory.eINSTANCE.createLineComment();
+
+		newComment.setContent(comment);
+
+		return newComment;
+
+	}
 	
 	private Comment createLineComment(String comment, FieldDeclaration field) {
 

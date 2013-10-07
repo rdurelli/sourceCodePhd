@@ -4,11 +4,20 @@ import java.util.List;
 
 import org.eclipse.gmt.modisco.java.Comment;
 import org.eclipse.gmt.modisco.java.FieldDeclaration;
+import org.eclipse.gmt.modisco.java.TypeAccess;
 import org.eclipse.gmt.modisco.java.VariableDeclarationStatement;
 
 public interface CommentsInTheModelFieldDeclaration {
 	
 	
+	
+	public void createCommentIfConnection (FieldDeclaration field, TypeAccess type) ;
+	
+	public void createCommentIfResultSet (FieldDeclaration field, TypeAccess type) ;
+	
+	public void createCommentIfPreparementStatement (FieldDeclaration field, TypeAccess type) ;
+	
+	public void createCommentIfJDBCStatement (FieldDeclaration field, TypeAccess type) ;
 	
 	public List<Comment> createCommentDAODelete (String tableOfTheDeleteStatement, FieldDeclaration field) ;
 	
