@@ -1,6 +1,8 @@
 package com.br.wizards;
 
+import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
@@ -36,7 +38,12 @@ import org.eclipse.gmt.modisco.omg.kdm.source.SourceRef;
 import org.eclipse.gmt.modisco.omg.kdm.source.SourceRegion;
 import org.eclipse.jface.wizard.Wizard;
 
+import com.br.catalogue.refactorings.util.PopulateKDMIntoMemory;
 import com.br.databaseDDL.DataBase;
+import com.br.models.graphviz.AttributeModel;
+import com.br.models.graphviz.ClassModel;
+import com.br.models.graphviz.generate.image.GenerateImageFactory;
+import com.br.models.graphviz.generate.image.GraphViz;
 import com.br.util.models.UtilJavaModel;
 import com.br.util.models.UtilKDMModel;
 import com.br.utils.CreateCommentOnJavaModelBasedInSqlStatement;
@@ -46,6 +53,7 @@ import com.br.utils.ProjectSelectedToModernize;
 import com.br.utils.ReestructuringToBeRealized;
 import com.br.utils.modernization.kdm.DAO.ModernizationKDMToDAO;
 import com.br.utils.modernization.kdm.DAO.ModernizationKDMToJPA;
+import com.google.gson.Gson;
 
 public class ReestructuringWizard extends Wizard {
 
@@ -179,6 +187,56 @@ public class ReestructuringWizard extends Wizard {
 				modernizationKDM2DAO = new ModernizationKDMToDAO();
 				
 				Segment segmentNew = modernizationKDM2DAO.start(fileToBeReadKDM.getLocationURI().toString(), mey);
+				
+				
+				PopulateKDMIntoMemory populateKDM = new PopulateKDMIntoMemory(segmentNew);
+				
+				ArrayList<ClassModel> classesPopulated = populateKDM.getClasses();
+				
+				System.out.println("QUantos foram populados " + classesPopulated.size());
+				
+				for (ClassModel classModel : classesPopulated) {
+					System.out.println("As classes recuperadas foram " + classModel.getName());
+					
+					System.out.println("Tem attributo? " + classModel.getAttributes().size());
+					
+					if (classModel.getAttributes() != null) {
+						
+						for (AttributeModel attr : classModel.getAttributes() ) {
+							
+							System.out.println("Name DO ATTRIBUTE " + attr.getName());
+							System.out.println("Type DO ATTRIBUTE " + attr.getType());
+							System.out.println("Acces DO ATTRIBUTE " + attr.getAccesibility());
+							
+							
+						}
+						
+					}
+					
+					
+				}
+				
+				
+				ClassModel classe = new ClassModel();
+				classe.setName("TESTECLASSE");
+				
+				Gson gson = new Gson();
+				
+				String json = gson.toJson(classe);
+				
+				//coloquei aqui s— para ver como ele estava gerando.....
+				GenerateImageFactory generate = GenerateImageFactory.getInstance();
+				generate.createClassGraphviz(classesPopulated);
+				
+				try {
+//////				write converted json data to a file named "file.json"
+				FileWriter writer = new FileWriter("/Users/rafaeldurelli/Desktop/fileNOVOKDM.json");
+				writer.write(json);
+				writer.close();
+////////		 
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 				
 				UtilKDMModel testeKDM = new UtilKDMModel();
 				

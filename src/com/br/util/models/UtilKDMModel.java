@@ -62,6 +62,7 @@ public Segment load(String KDMModelFullPath){
 		// example everything is hierarchical included in this first node
 		System.out.println(resource.getContents().get(0).toString());
 		
+		System.out.println("O Contents Ž " + resource.getContents());
 		
 		return (Segment) resource.getContents().get(0);
 	}

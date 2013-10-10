@@ -80,17 +80,17 @@ public class ModernizationKDMToDAO {
 		
 //		primeira refatoração FEITA devo arrumar isso aqui..
 		
-		Package packageTesteRefactoring = (Package) codeModel.getCodeElement().get(0);
-		
-		ClassUnit classUnitTesteRefactorin = (ClassUnit)packageTesteRefactoring.getCodeElement().get(0);
-		
-		StorableUnit novo = (StorableUnit)classUnitTesteRefactorin.getCodeElement().get(0);
-		
-		Package dao = (Package) codeModel.getCodeElement().get(2);
-		
-		ClassUnit classTObePut = (ClassUnit) dao.getCodeElement().get(0);
-		
-		classTObePut.getCodeElement().add(novo);
+//		Package packageTesteRefactoring = (Package) codeModel.getCodeElement().get(0);
+//		
+//		ClassUnit classUnitTesteRefactorin = (ClassUnit)packageTesteRefactoring.getCodeElement().get(0);
+//		
+//		StorableUnit novo = (StorableUnit)classUnitTesteRefactorin.getCodeElement().get(0);
+//		
+//		Package dao = (Package) codeModel.getCodeElement().get(2);
+//		
+//		ClassUnit classTObePut = (ClassUnit) dao.getCodeElement().get(0);
+//		
+//		classTObePut.getCodeElement().add(novo);
 		
 		return this.segment;		
 		

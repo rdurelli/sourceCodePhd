@@ -93,7 +93,7 @@ public class GenerateImageFactory {
 //	      String type = "svg";    // open with inkscape
 	      String type = "png";
 //	      String type = "plain";
-	      File out = new File("/Users/rafaeldurelli/Documents/workspace_mining/testeVai/tmp/rafael." + type);   // Linux
+	      File out = new File("/Users/rafaeldurelli/Desktop/rafael." + type);   // Linux
 //	      File out = new File("c:/eclipse.ws/graphviz-java-api/out." + type);    // Windows
 	      gv.writeGraphToFile( gv.getGraph( gv.getDotSource(), type ), out );
 		
