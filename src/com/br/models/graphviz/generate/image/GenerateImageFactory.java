@@ -3,10 +3,13 @@ package com.br.models.graphviz.generate.image;
 
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.br.models.graphviz.AttributeModel;
 import com.br.models.graphviz.ClassModel;
+import com.br.models.graphviz.Elements;
+import com.br.models.graphviz.InterfaceModel;
 import com.br.models.graphviz.MethodModel;
 
 
@@ -26,7 +29,7 @@ public class GenerateImageFactory {
 	}
 	
 	
-	public void createClassGraphviz (List<ClassModel> classes) {
+	public void createClassGraphviz (List<? extends Elements> classes) {
 		
 		  GraphViz gv = new GraphViz();
 	      gv.addln(gv.start_graph());
@@ -34,7 +37,9 @@ public class GenerateImageFactory {
 	      gv.addln("edge[dir=back, arrowtail=empty]");
 	      
 	      String node = "";
-	      for (ClassModel classModel : classes) {
+	      for (Elements elementsModel : classes) {
+	       if (elementsModel instanceof ClassModel) {
+	    	   ClassModel classModel = (ClassModel) elementsModel;
 			node =""+classModel.getNumberClass()+"[label = \"{"+classModel.getName()+"|";
 			
 			List<AttributeModel> attributes = classModel.getAttributes();
@@ -80,7 +85,60 @@ public class GenerateImageFactory {
 			node+="}\"];";
 			gv.addln(node);
 //			System.out.println("O NODE Ž " + node);
+		} else if (elementsModel instanceof InterfaceModel) {
+			
+			InterfaceModel interfaceModel = (InterfaceModel) elementsModel;
+			
+			System.out.println("Nome da interface Ž " + interfaceModel);
+			
+			node =""+interfaceModel.getNumberClass()+"[label = \"{\\<\\<interface\\>\\>\\n"+interfaceModel.getName()+"|";
+			
+			List<AttributeModel> attributes = interfaceModel.getAttributes();
+			
+			if (attributes != null) {
+			
+			for (int i = 1; i <= attributes.size(); i++) {
+				
+				if (i < attributes.size()){
+					node+=attributes.get(i-1).getAccesibility()+attributes.get(i-1).getName()+":"+attributes.get(i-1).getType()+"\n";
+				}
+				else if (i == attributes.size()) {
+					
+					node+=attributes.get(i-1).getAccesibility()+attributes.get(i-1).getName()+":"+attributes.get(i-1).getType()+"|";
+					
+				}
+				
+			}
+			} else {
+				
+				node += "|";
+			}
+			
+			List<MethodModel> methods = interfaceModel.getMethods();
+			
+			if (methods != null) {
+			
+			for (int i = 1; i <= methods.size(); i++) {
+				
+				if (i < methods.size()){
+					node+=methods.get(i-1).getAccesibility()+methods.get(i-1).getName()+"\\l";
+				}
+				else if (i == methods.size()) {
+					
+					node+=methods.get(i-1).getAccesibility()+methods.get(i-1).getName();
+					
+				}
+				
+			}
+			} else {
+				node += "";
+			}
+			node+="}\"];";
+			gv.addln(node);
+			
+			
 		}
+	      }
 	      createInherit(classes, gv);
 	      createAggregation(classes, gv);
 	      gv.addln(gv.end_graph());
@@ -100,23 +158,35 @@ public class GenerateImageFactory {
 	}
 	
 	
-	private void createInherit(List<ClassModel> classes, GraphViz gv) {
+	private void createInherit(List<? extends Elements> classes, GraphViz gv) {
 		
-		for (ClassModel classModel : classes) {
-			
+		for (Elements elementsModel : classes) {
+		 if (elementsModel instanceof ClassModel) {	
+			 ClassModel classModel = (ClassModel) elementsModel;
 			if (classModel.getParent() != null) {
 				gv.addln(classModel.getParent().getNumberClass()+"->"+classModel.getNumberClass()+";");
 				
 			}
+			if (classModel.getInterfaceParents() != null && classModel.getInterfaceParents().size() > 0) {
+				
+			ArrayList<InterfaceModel> interfacesParent = classModel.getInterfaceParents();
 			
+			for (InterfaceModel interfaceModel : interfacesParent) {
+				gv.addln(interfaceModel.getNumberClass()+"->"+classModel.getNumberClass()+";");
+			}
+				
+			}
+			
+		} 
 		}
 		
 	}
 	
-	private void createAggregation(List<ClassModel> classes, GraphViz gv) {
+	private void createAggregation(List<? extends Elements> classes, GraphViz gv) {
 		
-		for (ClassModel classModel : classes) {
-			
+		for (Elements elementsModel : classes) {
+		if (elementsModel instanceof ClassModel){	
+		 ClassModel classModel = (ClassModel) elementsModel;	
 			if (classModel.getAggregation() != null) {
 				
 				List<ClassModel> aggregation = classModel.getAggregation();
@@ -126,6 +196,7 @@ public class GenerateImageFactory {
 				}
 				
 			}
+		}
 			
 		}
 		

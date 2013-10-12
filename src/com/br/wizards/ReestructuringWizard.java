@@ -42,6 +42,7 @@ import com.br.catalogue.refactorings.util.PopulateKDMIntoMemory;
 import com.br.databaseDDL.DataBase;
 import com.br.models.graphviz.AttributeModel;
 import com.br.models.graphviz.ClassModel;
+import com.br.models.graphviz.Elements;
 import com.br.models.graphviz.generate.image.GenerateImageFactory;
 import com.br.models.graphviz.generate.image.GraphViz;
 import com.br.util.models.UtilJavaModel;
@@ -191,11 +192,11 @@ public class ReestructuringWizard extends Wizard {
 				
 				PopulateKDMIntoMemory populateKDM = new PopulateKDMIntoMemory(segmentNew);
 				
-				ArrayList<ClassModel> classesPopulated = populateKDM.getClasses();
+				ArrayList<Elements> classesPopulated = populateKDM.getClasses();
 				
 				System.out.println("QUantos foram populados " + classesPopulated.size());
 				
-				for (ClassModel classModel : classesPopulated) {
+				for (Elements classModel : classesPopulated) {
 					System.out.println("As classes recuperadas foram " + classModel.getName());
 					
 					System.out.println("Tem attributo? " + classModel.getAttributes().size());
@@ -217,12 +218,12 @@ public class ReestructuringWizard extends Wizard {
 				}
 				
 				
-				ClassModel classe = new ClassModel();
-				classe.setName("TESTECLASSE");
-				
+//				ClassModel classe = new ClassModel();
+//				classe.setName("TESTECLASSE");
+//				
 				Gson gson = new Gson();
 				
-				String json = gson.toJson(classe);
+				String json = gson.toJson(classesPopulated);
 				
 				//coloquei aqui s— para ver como ele estava gerando.....
 				GenerateImageFactory generate = GenerateImageFactory.getInstance();
