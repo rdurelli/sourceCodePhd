@@ -24,6 +24,7 @@ import com.br.models.graphviz.ClassModel;
 import com.br.models.graphviz.Elements;
 import com.br.models.graphviz.InterfaceModel;
 import com.br.models.graphviz.MethodModel;
+import com.br.models.graphviz.PackageModel;
 
 public class PopulateKDMIntoMemory {
 
@@ -32,6 +33,8 @@ public class PopulateKDMIntoMemory {
 	private Segment segment = null;
 	
 	private CodeModel codeModel = null;
+	
+	private List<PackageModel> allPackages = new ArrayList<PackageModel>();
 	
 	
 	public PopulateKDMIntoMemory(Segment segment) {
@@ -44,7 +47,19 @@ public class PopulateKDMIntoMemory {
 		
 	}
 	
-	public List<Elements> run (EList<AbstractCodeElement> codeElement, ClassUnit... classUnit) {
+	
+	private void createRelationShipBetweenPackage () {
+		
+		for (int i = 1; i < allPackages.size(); i++) {
+			
+			allPackages.get(i-1).setPack(allPackages.get(i));
+			
+		}
+		
+	}
+	
+	
+	public List<Elements> run (EList<AbstractCodeElement> codeElement, PackageModel... packageToAdd) {
 		
 		
 		if (codeElement == null) {
@@ -53,21 +68,66 @@ public class PopulateKDMIntoMemory {
 		} 
 		else {
 			
+			
 			for (AbstractCodeElement abstractCodeElement : codeElement) {
+			
+				
 				
 				if (abstractCodeElement instanceof Package) {
+				
+					PackageModel packageModel = new PackageModel();
+					
+					
+					Package packageKDM = (Package)abstractCodeElement;
+					 
+					packageModel.setName(packageKDM.getName());
+					
+					allPackages.add(packageModel);
+					
+					System.out.println("Package Model " + packageKDM.getName());
+					
+//					packageComposto = packageComposto + packageKDM.getName();
+					
+//					if (packageToAdd.length > 0 && packageToAdd != null) {
+//						
+//						packageModel.setPack(packageToAdd[0]);
+//						
+//					}
 					
 					
 					//obtem o nome do packote cria um PackageModel e set seu nome..
 					
 					run (((Package) abstractCodeElement).getCodeElement());
 					
+					allPackages.clear();
+					
 				} else if (abstractCodeElement instanceof ClassUnit) {
+					
+//					System.out.println("O pacote composto Ž " + packageComposto);
 					
 					ClassUnit classObtida = (ClassUnit) abstractCodeElement;
 					
+					System.out.println(allPackages);
+					
+					createRelationShipBetweenPackage ();
+					
+					
+					String nameComplete = "";
+					for (PackageModel packaName : allPackages) {
+						nameComplete += packaName.getName()+".";
+					}
+					
+//					
+//					System.out.println(nameComplete);
+//					System.out.println(allPackages.get(0));
+					
+					allPackages.get(0).setCompleteName(nameComplete);
+					
 					ClassModel classModel = new ClassModel();
 					classModel.setName(((ClassUnit) abstractCodeElement).getName());
+					classModel.setIsClass(true);
+					classModel.setPackageModel(allPackages.get(0));
+					
 					
 					this.classes.add(classModel);
 					
@@ -151,6 +211,15 @@ public class PopulateKDMIntoMemory {
 					
 					Elements interfaceModel = new InterfaceModel();
 					interfaceModel.setName(((InterfaceUnit) abstractCodeElement).getName());
+					
+					interfaceModel.setIsInterface(true);
+					
+					createRelationShipBetweenPackage ();
+					
+					// arrumar aqui.....
+					interfaceModel.setPackageModel(allPackages.get(0));
+					
+//					allPackages.clear();
 					
 					this.classes.add(interfaceModel);
 					

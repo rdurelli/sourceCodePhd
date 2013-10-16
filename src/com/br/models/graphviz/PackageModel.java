@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 public class PackageModel {
 	
+	private String completeName = "";
 	
 	private String name;
 	
@@ -13,6 +14,14 @@ public class PackageModel {
 	
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	public void setCompleteName(String completeName) {
+		this.completeName = completeName;
+	}
+	
+	public String getCompleteName() {
+		return completeName;
 	}
 	
 	public void setPackages(ArrayList<PackageModel> packages) {
@@ -34,6 +43,5 @@ public class PackageModel {
 	public PackageModel getPack() {
 		return pack;
 	}
-	
 
 }

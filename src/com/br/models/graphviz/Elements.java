@@ -8,6 +8,10 @@ public class Elements {
 	
 	private String name;
 	
+	private boolean isClass = false;
+	
+	private boolean isInterface = false;
+	
 	private int numberClass = 0;
 	
 	private ArrayList<AttributeModel> attributes;
@@ -71,6 +75,23 @@ public class Elements {
 	public void setPackageModel(PackageModel packageModel) {
 		this.packageModel = packageModel;
 	}
+
+	public boolean isClass() {
+		return isClass;
+	}
+
+	public void setIsClass(boolean isClass) {
+		this.isClass = isClass;
+	}
+
+	public boolean isInterface() {
+		return isInterface;
+	}
+
+	public void setIsInterface(boolean isInterface) {
+		this.isInterface = isInterface;
+	}
+	
 	
 	
 	

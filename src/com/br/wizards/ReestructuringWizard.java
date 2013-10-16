@@ -1,7 +1,11 @@
 package com.br.wizards;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +42,7 @@ import org.eclipse.gmt.modisco.omg.kdm.source.SourceRef;
 import org.eclipse.gmt.modisco.omg.kdm.source.SourceRegion;
 import org.eclipse.jface.wizard.Wizard;
 
+import com.br.catalogue.refactorings.util.PopulateKDMFromJSON;
 import com.br.catalogue.refactorings.util.PopulateKDMIntoMemory;
 import com.br.databaseDDL.DataBase;
 import com.br.models.graphviz.AttributeModel;
@@ -196,27 +201,42 @@ public class ReestructuringWizard extends Wizard {
 				
 				System.out.println("QUantos foram populados " + classesPopulated.size());
 				
-				for (Elements classModel : classesPopulated) {
-					System.out.println("As classes recuperadas foram " + classModel.getName());
-					
-					System.out.println("Tem attributo? " + classModel.getAttributes().size());
-					
-					if (classModel.getAttributes() != null) {
-						
-						for (AttributeModel attr : classModel.getAttributes() ) {
-							
-							System.out.println("Name DO ATTRIBUTE " + attr.getName());
-							System.out.println("Type DO ATTRIBUTE " + attr.getType());
-							System.out.println("Acces DO ATTRIBUTE " + attr.getAccesibility());
-							
-							
-						}
-						
-					}
-					
-					
-				}
+//				for (Elements classModel : classesPopulated) {
+//					System.out.println("As classes recuperadas foram " + classModel.getName());
+//					
+//					System.out.println("Tem attributo? " + classModel.getAttributes().size());
+//					
+//					if (classModel.getAttributes() != null) {
+//						
+//						for (AttributeModel attr : classModel.getAttributes() ) {
+//							
+//							System.out.println("Name DO ATTRIBUTE " + attr.getName());
+//							System.out.println("Type DO ATTRIBUTE " + attr.getType());
+//							System.out.println("Acces DO ATTRIBUTE " + attr.getAccesibility());
+//							
+//							
+//						}
+//						
+//						System.out.println("Os packotes s‹o " + classModel.getPackageModel().getName());
+//						
+//						if (classModel.getPackageModel().getPack() != null) {
+//							
+//							System.out.println("O Pack do packote Ž  " + classModel.getPackageModel().getPack().getName());
+//							
+//						}
+//						
+//						
+//						
+//						
+//						
+//					}
+//					
+//					
+//				}
 				
+				
+//				
+//				testPo.verificarPacote();
 				
 //				ClassModel classe = new ClassModel();
 //				classe.setName("TESTECLASSE");
@@ -238,6 +258,23 @@ public class ReestructuringWizard extends Wizard {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+				
+				
+				try {
+					BufferedReader br = new BufferedReader(
+							new FileReader("/Users/rafaeldurelli/Desktop/fileNOVOKDM.json"));
+					
+					Type type = new com.google.gson.reflect.TypeToken<ArrayList<Elements>>(){}.getType();
+					
+					ArrayList<Elements> classes = gson.fromJson(br, type);
+					
+					PopulateKDMFromJSON testPo = new PopulateKDMFromJSON(classes);
+					testPo.run();
+					
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				
 				UtilKDMModel testeKDM = new UtilKDMModel();
 				
