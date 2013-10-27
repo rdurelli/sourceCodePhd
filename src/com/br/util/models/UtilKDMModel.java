@@ -272,4 +272,41 @@ public Segment load(String KDMModelFullPath){
 
 	}
 	
+//	this method is used to save the JavaModel 
+	public void save(Segment model, String name, String projectURI)  {
+
+
+		KdmPackage.eINSTANCE.eClass();
+
+		Resource.Factory.Registry reg = Resource.Factory.Registry.INSTANCE;
+		Map<String, Object> m = reg.getExtensionToFactoryMap();
+		m.put("website", new XMIResourceFactoryImpl());
+
+		// Obtain a new resource set
+		ResourceSet resSet = new ResourceSetImpl();
+
+//		ProjectSelectedToModernize.projectSelected.getProject().getF
+		
+//		IResource resrouce = ProjectSelectedToModernize.projectSelected.getProject().findMember("/MODELS_PIM/KDMMODEL.xmi");
+//		
+//		IFile fileToBeRead = (IFile) resrouce;
+		
+//		String locationOfTheNewJAvaModelWithComment = ProjectSelectedToModernize.projectSelected.getProject().getLocationURI().toString();
+		
+		Resource resource = resSet.createResource(URI.createURI(projectURI+"/MODELS_PIM_modificado/KDMRefactoring.xmi"));
+
+		resource.getContents().add(model);
+
+		try {
+
+			resource.save(Collections.EMPTY_MAP);
+
+		} catch (IOException e) {
+			// TODO: handle exception
+		}
+
+	}
+	
+	
+	
 }

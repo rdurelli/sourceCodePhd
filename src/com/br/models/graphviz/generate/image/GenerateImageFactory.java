@@ -7,10 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.br.models.graphviz.AttributeModel;
-import com.br.models.graphviz.ClassModel;
 import com.br.models.graphviz.Elements;
-import com.br.models.graphviz.InterfaceModel;
 import com.br.models.graphviz.MethodModel;
+
+
 
 
 
@@ -38,8 +38,8 @@ public class GenerateImageFactory {
 	      
 	      String node = "";
 	      for (Elements elementsModel : classes) {
-	       if (elementsModel instanceof ClassModel) {
-	    	   ClassModel classModel = (ClassModel) elementsModel;
+	       if (elementsModel.isClass()) {
+	    	   Elements classModel = (Elements) elementsModel;
 			node =""+classModel.getNumberClass()+"[label = \"{"+classModel.getName()+"|";
 			
 			List<AttributeModel> attributes = classModel.getAttributes();
@@ -85,9 +85,9 @@ public class GenerateImageFactory {
 			node+="}\"];";
 			gv.addln(node);
 //			System.out.println("O NODE Ž " + node);
-		} else if (elementsModel instanceof InterfaceModel) {
+		} else if (elementsModel.isInterface()) {
 			
-			InterfaceModel interfaceModel = (InterfaceModel) elementsModel;
+			Elements interfaceModel = (Elements) elementsModel;
 			
 			System.out.println("Nome da interface Ž " + interfaceModel);
 			
@@ -161,17 +161,17 @@ public class GenerateImageFactory {
 	private void createInherit(List<? extends Elements> classes, GraphViz gv) {
 		
 		for (Elements elementsModel : classes) {
-		 if (elementsModel instanceof ClassModel) {	
-			 ClassModel classModel = (ClassModel) elementsModel;
+		 if (elementsModel.isClass()) {	
+			 Elements classModel = (Elements) elementsModel;
 			if (classModel.getParent() != null) {
 				gv.addln(classModel.getParent().getNumberClass()+"->"+classModel.getNumberClass()+";");
 				
 			}
 			if (classModel.getInterfaceParents() != null && classModel.getInterfaceParents().size() > 0) {
 				
-			ArrayList<InterfaceModel> interfacesParent = classModel.getInterfaceParents();
+			ArrayList<Elements> interfacesParent = classModel.getInterfaceParents();
 			
-			for (InterfaceModel interfaceModel : interfacesParent) {
+			for (Elements interfaceModel : interfacesParent) {
 				gv.addln(interfaceModel.getNumberClass()+"->"+classModel.getNumberClass()+";");
 			}
 				
@@ -185,13 +185,13 @@ public class GenerateImageFactory {
 	private void createAggregation(List<? extends Elements> classes, GraphViz gv) {
 		
 		for (Elements elementsModel : classes) {
-		if (elementsModel instanceof ClassModel){	
-		 ClassModel classModel = (ClassModel) elementsModel;	
+		if (elementsModel.isClass()){	
+			Elements classModel = (Elements) elementsModel;	
 			if (classModel.getAggregation() != null) {
 				
-				List<ClassModel> aggregation = classModel.getAggregation();
+				List<Elements> aggregation = classModel.getAggregation();
 				
-				for (ClassModel classAgregation : aggregation) {
+				for (Elements classAgregation : aggregation) {
 					gv.addln(classAgregation.getNumberClass()+"->"+classModel.getNumberClass()+"[arrowtail=vee style=dashed label=\"<has>\"];");
 				}
 				

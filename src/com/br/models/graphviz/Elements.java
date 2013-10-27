@@ -8,17 +8,21 @@ public class Elements {
 	
 	private String name;
 	
+	private int numberClass = 0;
+	
 	private boolean isClass = false;
 	
 	private boolean isInterface = false;
-	
-	private int numberClass = 0;
 	
 	private ArrayList<AttributeModel> attributes;
 	
 	private ArrayList<MethodModel> methods;
 	
-	private ArrayList<ClassModel> aggregation;
+	private ArrayList<Elements> interfaceParents;
+	
+	private Elements parent;
+	
+	private ArrayList<Elements> aggregation;
 
 	private PackageModel packageModel;
 	
@@ -43,12 +47,19 @@ public class Elements {
 		this.attributes = attributes;
 	}
 
+	public Elements getParent() {
+		return parent;
+	}
 
-	public ArrayList<ClassModel> getAggregation() {
+	public void setParent(Elements parent) {
+		this.parent = parent;
+	}
+
+	public ArrayList<Elements> getAggregation() {
 		return aggregation;
 	}
 
-	public void setAggregation(ArrayList<ClassModel> aggregation) {
+	public void setAggregation(ArrayList<Elements> aggregation) {
 		this.aggregation = aggregation;
 	}
 	
@@ -75,7 +86,7 @@ public class Elements {
 	public void setPackageModel(PackageModel packageModel) {
 		this.packageModel = packageModel;
 	}
-
+	
 	public boolean isClass() {
 		return isClass;
 	}
@@ -92,7 +103,29 @@ public class Elements {
 		this.isInterface = isInterface;
 	}
 	
+	public ArrayList<Elements> getInterfaceParents() {
+		return interfaceParents;
+	}
+	
+	public void setInterfaceParents(ArrayList<Elements> interfaceParents) {
+		this.interfaceParents = interfaceParents;
+	}
 	
 	
+	@Override
+	public boolean equals(Object other) {
+		
+		boolean result;
+	    if((other == null) || (getClass() != other.getClass())){
+	        result = false;
+	    } // end if
+	    else{
+	    	Elements otherClassModel = (Elements)other;
+	        result = this.getName().equals(otherClassModel.getName());
+	    } // end else
+
+	    return result;
+	}
 	
 }
+

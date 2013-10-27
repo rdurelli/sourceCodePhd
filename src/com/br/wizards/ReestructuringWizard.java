@@ -41,12 +41,13 @@ import org.eclipse.gmt.modisco.omg.kdm.source.SourceFile;
 import org.eclipse.gmt.modisco.omg.kdm.source.SourceRef;
 import org.eclipse.gmt.modisco.omg.kdm.source.SourceRegion;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 
 import com.br.catalogue.refactorings.util.PopulateKDMFromJSON;
 import com.br.catalogue.refactorings.util.PopulateKDMIntoMemory;
 import com.br.databaseDDL.DataBase;
 import com.br.models.graphviz.AttributeModel;
-import com.br.models.graphviz.ClassModel;
 import com.br.models.graphviz.Elements;
 import com.br.models.graphviz.generate.image.GenerateImageFactory;
 import com.br.models.graphviz.generate.image.GraphViz;
@@ -190,6 +191,17 @@ public class ReestructuringWizard extends Wizard {
 			
 			if (ReestructuringToBeRealized.modernizeToDAO == true) {
 				
+				
+				try {
+					System.out.println("Passou Aqui tentou chamar ...");
+					PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView("org.eclipse.wb.swt.RefactoringNameClass");
+					System.out.println("Passou Aqui tentou chamar 2222...");
+				} catch (PartInitException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				
+				
 				modernizationKDM2DAO = new ModernizationKDMToDAO();
 				
 				Segment segmentNew = modernizationKDM2DAO.start(fileToBeReadKDM.getLocationURI().toString(), mey);
@@ -258,6 +270,8 @@ public class ReestructuringWizard extends Wizard {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+				
+				
 				
 				
 				try {

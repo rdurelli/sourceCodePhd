@@ -151,4 +151,46 @@
        </action>
     </objectContribution>
  </extension>
+ <extension
+       point="org.eclipse.ui.views">
+    <view
+          class="com.br.gui.refactoring.RefactoringNameClass"
+          id="org.eclipse.wb.swt.RefactoringNameClass"
+          name="name"
+          restorable="true">
+    </view>
+    <view
+          class="com.br.gui.refactoring.RenameClassUnit"
+          id="com.br.gui.refactoring.RenameClassUnit"
+          name="Rename ClassUnit">
+    </view>
+ </extension>
+ <extension
+       point="org.eclipse.ui.popupMenus">
+    <objectContribution
+          adaptable="false"
+          id="TestePlugin.contribution3"
+          objectClass="org.eclipse.ui.IEditorInput">
+       <menu
+             icon="icons/5124.png"
+             id="TestePlugin.menu4"
+             label="Refactoring KDM"
+             path="additions">
+          <groupMarker
+                name="content">
+          </groupMarker>
+          <separator
+                name="additions">
+          </separator>
+       </menu>
+       <action
+             class="com.br.actions.ActionRefactoringRenameClass"
+             enablesFor="1"
+             icon="icons/4416.png"
+             id="com.actions.newActionRefactoringName"
+             label="Rename Class"
+             menubarPath="TestePlugin.menu4/content">
+       </action>
+    </objectContribution>
+ </extension>
 </plugin>

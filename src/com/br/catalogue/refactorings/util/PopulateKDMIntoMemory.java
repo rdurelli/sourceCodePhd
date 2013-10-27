@@ -20,9 +20,7 @@ import org.eclipse.gmt.modisco.omg.kdm.kdm.Attribute;
 import org.eclipse.gmt.modisco.omg.kdm.kdm.Segment;
 
 import com.br.models.graphviz.AttributeModel;
-import com.br.models.graphviz.ClassModel;
 import com.br.models.graphviz.Elements;
-import com.br.models.graphviz.InterfaceModel;
 import com.br.models.graphviz.MethodModel;
 import com.br.models.graphviz.PackageModel;
 
@@ -123,7 +121,7 @@ public class PopulateKDMIntoMemory {
 					
 					allPackages.get(0).setCompleteName(nameComplete);
 					
-					ClassModel classModel = new ClassModel();
+					Elements classModel = new Elements();
 					classModel.setName(((ClassUnit) abstractCodeElement).getName());
 					classModel.setIsClass(true);
 					classModel.setPackageModel(allPackages.get(0));
@@ -209,7 +207,7 @@ public class PopulateKDMIntoMemory {
 					
 					InterfaceUnit interfaceObtida = (InterfaceUnit) abstractCodeElement;
 					
-					Elements interfaceModel = new InterfaceModel();
+					Elements interfaceModel = new Elements();
 					interfaceModel.setName(((InterfaceUnit) abstractCodeElement).getName());
 					
 					interfaceModel.setIsInterface(true);
@@ -311,8 +309,8 @@ public class PopulateKDMIntoMemory {
 	private void createParentRelationShip (EList<AbstractCodeElement> codeElement) {
 		
 		
-		ClassModel classModelFROMRecuperatedInterface = null;
-		ArrayList<InterfaceModel> interfaceParents = new ArrayList<InterfaceModel>();
+		Elements classModelFROMRecuperatedInterface = null;
+		ArrayList<Elements> interfaceParents = new ArrayList<Elements>();
 		
 		if (codeElement == null) {
 			
@@ -339,17 +337,17 @@ public class PopulateKDMIntoMemory {
 							
 							String to = extendsKMD.getTo().getName();
 							
-							ClassModel classModelTO = new ClassModel();
+							Elements classModelTO = new Elements();
 							classModelTO.setName(to);
 							
 							String from = extendsKMD.getFrom().getName();
 							
-							ClassModel classModelFROM = new ClassModel();
+							Elements classModelFROM = new Elements();
 							classModelFROM.setName(from);
 							
-							ClassModel classModelFROMRecuperated = (ClassModel)getClasses().get(getClasses().indexOf(classModelFROM));
+							Elements classModelFROMRecuperated = (Elements)getClasses().get(getClasses().indexOf(classModelFROM));
 							
-							ClassModel classModelTORecuperated = (ClassModel)getClasses().get(getClasses().indexOf(classModelTO));
+							Elements classModelTORecuperated = (Elements)getClasses().get(getClasses().indexOf(classModelTO));
 							classModelFROMRecuperated.setParent(classModelTORecuperated);
 							
 //							System.out.println("Contém a classe TO " + getClasses().contains(classModelTO));
@@ -379,19 +377,19 @@ public class PopulateKDMIntoMemory {
 //							
 							System.out.println("TO é " + to);
 //							
-							InterfaceModel interfaceModelTO = new InterfaceModel();
+							Elements interfaceModelTO = new Elements();
 							interfaceModelTO.setName(to);
 							
 							String from = implementsKMD.getFrom().getName();
 //							
-							ClassModel classModelFROM = new ClassModel();
+							Elements classModelFROM = new Elements();
 							classModelFROM.setName(from);
 //							
 							System.out.println("FROM é " + from);
 //							
-							classModelFROMRecuperatedInterface = (ClassModel)getClasses().get(getClasses().indexOf(classModelFROM));						
+							classModelFROMRecuperatedInterface = (Elements)getClasses().get(getClasses().indexOf(classModelFROM));						
 							
-							InterfaceModel interfaceModelTORecuperated = (InterfaceModel)getClasses().get(getClasses().indexOf(interfaceModelTO));
+							Elements interfaceModelTORecuperated = (Elements)getClasses().get(getClasses().indexOf(interfaceModelTO));
 
 							System.out.println(interfaceModelTORecuperated);
 							
@@ -443,19 +441,19 @@ public class PopulateKDMIntoMemory {
 					
 					ClassUnit classUnit = (ClassUnit) abstractCodeElement;
 					
-					ArrayList<ClassModel> aggregation = new ArrayList<ClassModel>();
+					ArrayList<Elements> aggregation = new ArrayList<Elements>();
 					
 					EList<CodeItem> codeItems = classUnit.getCodeElement();
 					
 					if (codeItems != null) {
 						
 
-						ClassModel classThatContainTheAggregation = new ClassModel();
+						Elements classThatContainTheAggregation = new Elements();
 						classThatContainTheAggregation.setName(classUnit.getName());
 						
 						int indexClassThatContainTheAggregation = getClasses().indexOf(classThatContainTheAggregation);
 						
-						ClassModel classToPutTheAggregation = (ClassModel)getClasses().get(indexClassThatContainTheAggregation);
+						Elements classToPutTheAggregation = (Elements)getClasses().get(indexClassThatContainTheAggregation);
 						
 						for (CodeItem codeItem : codeItems) {
 							
@@ -471,13 +469,13 @@ public class PopulateKDMIntoMemory {
 									if (!type.equals("String")) {
 										
 										
-										ClassModel classModelAggregation = new ClassModel();
+										Elements classModelAggregation = new Elements();
 										classModelAggregation.setName(type);
 										
 										int indexAggregation = getClasses().indexOf(classModelAggregation);
 										
 										
-										ClassModel theAggregation = (ClassModel)getClasses().get(indexAggregation);
+										Elements theAggregation = (Elements)getClasses().get(indexAggregation);
 										aggregation.add(theAggregation);
 										
 										System.out.println("O indexe é " + getClasses().indexOf(classModelAggregation));

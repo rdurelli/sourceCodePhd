@@ -10,9 +10,7 @@ import org.eclipse.gmt.modisco.omg.kdm.code.Package;
 import org.eclipse.gmt.modisco.omg.kdm.kdm.KDMModel;
 import org.eclipse.gmt.modisco.omg.kdm.kdm.Segment;
 
-import com.br.models.graphviz.ClassModel;
 import com.br.models.graphviz.Elements;
-import com.br.models.graphviz.InterfaceModel;
 import com.br.models.graphviz.PackageModel;
 
 public class PopulateKDMFromJSON {
@@ -21,6 +19,10 @@ public class PopulateKDMFromJSON {
 	private ArrayList<Elements> elements;
 	
 	private Segment segment;
+	
+	private String pacoteUniversal = "";
+	
+	private ArrayList<PackageModel> pacotes = new ArrayList<PackageModel>();
 	
 	private PackageModel pacoteToUse = new PackageModel();
 	
@@ -46,11 +48,32 @@ public class PopulateKDMFromJSON {
 			
 			if (elem.isClass()) {
 				
-				ClassModel classTEsteMudan = (ClassModel) elem;
+//				ClassModel classTEsteMudan = (ClassModel) elem;
+				
+				
+				
+				
 				
 				System.out.println("É class e seu nome é " + elem.getName());
 				
-				System.out.println("O pacote da classe é " + classTEsteMudan.getPackageModel().getCompleteName());
+				if (elem.getMethods() != null) {
+					
+					System.out.println(elem.getName() +" Tem um total de tantos métodos " + elem.getMethods().size());
+				}
+				
+				
+				System.out.println("O pacote da classe é " + elem.getPackageModel().getCompleteName());
+				
+				
+				
+				if (!elem.getPackageModel().getCompleteName().equals(pacoteUniversal)) {
+					
+					pacoteUniversal = elem.getPackageModel().getCompleteName();
+					
+					System.out.println("O pacote Universal é " + pacoteUniversal);
+					
+				}
+				
 				
 			} else if (elem.isInterface()) {
 				
@@ -63,13 +86,13 @@ public class PopulateKDMFromJSON {
 			
 			
 //			System.out.println("O nome é " +elem.getName());
-//			PackageModel pegando = createKDMPackage(elem.getPackageModel());
+			PackageModel pegando = createKDMPackage(elem.getPackageModel());
 //			
-//			if (pegando.getCompleteName().equals(pacoteToUse.getCompleteName())) {
-//				
-//				pacoteToUse = pegando;
-//				
-//			}
+			if (pegando.getCompleteName().equals(pacoteToUse.getCompleteName())) {
+				
+				pacoteToUse = pegando;
+				
+			}
 //			
 //			if (elem instanceof ClassModel) {
 //				
@@ -112,6 +135,27 @@ public class PopulateKDMFromJSON {
 			
 		}
 		
+	
+	
+	
+	private void createPackage(String completeNamePackage) {
+		
+		
+		String[] nameSplit = completeNamePackage.split("\\.");
+		
+		for (int i = 0; i < nameSplit.length; i++) {
+			
+			PackageModel packToBeCreated = new PackageModel();
+			packToBeCreated.setName(nameSplit[i]);
+			
+			pacotes.add(packToBeCreated);
+			
+			
+		}
+		
+		
+	}
+	
 		
 //		return this.segment;
 	
