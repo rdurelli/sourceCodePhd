@@ -188,7 +188,13 @@
              enablesFor="1"
              icon="icons/4416.png"
              id="com.actions.newActionRefactoringName"
-             label="Rename Class"
+             label="Rename KDMEntity"
+             menubarPath="TestePlugin.menu4/content">
+       </action>
+       <action
+             class="com.br.actions.ExtractClass"
+             id="com.actions.newActionExtractClass"
+             label="Extract Class"
              menubarPath="TestePlugin.menu4/content">
        </action>
     </objectContribution>

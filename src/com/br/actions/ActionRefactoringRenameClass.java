@@ -1,6 +1,7 @@
 package com.br.actions;
 
 import java.awt.Window;
+import java.util.ArrayList;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -16,9 +17,15 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.gmt.modisco.infra.browser.MoDiscoBrowserPlugin;
 import org.eclipse.gmt.modisco.infra.browser.editors.EcoreBrowser;
+import org.eclipse.gmt.modisco.omg.kdm.action.ActionElement;
+import org.eclipse.gmt.modisco.omg.kdm.action.BlockUnit;
 import org.eclipse.gmt.modisco.omg.kdm.code.ClassUnit;
 import org.eclipse.gmt.modisco.omg.kdm.code.CodeModel;
+import org.eclipse.gmt.modisco.omg.kdm.code.InterfaceUnit;
+import org.eclipse.gmt.modisco.omg.kdm.code.MethodUnit;
 import org.eclipse.gmt.modisco.omg.kdm.code.Package;
+import org.eclipse.gmt.modisco.omg.kdm.code.StorableUnit;
+import org.eclipse.gmt.modisco.omg.kdm.core.KDMEntity;
 import org.eclipse.gmt.modisco.omg.kdm.kdm.Segment;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -40,9 +47,14 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 
+import com.br.catalogue.refactorings.util.PopulateKDMIntoMemory;
 import com.br.gui.refactoring.Refactoring;
 import com.br.gui.refactoring.RefactoringName;
 import com.br.gui.refactoring.RefactoringNameWizard;
+import com.br.gui.refactoring.WizardExtract;
+import com.br.gui.refactoring.WizardExtractClass;
+import com.br.models.graphviz.Elements;
+import com.br.models.graphviz.generate.image.GenerateImageFactory;
 import com.br.util.models.UtilKDMModel;
 import com.restphone.jrubyeclipse.Activator;
 
@@ -112,8 +124,25 @@ public class ActionRefactoringRenameClass implements IObjectActionDelegate {
 					
 						//offset
 						offset = ((StructuredSelection) iSelection);
+						
+						
+						if (offset.getFirstElement() instanceof KDMEntity) {
+							
+							KDMEntity kdmEntity = (KDMEntity)offset.getFirstElement();
+							
+							System.out.println("Ok você pode renomear o que vc quiser....");
+							
+							System.out.println("A classe é " + kdmEntity.toString());
+							
+							System.out.println("A classe é " + kdmEntity.getClass());
+							
+						}
+						
 									
 						if ( offset.getFirstElement() instanceof ClassUnit)  {
+							
+							
+							
 							
 							ClassUnit classUnit = (ClassUnit)offset.getFirstElement();	
 						
@@ -151,9 +180,149 @@ public class ActionRefactoringRenameClass implements IObjectActionDelegate {
 							
 							openEditor(fileToOpen);
 							
-						} else {
+							
+							Segment segmentToShow = utilKDM.load(fileToOpen.getFullPath().toOSString());
+							
+							System.out.println(segmentToShow);
+							
+							PopulateKDMIntoMemory populateKDMIntoMemory = new PopulateKDMIntoMemory(segmentToShow);
+							
+							ArrayList<Elements> elements = populateKDMIntoMemory.getClasses();
+							
+							System.out.println(elements.size());
+							
+							GenerateImageFactory generate = GenerateImageFactory.getInstance();
+							generate.createClassGraphviz(elements);
+							
+							
+						} else if (offset.getFirstElement() instanceof InterfaceUnit) {
+							
+							
+							InterfaceUnit interfaceUnit = (InterfaceUnit)offset.getFirstElement();	
+							
+							Segment segment = getSegmentToPersiste(interfaceUnit);
+							
+							WizardDialog wizardDialog = new WizardDialog(shell, new RefactoringNameWizard(interfaceUnit.getName(), interfaceUnit));
+							
+							if (wizardDialog.open() == org.eclipse.jface.window.Window.OK) {
+								
+								System.out.println("Ok pressed..");
+								
+							} else {
+								
+								System.out.println("Cancel pressed..");
+								
+							}
+							
+							UtilKDMModel utilKDM = new UtilKDMModel();
+							
+							Resource resource = utilKDM.save(segment, offset.toString(), URIProject);
+							
+							closeEditor(editorPart);
+							
+							
+							IWorkspaceRoot workRoot = ResourcesPlugin.getWorkspace().getRoot();
 						
-							MessageDialog.openError(shell, "Error", "Please be sure you have selected a class to rename.");
+							IPath path = new Path(resource.getURI().toFileString());
+							
+							IFile fileToOpen = workRoot.getFileForLocation(path);
+								
+							refreshLocal(activeProject);					
+							
+							
+							openEditor(fileToOpen);
+							
+							
+							
+						} else if (offset.getFirstElement() instanceof MethodUnit) {
+							
+							MethodUnit methodUnit = (MethodUnit)offset.getFirstElement();
+							
+							Segment segment = getSegmentToPersiste(methodUnit);
+							
+							WizardDialog wizardDialog = new WizardDialog(shell, new RefactoringNameWizard(methodUnit.getName(), methodUnit));
+							
+							if (wizardDialog.open() == org.eclipse.jface.window.Window.OK) {
+								
+								System.out.println("Ok pressed..");
+								
+							} else {
+								
+								System.out.println("Cancel pressed..");
+								
+							}
+							
+							UtilKDMModel utilKDM = new UtilKDMModel();
+							
+							
+							
+							Resource resource = utilKDM.save(segment, offset.toString(), URIProject);
+							
+							closeEditor(editorPart);
+							
+							
+							IWorkspaceRoot workRoot = ResourcesPlugin.getWorkspace().getRoot();
+						
+							IPath path = new Path(resource.getURI().toFileString());
+							
+							IFile fileToOpen = workRoot.getFileForLocation(path);
+								
+							refreshLocal(activeProject);					
+							
+							
+							openEditor(fileToOpen);
+							
+							
+						} else if (offset.getFirstElement() instanceof StorableUnit) {
+							
+							StorableUnit storableUnit = (StorableUnit) offset.getFirstElement();
+							
+							Segment segment = getSegmentToPersiste(storableUnit);
+							
+							WizardDialog wizardDialog = new WizardDialog(shell, new RefactoringNameWizard(storableUnit.getName(), storableUnit));
+							
+							
+							if (wizardDialog.open() == org.eclipse.jface.window.Window.OK) {
+								
+								System.out.println("Ok pressed..");
+								
+							} else {
+								
+								System.out.println("Cancel pressed..");
+								
+							}
+							
+							UtilKDMModel utilKDM = new UtilKDMModel();
+							
+							
+							
+							Resource resource = utilKDM.save(segment, offset.toString(), URIProject);
+							
+							closeEditor(editorPart);
+							
+							
+							IWorkspaceRoot workRoot = ResourcesPlugin.getWorkspace().getRoot();
+						
+							IPath path = new Path(resource.getURI().toFileString());
+							
+							IFile fileToOpen = workRoot.getFileForLocation(path);
+								
+							refreshLocal(activeProject);					
+							
+							
+							openEditor(fileToOpen);
+							
+							
+						}
+							
+							
+							
+							
+							
+							
+							else {
+						
+							MessageDialog.openError(shell, "Error", "Please be sure you have selected a KDMEntity to rename.");
 							
 							
 						}
@@ -168,11 +337,11 @@ public class ActionRefactoringRenameClass implements IObjectActionDelegate {
 
 	}
 	
-	private Segment getSegmentToPersiste(ClassUnit classUnit) {
+	private Segment getSegmentToPersiste(KDMEntity kdmEntity) {
 		
 		Segment segment = null;
 		
-		EObject eObject = classUnit.eContainer();
+		EObject eObject = kdmEntity.eContainer();
 		
 		while (segment == null) {
 			
@@ -198,6 +367,34 @@ public class ActionRefactoringRenameClass implements IObjectActionDelegate {
 				CodeModel codeModelKDM = (CodeModel) eObject;
 				
 				eObject = codeModelKDM.eContainer();
+				
+			} else if (eObject instanceof ClassUnit) {
+				
+				ClassUnit classUnitKDM = (ClassUnit) eObject;
+				eObject = classUnitKDM.eContainer();
+				
+			} else if (eObject instanceof ActionElement) {
+				
+				ActionElement actionElement = (ActionElement) eObject;
+				
+				eObject = actionElement.eContainer();
+				
+				
+			} else if (eObject instanceof BlockUnit) {
+				
+				
+				BlockUnit blockUnit = (BlockUnit) eObject;
+				
+				eObject = blockUnit.eContainer();
+				
+				
+			} else if (eObject instanceof MethodUnit) {
+				
+				
+				MethodUnit methodUnit = (MethodUnit) eObject;
+				
+				eObject = methodUnit.eContainer();
+				
 				
 			}
 			

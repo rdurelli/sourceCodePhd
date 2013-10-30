@@ -20,8 +20,8 @@ public class RenamingRefactoringPage extends WizardPage {
 	 */
 	public RenamingRefactoringPage(String nameClass) {
 		super("wizardPage");
-		setTitle("Rename ClassUnit - KDM.");
-		setDescription("Rename ClassUnit.");
+		setTitle("Rename KDMEntity.");
+		setDescription("Renaming.");
 		this.nameClass = nameClass;
 	}
 
