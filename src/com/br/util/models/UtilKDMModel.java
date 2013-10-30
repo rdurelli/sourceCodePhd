@@ -273,7 +273,7 @@ public Segment load(String KDMModelFullPath){
 	}
 	
 //	this method is used to save the JavaModel 
-	public void save(Segment model, String name, String projectURI)  {
+	public Resource save(Segment model, String name, String projectURI)  {
 
 
 		KdmPackage.eINSTANCE.eClass();
@@ -300,11 +300,13 @@ public Segment load(String KDMModelFullPath){
 		try {
 
 			resource.save(Collections.EMPTY_MAP);
-
+			
 		} catch (IOException e) {
 			// TODO: handle exception
 		}
 
+		return resource;
+		
 	}
 	
 	

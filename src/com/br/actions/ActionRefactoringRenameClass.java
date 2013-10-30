@@ -4,7 +4,16 @@ import java.awt.Window;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.gmt.modisco.infra.browser.MoDiscoBrowserPlugin;
 import org.eclipse.gmt.modisco.infra.browser.editors.EcoreBrowser;
 import org.eclipse.gmt.modisco.omg.kdm.code.ClassUnit;
@@ -23,9 +32,11 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IObjectActionDelegate;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 
@@ -47,10 +58,7 @@ public class ActionRefactoringRenameClass implements IObjectActionDelegate {
 	@Override
 	public void run(IAction action) {
 	
-		
-		
-		
-			System.out.println("FEITO");
+	      System.out.println("FEITO");
 		
 		
 			
@@ -75,8 +83,6 @@ public class ActionRefactoringRenameClass implements IObjectActionDelegate {
 				System.out.println("Chegou aqui mesmo");
 				
 				StructuredSelection offset = null;
-				int length = 0;
-				String selectedText = null;
 				IEditorSite iEditorSite = editorPart.getEditorSite();
 				if (iEditorSite != null) {
 					//get selection provider
@@ -106,99 +112,52 @@ public class ActionRefactoringRenameClass implements IObjectActionDelegate {
 					
 						//offset
 						offset = ((StructuredSelection) iSelection);
-						
-						System.out.println("O nome do arquivo " + offset.toString());
-						
-						
-						ClassUnit classUnit = (ClassUnit)offset.getFirstElement();
-						
-						
-						Segment segment = null;
-						
-						EObject eObject = classUnit.eContainer();
-						
-						while (segment == null) {
+									
+						if ( offset.getFirstElement() instanceof ClassUnit)  {
 							
+							ClassUnit classUnit = (ClassUnit)offset.getFirstElement();	
+						
+							Segment segment = getSegmentToPersiste(classUnit);
 							
+							WizardDialog wizardDialog = new WizardDialog(shell, new RefactoringNameWizard(classUnit.getName(), classUnit));
 							
-							
-							if (eObject instanceof Segment) {
+							if (wizardDialog.open() == org.eclipse.jface.window.Window.OK) {
 								
-								segment = (Segment) eObject;
+								System.out.println("Ok pressed..");
 								
-							} else if ( eObject instanceof Package)
-							{
+							} else {
 								
-								Package packageKDM = (Package) eObject;
-								
-								eObject = packageKDM.eContainer();
-								
-								System.out.println(eObject);
-								
-							} else if (eObject instanceof CodeModel) {
-								
-								
-								CodeModel codeModelKDM = (CodeModel) eObject;
-								
-								eObject = codeModelKDM.eContainer();
+								System.out.println("Cancel pressed..");
 								
 							}
 							
+							UtilKDMModel utilKDM = new UtilKDMModel();
 							
-						}
-						
-						System.out.println("o Segmento Ž " + segment.getModel().size());
-						
-						System.out.println(" O container da classe Ž " + classUnit.eContainer());
-						
-						WizardDialog wizardDialog = new WizardDialog(shell, new RefactoringNameWizard(classUnit.getName(), classUnit));
-						
-						if (wizardDialog.open() == org.eclipse.jface.window.Window.OK) {
 							
-							System.out.println("Ok pressed..");
+							
+							Resource resource = utilKDM.save(segment, offset.toString(), URIProject);
+							
+							closeEditor(editorPart);
+							
+							
+							IWorkspaceRoot workRoot = ResourcesPlugin.getWorkspace().getRoot();
+						
+							IPath path = new Path(resource.getURI().toFileString());
+							
+							IFile fileToOpen = workRoot.getFileForLocation(path);
+								
+							refreshLocal(activeProject);					
+							
+							
+							openEditor(fileToOpen);
 							
 						} else {
+						
+							MessageDialog.openError(shell, "Error", "Please be sure you have selected a class to rename.");
 							
-							System.out.println("Cancel pressed..");
 							
 						}
 						
-						UtilKDMModel utilKDM = new UtilKDMModel();
-						
-						
-						
-						utilKDM.save(segment, offset.toString(), URIProject);
-						
-						System.out.println("salvou.");
-						
-						
-//						Shell activeShell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-//						
-//						RefactoringName refactoringTeste = new RefactoringName(activeShell, classUnit);
-//						refactoringTeste.open();
-						
-//						try {
-//							PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView("com.br.gui.refactoring.RenameClassUnit");
-//						} catch (PartInitException e) {
-//							// TODO Auto-generated catch block
-//							e.printStackTrace();
-//						}
-						
-//						RefactoringName refactoringTeste = new RefactoringName(shell, classUnit);
-//						
-//						refactoringTeste.open();
-						
-//						Refactoring refactoring = new Refactoring(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), classUnit);
-//						refactoring.open();
-//						
-//						System.out.println("O novo nome Ž " + refactoring.getNewName());
-//						
-//						
-//						System.out.println("O primeiro elemento Ž " + offset.getFirstElement());
-//						
-//						System.out.println("O nome da classe " + classUnit.getName());
-//						
-//						classUnit.setName("MUDADOPELORAFAEL");
 						
 					}
 				}
@@ -208,7 +167,78 @@ public class ActionRefactoringRenameClass implements IObjectActionDelegate {
 		
 
 	}
-
+	
+	private Segment getSegmentToPersiste(ClassUnit classUnit) {
+		
+		Segment segment = null;
+		
+		EObject eObject = classUnit.eContainer();
+		
+		while (segment == null) {
+			
+			
+			
+			
+			if (eObject instanceof Segment) {
+				
+				segment = (Segment) eObject;
+				
+			} else if ( eObject instanceof Package)
+			{
+				
+				Package packageKDM = (Package) eObject;
+				
+				eObject = packageKDM.eContainer();
+				
+				System.out.println(eObject);
+				
+			} else if (eObject instanceof CodeModel) {
+				
+				
+				CodeModel codeModelKDM = (CodeModel) eObject;
+				
+				eObject = codeModelKDM.eContainer();
+				
+			}
+			
+			
+		}
+		
+		return segment;
+	}
+	
+	private void closeEditor (IEditorPart editorPart) {
+		
+		
+		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().closeEditor(editorPart, true);
+		
+	}
+	
+	private void openEditor (IFile fileToOpen) {
+		
+		 IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+			
+			try {
+				IDE.openEditor(page, fileToOpen);
+			} catch (PartInitException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		
+		
+	}
+	
+	private void refreshLocal (IProject project) {
+		
+		try {
+			ResourcesPlugin.getWorkspace().getRoot().getProject(project.getName()).refreshLocal(IResource.DEPTH_INFINITE, null);
+		} catch (CoreException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}					
+		
+	}
+	
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		// TODO Auto-generated method stub
