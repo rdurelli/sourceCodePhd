@@ -4,8 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -24,6 +26,7 @@ import org.eclipse.gmt.modisco.omg.kdm.code.AbstractCodeElement;
 import org.eclipse.gmt.modisco.omg.kdm.code.BooleanType;
 import org.eclipse.gmt.modisco.omg.kdm.code.CharType;
 import org.eclipse.gmt.modisco.omg.kdm.code.ClassUnit;
+import org.eclipse.gmt.modisco.omg.kdm.code.CodeFactory;
 import org.eclipse.gmt.modisco.omg.kdm.code.CodeModel;
 import org.eclipse.gmt.modisco.omg.kdm.code.FloatType;
 import org.eclipse.gmt.modisco.omg.kdm.code.IntegerType;
@@ -36,7 +39,13 @@ import org.eclipse.gmt.modisco.omg.kdm.code.VoidType;
 import org.eclipse.gmt.modisco.omg.kdm.kdm.KDMModel;
 import org.eclipse.gmt.modisco.omg.kdm.kdm.KdmPackage;
 import org.eclipse.gmt.modisco.omg.kdm.kdm.Segment;
+import org.eclipse.gmt.modisco.omg.kdm.source.SourceFactory;
+import org.eclipse.gmt.modisco.omg.kdm.source.SourceFile;
+import org.eclipse.gmt.modisco.omg.kdm.source.SourceRef;
+import org.eclipse.gmt.modisco.omg.kdm.source.SourceRegion;
+import org.omg.IOP.CodecFactory;
 
+import com.br.databaseDDL.Column;
 import com.br.utils.ProjectSelectedToModernize;
 
 public class UtilKDMModel {
@@ -202,6 +211,63 @@ public Segment load(String KDMModelFullPath){
 		}
 		
 		return stringToBeRetorned;
+		
+	}
+	
+	private SourceFile criarSourceFile (String nameOFTheTableToBeClass) {
+		
+		SourceFile sourceFile = SourceFactory.eINSTANCE.createSourceFile();
+		
+		sourceFile.setName(nameOFTheTableToBeClass+".java");
+		
+		sourceFile.setPath("/Users/rafaeldurelli/Documents/runtime-EclipseApplication/Legacy_System_To_Test/src/"+nameOFTheTableToBeClass+".java");
+		
+		sourceFile.setLanguage("java");
+		
+		
+		return sourceFile;
+		
+	}
+	
+	private SourceRegion criarSourceRegion (String nameOFTheTableToBeClass) {
+		
+		SourceRegion sourceRegion = SourceFactory.eINSTANCE.createSourceRegion();
+		
+		sourceRegion.setLanguage("java");
+//		O File n‹o esta sendo criado no modelo, tentar verificar o motivo...
+		sourceRegion.setFile(this.criarSourceFile(nameOFTheTableToBeClass));
+		
+		
+		return sourceRegion;
+		
+		
+		
+	}
+	
+	private SourceRef criarSource ( String nameOFTheTableToBeClass ) {
+		
+		SourceRef sourceRef = SourceFactory.eINSTANCE.createSourceRef();
+		
+		sourceRef.setLanguage("java");
+		
+		sourceRef.getRegion().add(this.criarSourceRegion(nameOFTheTableToBeClass));
+		
+		return sourceRef;
+		
+	}
+	
+	public ClassUnit createClassUnit (String name, Package packageObtained) {
+		
+		ClassUnit classUnitToBeCreated = CodeFactory.eINSTANCE.createClassUnit();
+		
+		classUnitToBeCreated.setName(name);
+		classUnitToBeCreated.setIsAbstract(false);
+		classUnitToBeCreated.getSource().add(this.criarSource(name));
+		
+		
+		packageObtained.getCodeElement().add(classUnitToBeCreated);
+		
+		return classUnitToBeCreated;
 		
 	}
 	

@@ -24,6 +24,8 @@ public class WizardExtractClass extends WizardPage {
 
 	private ClassUnit classUnitToExtract;
 	
+	private Button btnCreateGettersAnd;
+	
 	
 	/**
 	 * Create the wizard.
@@ -71,7 +73,7 @@ public class WizardExtractClass extends WizardPage {
 		lblSelectFieldsFor.setBounds(10, 86, 174, 14);
 		lblSelectFieldsFor.setText("Select fields for extracted class:");
 		
-		table = new Table(container, SWT.BORDER | SWT.CHECK | SWT.FULL_SELECTION);
+		table = new Table(container, SWT.BORDER | SWT.CHECK | SWT.FULL_SELECTION | SWT.V_SCROLL);
 		table.setBounds(10, 106, 412, 115);
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
@@ -88,9 +90,10 @@ public class WizardExtractClass extends WizardPage {
 		btnEdit.setBounds(428, 106, 94, 28);
 		btnEdit.setText("Edit...");
 		
-		Button btnCreateGettersAnd = new Button(container, SWT.CHECK);
+		btnCreateGettersAnd = new Button(container, SWT.CHECK);
 		btnCreateGettersAnd.setBounds(10, 227, 161, 18);
 		btnCreateGettersAnd.setText("Create getters and setters");
+		btnCreateGettersAnd.setSelection(false);
 		
 		Label lblFieldName = new Label(container, SWT.NONE);
 		lblFieldName.setBounds(10, 251, 69, 14);
@@ -98,12 +101,32 @@ public class WizardExtractClass extends WizardPage {
 		
 		text_1 = new Text(container, SWT.BORDER);
 		text_1.setBounds(83, 246, 432, 19);
+		text_1.setText("data");
 		
 		fillTable(table);
 		
 		Button button = new Button(container, SWT.CHECK);
 		button.setBounds(45, 137, 94, 18);
 		button.setText("Check Button");
+	}
+	
+	
+	public Table getTable() {
+		
+		return table;
+	}
+	
+	public Text getFieldName() {
+		return text_1;
+	}
+	
+	public Text getNameNewClass() {
+		return text;
+	}
+	
+	
+	public Button getCreateGettersAndSetters() {
+		return btnCreateGettersAnd;
 	}
 	
 	
@@ -121,6 +144,7 @@ public class WizardExtractClass extends WizardPage {
 				TableItem item = new TableItem(table, SWT.NONE);
 				
 				item.setText(new String[]{type.getName(), storableUnit.getName()});
+				
 				
 			}
 		}
