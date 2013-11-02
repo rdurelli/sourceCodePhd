@@ -42,9 +42,6 @@ public class UtilJavaModel {
 		// example everything is hierarchical included in this first node
 		System.out.println(resource.getContents().get(0).toString());
 		
-		
-		System.out.println("Deu certo o cara chamaou corretamente");
-		
 		return (Model) resource.getContents().get(0);
 	}
 
@@ -99,6 +96,36 @@ public class UtilJavaModel {
 		String locationOfTheNewJAvaModelWithComment = ProjectSelectedToModernize.projectSelected.getProject().getLocationURI().toString();
 		
 		Resource resource = resSet.createResource(URI.createURI(locationOfTheNewJAvaModelWithComment+"/MODELS_PSM_TO_BE/newJavaModel.javaxmi"));
+
+		resource.getContents().add(model);
+
+		try {
+
+			resource.save(Collections.EMPTY_MAP);
+
+		} catch (IOException e) {
+			// TODO: handle exception
+		}
+
+	}
+	
+//	this method is used to save the JavaModel 
+	public void save(Model model, String path)  {
+
+
+		JavaPackage.eINSTANCE.eClass();
+
+		Resource.Factory.Registry reg = Resource.Factory.Registry.INSTANCE;
+		Map<String, Object> m = reg.getExtensionToFactoryMap();
+		m.put("website", new XMIResourceFactoryImpl());
+
+		// Obtain a new resource set
+		ResourceSet resSet = new ResourceSetImpl();
+
+		
+		
+		
+		Resource resource = resSet.createResource(URI.createURI(path+"/MODELS_PIM_modificado/JavaModelRefactoring.javaxmi"));
 
 		resource.getContents().add(model);
 

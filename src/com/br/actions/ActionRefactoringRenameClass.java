@@ -2,6 +2,9 @@ package com.br.actions;
 
 import java.awt.Window;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -12,11 +15,17 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.gmt.modisco.infra.browser.MoDiscoBrowserPlugin;
 import org.eclipse.gmt.modisco.infra.browser.editors.EcoreBrowser;
+import org.eclipse.gmt.modisco.java.AbstractTypeDeclaration;
+import org.eclipse.gmt.modisco.java.ClassDeclaration;
+import org.eclipse.gmt.modisco.java.Model;
+import org.eclipse.gmt.modisco.java.NamedElement;
+import org.eclipse.gmt.modisco.java.emf.JavaFactory;
 import org.eclipse.gmt.modisco.omg.kdm.action.ActionElement;
 import org.eclipse.gmt.modisco.omg.kdm.action.BlockUnit;
 import org.eclipse.gmt.modisco.omg.kdm.code.ClassUnit;
@@ -55,6 +64,7 @@ import com.br.gui.refactoring.WizardExtract;
 import com.br.gui.refactoring.WizardExtractClass;
 import com.br.models.graphviz.Elements;
 import com.br.models.graphviz.generate.image.GenerateImageFactory;
+import com.br.util.models.UtilJavaModel;
 import com.br.util.models.UtilKDMModel;
 import com.restphone.jrubyeclipse.Activator;
 
@@ -121,6 +131,9 @@ public class ActionRefactoringRenameClass implements IObjectActionDelegate {
 								.getSelection();
 					
 						
+						UtilJavaModel utilJavaModel = new UtilJavaModel();
+						
+						Model modelJava = utilJavaModel.load(activeProject.getLocationURI().toString()+"/MODELS_PIM_modificado/JavaModelRefactoring.javaxmi");
 					
 						//offset
 						offset = ((StructuredSelection) iSelection);
@@ -146,9 +159,20 @@ public class ActionRefactoringRenameClass implements IObjectActionDelegate {
 							
 							ClassUnit classUnit = (ClassUnit)offset.getFirstElement();	
 						
+							
+							String[] packageComplete  = getCompletePackageName(classUnit);
+							
+							NamedElement classDeclaration = getClassDeclaration(classUnit, packageComplete, modelJava);
+							
+							
+//							NamedElement teste = JavaFactory.eINSTANCE.createMethodDeclaration();
+//							
+//							NamedElement teste1 = JavaFactory.eINSTANCE.createFieldDeclaration();
+//							
+							
 							Segment segment = getSegmentToPersiste(classUnit);
 							
-							WizardDialog wizardDialog = new WizardDialog(shell, new RefactoringNameWizard(classUnit.getName(), classUnit));
+							WizardDialog wizardDialog = new WizardDialog(shell, new RefactoringNameWizard(classUnit.getName(), classUnit, classDeclaration, true));
 							
 							if (wizardDialog.open() == org.eclipse.jface.window.Window.OK) {
 								
@@ -160,8 +184,13 @@ public class ActionRefactoringRenameClass implements IObjectActionDelegate {
 								
 							}
 							
+							Model modelObtained  = getModelToPersiste(classDeclaration);
+							
+							System.out.println(modelObtained);
+							
 							UtilKDMModel utilKDM = new UtilKDMModel();
 							
+							utilJavaModel.save(modelObtained, URIProject);
 							
 							
 							Resource resource = utilKDM.save(segment, offset.toString(), URIProject);
@@ -202,7 +231,7 @@ public class ActionRefactoringRenameClass implements IObjectActionDelegate {
 							
 							Segment segment = getSegmentToPersiste(interfaceUnit);
 							
-							WizardDialog wizardDialog = new WizardDialog(shell, new RefactoringNameWizard(interfaceUnit.getName(), interfaceUnit));
+							WizardDialog wizardDialog = new WizardDialog(shell, new RefactoringNameWizard(interfaceUnit.getName(), interfaceUnit, null, false));
 							
 							if (wizardDialog.open() == org.eclipse.jface.window.Window.OK) {
 								
@@ -240,7 +269,7 @@ public class ActionRefactoringRenameClass implements IObjectActionDelegate {
 							
 							Segment segment = getSegmentToPersiste(methodUnit);
 							
-							WizardDialog wizardDialog = new WizardDialog(shell, new RefactoringNameWizard(methodUnit.getName(), methodUnit));
+							WizardDialog wizardDialog = new WizardDialog(shell, new RefactoringNameWizard(methodUnit.getName(), methodUnit, null, false));
 							
 							if (wizardDialog.open() == org.eclipse.jface.window.Window.OK) {
 								
@@ -279,7 +308,7 @@ public class ActionRefactoringRenameClass implements IObjectActionDelegate {
 							
 							Segment segment = getSegmentToPersiste(storableUnit);
 							
-							WizardDialog wizardDialog = new WizardDialog(shell, new RefactoringNameWizard(storableUnit.getName(), storableUnit));
+							WizardDialog wizardDialog = new WizardDialog(shell, new RefactoringNameWizard(storableUnit.getName(), storableUnit, null, false));
 							
 							
 							if (wizardDialog.open() == org.eclipse.jface.window.Window.OK) {
@@ -337,6 +366,130 @@ public class ActionRefactoringRenameClass implements IObjectActionDelegate {
 
 	}
 	
+	
+	private ClassDeclaration getClassDeclaration (ClassUnit classUnit, String[] packageComplete, Model model) {
+		
+		ClassDeclaration classToReturn = null;
+		
+		org.eclipse.gmt.modisco.java.Package packageJava = null;
+		
+		EList<AbstractTypeDeclaration> classes = null; 
+		
+		
+		
+		EList<org.eclipse.gmt.modisco.java.Package> packages = model.getOwnedElements();
+		
+		for (int i = 0; i < packageComplete.length; i++) {
+			
+			for (org.eclipse.gmt.modisco.java.Package package1 : packages) {
+				
+				if (package1.getName().equals(packageComplete[i])) {
+					
+					packageJava = package1;
+					if (packageJava.getOwnedPackages() != null || packageJava.getOwnedPackages().size() > 0) {
+						packages = packageJava.getOwnedPackages();
+					}else {
+						
+						classes = packageJava.getOwnedElements();
+						break;
+						
+					}
+					
+				}
+				
+			}
+			
+		}
+		classes = packageJava.getOwnedElements();
+		if (classes != null) {
+			for (AbstractTypeDeclaration abstractTypeDeclaraction : classes) {
+				
+				if (abstractTypeDeclaraction instanceof ClassDeclaration) {
+					
+					ClassDeclaration classToVerifyTheName = (ClassDeclaration) abstractTypeDeclaraction;
+					
+					if(classToVerifyTheName.getName().equals(classUnit.getName())) {
+						
+						classToReturn = classToVerifyTheName;
+						break;
+						
+					}
+					
+					
+				}
+				
+			}
+		}
+	
+		
+		
+		return classToReturn;
+	}
+	
+	
+	private String[] getCompletePackageName (ClassUnit classUnit) {
+		
+		CodeModel codeModel = null;
+		
+		String packageComplete = "";
+		
+		EObject eObject = classUnit.eContainer();
+		
+		while (codeModel == null) {
+			
+			if (eObject instanceof CodeModel) {
+				
+				codeModel = (CodeModel) eObject;
+				
+			} else if ( eObject instanceof Package)
+			{
+				
+				Package packageKDM = (Package) eObject;
+				
+				eObject = packageKDM.eContainer();
+				
+				packageComplete += packageKDM.getName()+".";
+				
+				System.out.println(packageKDM.getName());
+				
+			}
+			
+			
+		}
+		
+		String[] packages = packageComplete.split("\\.");
+		Collections.reverse(Arrays.asList(packages));
+		
+		return packages;
+	}
+	
+	
+	private Model getModelToPersiste(NamedElement namedElement) {
+		
+		Model model = null;
+		
+		EObject eObject = namedElement.eContainer();
+		
+		while (model == null) {
+			
+			if (eObject instanceof Model) {
+				
+				model = (Model) eObject;
+				
+			} else if ( eObject instanceof org.eclipse.gmt.modisco.java.Package)
+			{
+				
+				org.eclipse.gmt.modisco.java.Package packageJAVA = (org.eclipse.gmt.modisco.java.Package) eObject;
+				
+				eObject = packageJAVA.eContainer();
+				
+			}
+			
+		}
+		return model;
+		
+	}
+	
 	private Segment getSegmentToPersiste(KDMEntity kdmEntity) {
 		
 		Segment segment = null;
@@ -344,9 +497,6 @@ public class ActionRefactoringRenameClass implements IObjectActionDelegate {
 		EObject eObject = kdmEntity.eContainer();
 		
 		while (segment == null) {
-			
-			
-			
 			
 			if (eObject instanceof Segment) {
 				
