@@ -1,6 +1,7 @@
 package com.br.gui.refactoring;
 
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.gmt.modisco.java.ClassDeclaration;
 import org.eclipse.gmt.modisco.java.Type;
 import org.eclipse.gmt.modisco.omg.kdm.code.ClassUnit;
 import org.eclipse.gmt.modisco.omg.kdm.code.CodeItem;
@@ -24,15 +25,18 @@ public class WizardExtractClass extends WizardPage {
 
 	private ClassUnit classUnitToExtract;
 	
+	private ClassDeclaration classDeclarationToExtract;
+	
 	private Button btnCreateGettersAnd;
 	
 	
 	/**
 	 * Create the wizard.
 	 */
-	public WizardExtractClass(ClassUnit classUnitToExtract) {
+	public WizardExtractClass(ClassUnit classUnitToExtract, ClassDeclaration classDeclarationToExtract) {
 		super("wizardPage");
 		this.classUnitToExtract = classUnitToExtract;
+		this.classDeclarationToExtract = classDeclarationToExtract;
 		setImageDescriptor(ResourceManager.getPluginImageDescriptor("JrubyEclipsePlugin", "icons/GIFTESTE.gif"));
 		setTitle("Refactoring Extract Class");
 		setDescription("You have one class doing work that should be done by two.");

@@ -2,8 +2,20 @@ package com.br.actions;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.gmt.modisco.infra.browser.editors.EcoreBrowser;
+import org.eclipse.gmt.modisco.java.AbstractTypeDeclaration;
+import org.eclipse.gmt.modisco.java.ClassDeclaration;
+import org.eclipse.gmt.modisco.java.Model;
 import org.eclipse.gmt.modisco.omg.kdm.code.ClassUnit;
+import org.eclipse.gmt.modisco.omg.kdm.kdm.Segment;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
@@ -15,10 +27,16 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IObjectActionDelegate;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 import com.br.gui.refactoring.WizardExtract;
+import com.br.util.models.UtilJavaModel;
+import com.br.util.models.UtilKDMModel;
 
 public class ExtractClass implements IObjectActionDelegate {
 
@@ -79,13 +97,57 @@ public class ExtractClass implements IObjectActionDelegate {
 					
 					if (offset.getFirstElement() instanceof ClassUnit) {
 						
-					
+						UtilJavaModel utilJavaModel =  new UtilJavaModel();
+						
+						Model modelJava = utilJavaModel.load(activeProject.getLocationURI().toString()+"/MODELS_PIM_modificado/JavaModelRefactoring.javaxmi");
+						
 						ClassUnit classUnitToExtract = (ClassUnit) offset.getFirstElement();
 						
+						
+						UtilKDMModel utilKDMMODEL = new UtilKDMModel();
+						
+						String [] packageKDM = utilKDMMODEL.getCompletePackageName(classUnitToExtract);
+						
+						
+						
+					
+						
+						ClassDeclaration classDeclaration = utilJavaModel.getClassDeclaration(classUnitToExtract, packageKDM, modelJava);
+						
+						
+						
+						
 						WizardDialog teste = new WizardDialog(shell,
-								new WizardExtract(classUnitToExtract));
+								new WizardExtract(classUnitToExtract, classDeclaration));
 
 						teste.open();
+						
+						UtilKDMModel utilKDM = new UtilKDMModel();
+						
+						Segment segment = utilKDM.getSegmentToPersiste(classUnitToExtract);
+						
+						Resource resource = utilKDM.save(segment, offset.toString(), URIProject);
+						
+						closeEditor(editorPart);
+						
+						
+						IWorkspaceRoot workRoot = ResourcesPlugin.getWorkspace().getRoot();
+					
+						IPath path = new Path(resource.getURI().toFileString());
+						
+						IFile fileToOpen = workRoot.getFileForLocation(path);
+							
+						refreshLocal(activeProject);					
+						
+						
+						openEditor(fileToOpen);
+						
+						
+						Model model = utilJavaModel.getModelToPersiste(classDeclaration);
+						
+						utilJavaModel.save(model, URIProject);
+						
+
 						
 						
 					} else {
@@ -101,6 +163,39 @@ public class ExtractClass implements IObjectActionDelegate {
 		}
 
 	}
+	
+private void closeEditor (IEditorPart editorPart) {
+		
+		
+		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().closeEditor(editorPart, true);
+		
+	}
+	
+	private void openEditor (IFile fileToOpen) {
+		
+		 IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+			
+			try {
+				IDE.openEditor(page, fileToOpen);
+			} catch (PartInitException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		
+		
+	}
+	
+	private void refreshLocal (IProject project) {
+		
+		try {
+			ResourcesPlugin.getWorkspace().getRoot().getProject(project.getName()).refreshLocal(IResource.DEPTH_INFINITE, null);
+		} catch (CoreException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}					
+		
+	}
+	
 
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {

@@ -3,6 +3,7 @@ package com.br.util.models;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -13,6 +14,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
@@ -22,6 +24,8 @@ import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
 import org.eclipse.gmt.modisco.java.Model;
 import org.eclipse.gmt.modisco.java.emf.JavaPackage;
 import org.eclipse.gmt.modisco.java.generation.files.GenerateJavaExtended;
+import org.eclipse.gmt.modisco.omg.kdm.action.ActionElement;
+import org.eclipse.gmt.modisco.omg.kdm.action.BlockUnit;
 import org.eclipse.gmt.modisco.omg.kdm.code.AbstractCodeElement;
 import org.eclipse.gmt.modisco.omg.kdm.code.BooleanType;
 import org.eclipse.gmt.modisco.omg.kdm.code.CharType;
@@ -31,6 +35,7 @@ import org.eclipse.gmt.modisco.omg.kdm.code.CodeModel;
 import org.eclipse.gmt.modisco.omg.kdm.code.FloatType;
 import org.eclipse.gmt.modisco.omg.kdm.code.IntegerType;
 import org.eclipse.gmt.modisco.omg.kdm.code.LanguageUnit;
+import org.eclipse.gmt.modisco.omg.kdm.code.MethodUnit;
 import org.eclipse.gmt.modisco.omg.kdm.code.OctetType;
 import org.eclipse.gmt.modisco.omg.kdm.code.Package;
 import org.eclipse.gmt.modisco.omg.kdm.code.PrimitiveType;
@@ -38,6 +43,7 @@ import org.eclipse.gmt.modisco.omg.kdm.code.StorableKind;
 import org.eclipse.gmt.modisco.omg.kdm.code.StorableUnit;
 import org.eclipse.gmt.modisco.omg.kdm.code.StringType;
 import org.eclipse.gmt.modisco.omg.kdm.code.VoidType;
+import org.eclipse.gmt.modisco.omg.kdm.core.KDMEntity;
 import org.eclipse.gmt.modisco.omg.kdm.kdm.Attribute;
 import org.eclipse.gmt.modisco.omg.kdm.kdm.KDMModel;
 import org.eclipse.gmt.modisco.omg.kdm.kdm.KdmFactory;
@@ -289,6 +295,9 @@ public Segment load(String KDMModelFullPath){
 		
 	}
 	
+	
+	
+	
 	private Attribute criarAttibuteForStorableUnit () {
 		
 		Attribute att = KdmFactory.eINSTANCE.createAttribute();
@@ -405,6 +414,105 @@ public Segment load(String KDMModelFullPath){
 		
 	}
 	
+	public String[] getCompletePackageName (ClassUnit classUnit) {
+		
+		CodeModel codeModel = null;
+		
+		String packageComplete = "";
+		
+		EObject eObject = classUnit.eContainer();
+		
+		while (codeModel == null) {
+			
+			if (eObject instanceof CodeModel) {
+				
+				codeModel = (CodeModel) eObject;
+				
+			} else if ( eObject instanceof Package)
+			{
+				
+				Package packageKDM = (Package) eObject;
+				
+				eObject = packageKDM.eContainer();
+				
+				packageComplete += packageKDM.getName()+".";
+				
+				System.out.println(packageKDM.getName());
+				
+			}
+			
+			
+		}
+		
+		String[] packages = packageComplete.split("\\.");
+		Collections.reverse(Arrays.asList(packages));
+		
+		return packages;
+	}
+	
+	public Segment getSegmentToPersiste(KDMEntity kdmEntity) {
+		
+		Segment segment = null;
+		
+		EObject eObject = kdmEntity.eContainer();
+		
+		while (segment == null) {
+			
+			if (eObject instanceof Segment) {
+				
+				segment = (Segment) eObject;
+				
+			} else if ( eObject instanceof Package)
+			{
+				
+				Package packageKDM = (Package) eObject;
+				
+				eObject = packageKDM.eContainer();
+				
+				System.out.println(eObject);
+				
+			} else if (eObject instanceof CodeModel) {
+				
+				
+				CodeModel codeModelKDM = (CodeModel) eObject;
+				
+				eObject = codeModelKDM.eContainer();
+				
+			} else if (eObject instanceof ClassUnit) {
+				
+				ClassUnit classUnitKDM = (ClassUnit) eObject;
+				eObject = classUnitKDM.eContainer();
+				
+			} else if (eObject instanceof ActionElement) {
+				
+				ActionElement actionElement = (ActionElement) eObject;
+				
+				eObject = actionElement.eContainer();
+				
+				
+			} else if (eObject instanceof BlockUnit) {
+				
+				
+				BlockUnit blockUnit = (BlockUnit) eObject;
+				
+				eObject = blockUnit.eContainer();
+				
+				
+			} else if (eObject instanceof MethodUnit) {
+				
+				
+				MethodUnit methodUnit = (MethodUnit) eObject;
+				
+				eObject = methodUnit.eContainer();
+				
+				
+			}
+			
+			
+		}
+		
+		return segment;
+	}
 	
 	
 }

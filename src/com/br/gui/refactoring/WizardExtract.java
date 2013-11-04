@@ -3,6 +3,8 @@ package com.br.gui.refactoring;
 import java.util.ArrayList;
 
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.gmt.modisco.java.ClassDeclaration;
+import org.eclipse.gmt.modisco.java.Model;
 import org.eclipse.gmt.modisco.omg.kdm.code.ClassUnit;
 import org.eclipse.gmt.modisco.omg.kdm.code.CodeItem;
 import org.eclipse.gmt.modisco.omg.kdm.code.MethodUnit;
@@ -12,6 +14,7 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
+import com.br.util.models.UtilJavaModel;
 import com.br.util.models.UtilKDMModel;
 
 public class WizardExtract extends Wizard {
@@ -20,12 +23,15 @@ public class WizardExtract extends Wizard {
 	
 	private ClassUnit classUnitToExtract;
 	
+	private ClassDeclaration classDeclarationToExtract;
+	
 	private Package packageKDM;
 	
-	public WizardExtract(ClassUnit classUnitToExtract) {
+	public WizardExtract(ClassUnit classUnitToExtract, ClassDeclaration classDeclarationToExtract) {
 		setWindowTitle("Extract ClassUnit");
 		this.classUnitToExtract = classUnitToExtract;
-		this.page1 = new WizardExtractClass(this.classUnitToExtract);
+		this.classDeclarationToExtract = classDeclarationToExtract;
+		this.page1 = new WizardExtractClass(this.classUnitToExtract, this.classDeclarationToExtract);
 	}
 
 	@Override
@@ -36,6 +42,11 @@ public class WizardExtract extends Wizard {
 	@Override
 	public boolean performFinish() {
 		
+		UtilJavaModel utilJavaModel = new UtilJavaModel();
+		
+		Model model = utilJavaModel.getModelToPersiste(classDeclarationToExtract);
+		
+		ClassDeclaration classDeclarationCreated = utilJavaModel.createClassDeclaration(this.page1.getNameNewClass().getText(), classDeclarationToExtract.getPackage(), model);
 		
 		this.packageKDM = (Package)this.classUnitToExtract.eContainer();
 		
