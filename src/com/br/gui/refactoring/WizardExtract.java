@@ -3,7 +3,9 @@ package com.br.gui.refactoring;
 import java.util.ArrayList;
 
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.gmt.modisco.java.BodyDeclaration;
 import org.eclipse.gmt.modisco.java.ClassDeclaration;
+import org.eclipse.gmt.modisco.java.FieldDeclaration;
 import org.eclipse.gmt.modisco.java.Model;
 import org.eclipse.gmt.modisco.omg.kdm.code.ClassUnit;
 import org.eclipse.gmt.modisco.omg.kdm.code.CodeItem;
@@ -42,7 +44,14 @@ public class WizardExtract extends Wizard {
 	@Override
 	public boolean performFinish() {
 		
+		
+		ArrayList<FieldDeclaration> filds = getSelectedFieldDeclaration();
+		
+		System.out.println(filds.size());
+		
 		UtilJavaModel utilJavaModel = new UtilJavaModel();
+		
+//		utilJavaModel.
 		
 		Model model = utilJavaModel.getModelToPersiste(classDeclarationToExtract);
 		
@@ -51,6 +60,10 @@ public class WizardExtract extends Wizard {
 		this.packageKDM = (Package)this.classUnitToExtract.eContainer();
 		
 		UtilKDMModel utilKDM = new UtilKDMModel();
+		
+		String []  packageName = utilKDM.getCompletePackageName(classUnitToExtract);
+		
+		ClassDeclaration classDeclarationToRemoveTheAttributes = utilJavaModel.getClassDeclaration(classUnitToExtract, packageName, model);
 		
 		ClassUnit newClassUnit = utilKDM.createClassUnit(this.page1.getNameNewClass().getText(), this.packageKDM);
 		
@@ -119,6 +132,50 @@ public class WizardExtract extends Wizard {
 		for (StorableUnit storableUnit : storableUnits) {
 			classToPutTheStorableUnits.getCodeElement().add(storableUnit);
 		}
+		
+	}
+	
+	private ArrayList<FieldDeclaration> getSelectedFieldDeclaration() {
+		
+		Table table = this.page1.getTable();
+		
+		ArrayList<FieldDeclaration> fieldDeclarationsToPut = new ArrayList<FieldDeclaration>();
+		
+		EList<BodyDeclaration> fieldDeclarations = this.classDeclarationToExtract.getBodyDeclarations();
+		
+		TableItem[] itens = table.getItems();
+		
+		for (TableItem tableItem : itens) {
+			
+			if (tableItem.getChecked()) {
+				
+				String nameAttributes = tableItem.getText(1);
+				
+				for (BodyDeclaration attributes : fieldDeclarations) {
+					
+					if (attributes instanceof FieldDeclaration) {
+						
+						FieldDeclaration fieldDeclaration = (FieldDeclaration) attributes;
+						
+						
+						if (fieldDeclaration.getFragments().get(0).getName().equals(nameAttributes)) {
+							
+							fieldDeclarationsToPut.add(fieldDeclaration);
+							
+							
+						}
+						
+						
+					}
+					
+				} 
+				
+			}
+			
+		}
+		
+		return fieldDeclarationsToPut;
+		
 		
 	}
 	
