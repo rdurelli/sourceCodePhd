@@ -34,9 +34,13 @@ import org.eclipse.gmt.modisco.omg.kdm.code.LanguageUnit;
 import org.eclipse.gmt.modisco.omg.kdm.code.OctetType;
 import org.eclipse.gmt.modisco.omg.kdm.code.Package;
 import org.eclipse.gmt.modisco.omg.kdm.code.PrimitiveType;
+import org.eclipse.gmt.modisco.omg.kdm.code.StorableKind;
+import org.eclipse.gmt.modisco.omg.kdm.code.StorableUnit;
 import org.eclipse.gmt.modisco.omg.kdm.code.StringType;
 import org.eclipse.gmt.modisco.omg.kdm.code.VoidType;
+import org.eclipse.gmt.modisco.omg.kdm.kdm.Attribute;
 import org.eclipse.gmt.modisco.omg.kdm.kdm.KDMModel;
+import org.eclipse.gmt.modisco.omg.kdm.kdm.KdmFactory;
 import org.eclipse.gmt.modisco.omg.kdm.kdm.KdmPackage;
 import org.eclipse.gmt.modisco.omg.kdm.kdm.Segment;
 import org.eclipse.gmt.modisco.omg.kdm.source.SourceFactory;
@@ -270,6 +274,32 @@ public Segment load(String KDMModelFullPath){
 		return classUnitToBeCreated;
 		
 	}
+	
+	public void createStorableUnitInAClassUnit (ClassUnit classUnit, String name, ClassUnit type) {
+		
+		StorableUnit attributeLike = CodeFactory.eINSTANCE.createStorableUnit();
+		attributeLike.setName(name);
+		attributeLike.setKind(StorableKind.GLOBAL);
+		attributeLike.getAttribute().add(this.criarAttibuteForStorableUnit());
+		attributeLike.getSource().add(this.criarSource(classUnit.getName()));
+		attributeLike.setType(type);
+		
+		
+		classUnit.getCodeElement().add(attributeLike);
+		
+	}
+	
+	private Attribute criarAttibuteForStorableUnit () {
+		
+		Attribute att = KdmFactory.eINSTANCE.createAttribute();
+		
+		att.setTag("export");
+		att.setValue("private");
+		
+		return att;
+		
+	}
+	
 	
 	
 	//this method is used to generate source-code based on the Java model as input.

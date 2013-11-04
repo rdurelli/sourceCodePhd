@@ -22,7 +22,6 @@ public class WizardExtract extends Wizard {
 	
 	private Package packageKDM;
 	
-	
 	public WizardExtract(ClassUnit classUnitToExtract) {
 		setWindowTitle("Extract ClassUnit");
 		this.classUnitToExtract = classUnitToExtract;
@@ -37,7 +36,6 @@ public class WizardExtract extends Wizard {
 	@Override
 	public boolean performFinish() {
 		
-		System.out.println(this.page1.getCreateGettersAndSetters().getSelection());
 		
 		this.packageKDM = (Package)this.classUnitToExtract.eContainer();
 		
@@ -47,6 +45,8 @@ public class WizardExtract extends Wizard {
 		
 		
 		ArrayList<StorableUnit> storableUnit = this.getSelectedStorableUnit();
+		
+		utilKDM.createStorableUnitInAClassUnit(classUnitToExtract, this.page1.getFieldName().getText(), newClassUnit);
 		
 		addStorableUnitToTheNewClass(newClassUnit, storableUnit);
 		
