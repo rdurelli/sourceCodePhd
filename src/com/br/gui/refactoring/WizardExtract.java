@@ -65,6 +65,10 @@ public class WizardExtract extends Wizard {
 		
 		ClassDeclaration classDeclarationToRemoveTheAttributes = utilJavaModel.getClassDeclaration(classUnitToExtract, packageName, model);
 		
+		FieldDeclaration fieldCreated = utilJavaModel.createFieldDeclaration("attriCreated", classDeclarationToRemoveTheAttributes, "String", model);
+		//cria o méthod get..
+		utilJavaModel.createMethodDeclarationGET("getAttriCreated", classDeclarationToRemoveTheAttributes,fieldCreated, "attriCreated",  model);
+		
 		ClassUnit newClassUnit = utilKDM.createClassUnit(this.page1.getNameNewClass().getText(), this.packageKDM);
 		
 		

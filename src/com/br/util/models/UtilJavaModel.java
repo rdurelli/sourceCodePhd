@@ -16,19 +16,32 @@ import org.eclipse.emf.ecore.xmi.XMIResource;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
 import org.eclipse.gmt.modisco.java.AbstractTypeDeclaration;
+import org.eclipse.gmt.modisco.java.Assignment;
+import org.eclipse.gmt.modisco.java.Block;
+import org.eclipse.gmt.modisco.java.BodyDeclaration;
 import org.eclipse.gmt.modisco.java.ClassDeclaration;
 import org.eclipse.gmt.modisco.java.CompilationUnit;
+import org.eclipse.gmt.modisco.java.FieldAccess;
+import org.eclipse.gmt.modisco.java.FieldDeclaration;
 import org.eclipse.gmt.modisco.java.InheritanceKind;
+import org.eclipse.gmt.modisco.java.MethodDeclaration;
 import org.eclipse.gmt.modisco.java.Model;
 import org.eclipse.gmt.modisco.java.Modifier;
 import org.eclipse.gmt.modisco.java.NamedElement;
 import org.eclipse.gmt.modisco.java.Package;
+import org.eclipse.gmt.modisco.java.ReturnStatement;
+import org.eclipse.gmt.modisco.java.SingleVariableAccess;
+import org.eclipse.gmt.modisco.java.SingleVariableDeclaration;
+import org.eclipse.gmt.modisco.java.Statement;
+import org.eclipse.gmt.modisco.java.TypeAccess;
+import org.eclipse.gmt.modisco.java.VariableDeclarationFragment;
 import org.eclipse.gmt.modisco.java.VisibilityKind;
 import org.eclipse.gmt.modisco.java.emf.JavaFactory;
 import org.eclipse.gmt.modisco.java.emf.JavaPackage;
 import org.eclipse.gmt.modisco.java.generation.files.GenerateJavaExtended;
 import org.eclipse.gmt.modisco.omg.kdm.code.ClassUnit;
 import org.eclipse.gmt.modisco.omg.kdm.code.CodeFactory;
+import org.jruby.javasupport.Java;
 
 import com.br.utils.ProjectSelectedToModernize;
 
@@ -116,6 +129,186 @@ public class UtilJavaModel {
 		return classDeclarationToBeCreated;
 		
 	}
+	
+	private Modifier createModifierForMethodDeclaration(MethodDeclaration method) {
+		
+		Modifier modifier = JavaFactory.eINSTANCE.createModifier();
+		modifier.setVisibility(VisibilityKind.PUBLIC);
+		modifier.setInheritance(InheritanceKind.NONE);
+		modifier.setStatic(false);
+		modifier.setTransient(false);
+		modifier.setVolatile(false);
+		modifier.setStrictfp(false);
+		modifier.setSynchronized(false);
+		modifier.setBodyDeclaration(method);
+		
+		return modifier;
+		
+	}
+	
+	private Modifier createModifierForFieldDeclaration(FieldDeclaration field) {
+		
+		Modifier modifier = JavaFactory.eINSTANCE.createModifier();
+		modifier.setVisibility(VisibilityKind.PRIVATE);
+		modifier.setInheritance(InheritanceKind.NONE);
+		modifier.setStatic(false);
+		modifier.setTransient(false);
+		modifier.setVolatile(false);
+		modifier.setStrictfp(false);
+		modifier.setSynchronized(false);
+		modifier.setBodyDeclaration(field);
+		
+		
+		return modifier;
+		
+	}
+	
+	private void createBodyForMethodDeclaration (MethodDeclaration method) {
+		
+		Block block = JavaFactory.eINSTANCE.createBlock();
+		block.setOriginalCompilationUnit(method.getOriginalCompilationUnit());
+		block.getStatements().add(this.createStatementReturnForMethod(block));
+		
+	}
+	
+	private ReturnStatement createStatementReturnForMethod (Block block) {
+		
+		ReturnStatement returnStatement = JavaFactory.eINSTANCE.createReturnStatement();
+		returnStatement.setOriginalCompilationUnit(block.getOriginalCompilationUnit());
+		
+		return returnStatement;
+	}
+	
+	private SingleVariableAccess createExpressionForMethod(ReturnStatement returnStatement, Block block, MethodDeclaration method) {
+		
+		SingleVariableAccess single = JavaFactory.eINSTANCE.createSingleVariableAccess();
+		
+		
+		
+		SingleVariableDeclaration singleDeclaration = JavaFactory.eINSTANCE.createSingleVariableDeclaration();
+		singleDeclaration.setName("qualquer");
+		singleDeclaration.setProxy(false);
+		singleDeclaration.setExtraArrayDimensions(0);
+		singleDeclaration.setVarargs(false);
+		singleDeclaration.setOriginalCompilationUnit(block.getOriginalCompilationUnit());
+		singleDeclaration.setModifier(this.createModifierForSingleVariableDeclaration(singleDeclaration));
+		singleDeclaration.setMethodDeclaration(method);
+		
+		single.setVariable(singleDeclaration);
+		
+		Assignment assignment = JavaFactory.eINSTANCE.createAssignment();
+		assignment.setOriginalCompilationUnit(block.getOriginalCompilationUnit());
+		//cointainer
+		FieldAccess field = JavaFactory.eINSTANCE.createFieldAccess();
+		field.setOriginalCompilationUnit(block.getOriginalCompilationUnit());
+		
+		
+		return null;
+		
+	}
+	
+	private Modifier createModifierForSingleVariableDeclaration (SingleVariableDeclaration singleDeclaration) {
+		
+		Modifier modifier = JavaFactory.eINSTANCE.createModifier();
+		modifier.setVisibility(VisibilityKind.NONE);
+		modifier.setInheritance(InheritanceKind.NONE);
+		modifier.setStatic(false);
+		modifier.setTransient(false);
+		modifier.setVolatile(false);
+		modifier.setStrictfp(false);
+		modifier.setSynchronized(false);
+		modifier.setSingleVariableDeclaration(singleDeclaration);
+		
+		return modifier;
+		
+		
+	}
+	
+	public FieldDeclaration createFieldDeclaration(String name, ClassDeclaration classDeclaration, String type, Model model) {
+		
+		FieldDeclaration field = JavaFactory.eINSTANCE.createFieldDeclaration();
+		field.setProxy(false);
+		field.setOriginalCompilationUnit(classDeclaration.getOriginalCompilationUnit());
+		field.setAbstractTypeDeclaration(classDeclaration);
+		field.setModifier(this.createModifierForFieldDeclaration(field));
+		TypeAccess typeAcess = JavaFactory.eINSTANCE.createTypeAccess();
+		typeAcess.setType(this.getStringType(model));
+		field.setType(typeAcess);
+		
+		VariableDeclarationFragment teste = JavaFactory.eINSTANCE.createVariableDeclarationFragment();
+		
+		teste.setName(name);
+		teste.setProxy(false);
+		teste.setExtraArrayDimensions(0);
+		teste.setOriginalCompilationUnit(classDeclaration.getOriginalCompilationUnit());
+		//teste.setVariablesContainer(field);
+		//field.getFragments().add(teste);
+		
+		
+		return field;
+		
+	} 
+	
+	public MethodDeclaration createMethodDeclarationGET(String name, ClassDeclaration classToPutTheMethod, FieldDeclaration fieldDeclaration, String nameAttribute, Model model){
+		
+		MethodDeclaration newMethod = JavaFactory.eINSTANCE.createMethodDeclaration();
+		newMethod.setName(name);
+		newMethod.setProxy(false);
+		newMethod.setExtraArrayDimensions(0);
+		newMethod.setOriginalCompilationUnit(classToPutTheMethod.getOriginalCompilationUnit());
+		newMethod.setAbstractTypeDeclaration(classToPutTheMethod);
+		newMethod.setModifier(this.createModifierForMethodDeclaration(newMethod));
+		
+		Block block = JavaFactory.eINSTANCE.createBlock();
+		newMethod.setBody(block);
+		
+		block.setOriginalCompilationUnit(classToPutTheMethod.getOriginalCompilationUnit());
+		
+		//create The return statement 
+		
+		ReturnStatement returnStatement = JavaFactory.eINSTANCE.createReturnStatement();
+		returnStatement.setOriginalCompilationUnit(classToPutTheMethod.getOriginalCompilationUnit());
+		block.getStatements().add(returnStatement);//adiciona o return statement no block...
+		
+		//create the expression...
+		
+		SingleVariableAccess single = JavaFactory.eINSTANCE.createSingleVariableAccess();
+		
+		returnStatement.setExpression(single);//coloca o SingleVariableAcessNoReturnStatment..
+		
+		VariableDeclarationFragment teste = JavaFactory.eINSTANCE.createVariableDeclarationFragment();
+		
+//		String nameToTheAttribute = "rafaelAtti";
+		
+		teste.setName(nameAttribute);
+		teste.setProxy(false);
+		teste.setExtraArrayDimensions(0);
+		teste.setOriginalCompilationUnit(classToPutTheMethod.getOriginalCompilationUnit());
+		teste.setVariablesContainer(fieldDeclaration);
+		
+//		SingleVariableDeclaration singleDeclaration = JavaFactory.eINSTANCE.createSingleVariableDeclaration();
+//		singleDeclaration.setName("qualquer");
+//		singleDeclaration.setProxy(false);
+//		singleDeclaration.setExtraArrayDimensions(0);
+//		singleDeclaration.setVarargs(false);
+//		singleDeclaration.setOriginalCompilationUnit(block.getOriginalCompilationUnit());
+//		singleDeclaration.setModifier(this.createModifierForSingleVariableDeclaration(singleDeclaration));
+//		singleDeclaration.setMethodDeclaration(newMethod);//o problema do paramenter esta aqui...
+		
+		TypeAccess typeAccess = JavaFactory.eINSTANCE.createTypeAccess();
+		typeAccess.setType(this.getStringType(model));
+		
+//		singleDeclaration.setType(typeAccess);//falta colocar o type....
+		
+		single.setVariable(teste);
+		
+		newMethod.setReturnType(typeAccess);//colocar quando eu pegar os tipos...
+		
+		
+		classToPutTheMethod.getBodyDeclarations().add(newMethod);//adiciona o method para o containner..
+		
+		return newMethod;
+	}
 
 	
 	//this method is used to generate source-code based on the Java model as input.
@@ -148,6 +341,72 @@ public class UtilJavaModel {
 	}
 
 
+	public FieldDeclaration getField(ClassDeclaration classDeclaration) {
+		
+		FieldDeclaration field = null;
+		
+		EList<BodyDeclaration> types = classDeclaration.getBodyDeclarations();
+		
+		for (BodyDeclaration bodyDeclaration : types) {
+			
+			if (bodyDeclaration instanceof FieldDeclaration) {
+				
+				FieldDeclaration fieldDeclaration = (FieldDeclaration) bodyDeclaration;
+				
+				
+				if (fieldDeclaration.getFragments().get(0).getName().equals("rg")) {
+					
+					field = fieldDeclaration;
+					
+					
+				}
+				
+			}
+			
+		}
+		
+		return field;
+	}
+	
+	public ClassDeclaration getStringType (Model model){
+		
+		
+		ClassDeclaration classString = null;
+		EList<Package> packages = model.getOwnedElements();
+		
+		for (Package package1 : packages) {
+			if (package1.getName().equals("java")) {
+				
+				EList<Package> packagesUtils = package1.getOwnedPackages();
+				
+				for (Package package2 : packagesUtils) {
+					
+					if(package2.getName().equals("lang")) {
+						
+						EList<AbstractTypeDeclaration> types = package2.getOwnedElements();
+						
+						for (AbstractTypeDeclaration abstractTypeDeclaration : types) {
+							
+							if ((abstractTypeDeclaration instanceof ClassDeclaration ) && abstractTypeDeclaration.getName().equals("String")) {
+								
+								classString = (ClassDeclaration) abstractTypeDeclaration;
+								
+							}
+							
+						}
+						
+						
+					}
+					
+				}
+				
+			}
+		}
+		
+		
+		return classString;
+	}
+	
 	
 //	this method is used to save the JavaModel 
 	public void save(Model model)  {
