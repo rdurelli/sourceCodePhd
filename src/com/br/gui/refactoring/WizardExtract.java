@@ -69,6 +69,8 @@ public class WizardExtract extends Wizard {
 		//cria o méthod get..
 		utilJavaModel.createMethodDeclarationGET("getAttriCreated", classDeclarationToRemoveTheAttributes,fieldCreated, "attriCreated",  model);
 		
+		utilJavaModel.createMethodDeclarationSET("setAttriCreated", classDeclarationToRemoveTheAttributes, fieldCreated, "attriCreated", model);
+		
 		ClassUnit newClassUnit = utilKDM.createClassUnit(this.page1.getNameNewClass().getText(), this.packageKDM);
 		
 		

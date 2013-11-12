@@ -17,10 +17,13 @@ import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
 import org.eclipse.gmt.modisco.java.AbstractTypeDeclaration;
 import org.eclipse.gmt.modisco.java.Assignment;
+import org.eclipse.gmt.modisco.java.AssignmentKind;
 import org.eclipse.gmt.modisco.java.Block;
 import org.eclipse.gmt.modisco.java.BodyDeclaration;
 import org.eclipse.gmt.modisco.java.ClassDeclaration;
 import org.eclipse.gmt.modisco.java.CompilationUnit;
+import org.eclipse.gmt.modisco.java.Expression;
+import org.eclipse.gmt.modisco.java.ExpressionStatement;
 import org.eclipse.gmt.modisco.java.FieldAccess;
 import org.eclipse.gmt.modisco.java.FieldDeclaration;
 import org.eclipse.gmt.modisco.java.InheritanceKind;
@@ -42,6 +45,7 @@ import org.eclipse.gmt.modisco.java.ReturnStatement;
 import org.eclipse.gmt.modisco.java.SingleVariableAccess;
 import org.eclipse.gmt.modisco.java.SingleVariableDeclaration;
 import org.eclipse.gmt.modisco.java.Statement;
+import org.eclipse.gmt.modisco.java.ThisExpression;
 import org.eclipse.gmt.modisco.java.Type;
 import org.eclipse.gmt.modisco.java.TypeAccess;
 import org.eclipse.gmt.modisco.java.VariableDeclarationFragment;
@@ -318,6 +322,96 @@ public class UtilJavaModel {
 		return newMethod;
 	}
 
+	
+	public MethodDeclaration createMethodDeclarationSET(String name, ClassDeclaration classToPutTheMethod, FieldDeclaration fieldDeclaration, String nameAttribute, Model model){
+		
+		MethodDeclaration newMethod = JavaFactory.eINSTANCE.createMethodDeclaration();
+		newMethod.setName(name);
+		newMethod.setProxy(false);
+		newMethod.setExtraArrayDimensions(0);
+		newMethod.setOriginalCompilationUnit(classToPutTheMethod.getOriginalCompilationUnit());
+		newMethod.setAbstractTypeDeclaration(classToPutTheMethod);
+		newMethod.setModifier(this.createModifierForMethodDeclaration(newMethod));
+		
+		Block block = JavaFactory.eINSTANCE.createBlock();
+		newMethod.setBody(block);
+		
+		block.setOriginalCompilationUnit(classToPutTheMethod.getOriginalCompilationUnit());
+		
+		
+		//create the expressionStatement
+		
+		ExpressionStatement expressionStatement = JavaFactory.eINSTANCE.createExpressionStatement();
+		expressionStatement.setOriginalCompilationUnit(classToPutTheMethod.getOriginalCompilationUnit());
+
+		Assignment expression = JavaFactory.eINSTANCE.createAssignment();
+		expression.setOperator(AssignmentKind.ASSIGN);
+		expression.setOriginalCompilationUnit(classToPutTheMethod.getOriginalCompilationUnit());
+		
+		
+
+		
+		FieldAccess fieldAccess = JavaFactory.eINSTANCE.createFieldAccess();
+		fieldAccess.setOriginalCompilationUnit(classToPutTheMethod.getOriginalCompilationUnit());
+		ThisExpression thisExpression = JavaFactory.eINSTANCE.createThisExpression();
+		fieldAccess.setExpression(thisExpression);
+		thisExpression.setOriginalCompilationUnit(classToPutTheMethod.getOriginalCompilationUnit());
+		expression.setLeftHandSide(fieldAccess);
+		
+		expressionStatement.setExpression(expression);
+		
+		
+		block.getStatements().add(expressionStatement);//adiciona o return statement no block...
+		
+		//create the expression...
+		
+		SingleVariableAccess single = JavaFactory.eINSTANCE.createSingleVariableAccess();
+		
+		SingleVariableAccess singleRightHand = JavaFactory.eINSTANCE.createSingleVariableAccess();
+		
+		expression.setRightHandSide(singleRightHand);
+		
+		SingleVariableDeclaration variableDeclarationFragment = JavaFactory.eINSTANCE.createSingleVariableDeclaration();
+		
+		fieldAccess.setField(single);
+		
+		variableDeclarationFragment.setName(nameAttribute);
+		variableDeclarationFragment.setProxy(false);
+		variableDeclarationFragment.setExtraArrayDimensions(0);
+		variableDeclarationFragment.setVarargs(false);
+		variableDeclarationFragment.setOriginalCompilationUnit(classToPutTheMethod.getOriginalCompilationUnit());
+		variableDeclarationFragment.setModifier(this.createModifierForSingleVariableDeclaration(variableDeclarationFragment));
+		variableDeclarationFragment.setMethodDeclaration(newMethod);
+		TypeAccess typeString = JavaFactory.eINSTANCE.createTypeAccess();
+		typeString.setOriginalCompilationUnit(classToPutTheMethod.getOriginalCompilationUnit());
+		typeString.setType(this.getStringType(model));
+		variableDeclarationFragment.setType(typeString);
+//		variableDeclarationFragment.setVariablesContainer(fieldDeclaration);
+		
+//		SingleVariableDeclaration singleDeclaration = JavaFactory.eINSTANCE.createSingleVariableDeclaration();
+//		singleDeclaration.setName("qualquer");
+//		singleDeclaration.setProxy(false);
+//		singleDeclaration.setExtraArrayDimensions(0);
+//		singleDeclaration.setVarargs(false);
+//		singleDeclaration.setOriginalCompilationUnit(block.getOriginalCompilationUnit());
+//		singleDeclaration.setModifier(this.createModifierForSingleVariableDeclaration(singleDeclaration));
+//		singleDeclaration.setMethodDeclaration(newMethod);//o problema do paramenter esta aqui...
+		
+		TypeAccess typeAccess = JavaFactory.eINSTANCE.createTypeAccess();
+		typeAccess.setType(this.getPrimitiveTypeVoid(model));
+		
+		
+		single.setVariable(variableDeclarationFragment);
+		singleRightHand.setVariable(variableDeclarationFragment);
+		newMethod.getParameters().add(variableDeclarationFragment);
+		newMethod.setReturnType(typeAccess);//colocar quando eu pegar os tipos...
+		
+		
+		classToPutTheMethod.getBodyDeclarations().add(newMethod);//adiciona o method para o containner..
+		
+		return newMethod;
+	}
+	
 	
 	//this method is used to generate source-code based on the Java model as input.
 	public void generateNewSourceCode() throws IOException {
