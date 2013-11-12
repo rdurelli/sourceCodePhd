@@ -374,23 +374,7 @@ public class UtilJavaModel {
 		
 		return field;
 	}
-	
-	
-	public Type getPrimitiveType (Model model, String typeName) {
-		
-		
-		Type type = null;
-		EList<Type> orphanTypes = model.getOrphanTypes();
-		
-		
-		
-		
-		return null;
-		
-		
-		
-		
-	}
+
 	
 	public PrimitiveTypeInt getPrimitiveTypeInt (Model model) {
 		
