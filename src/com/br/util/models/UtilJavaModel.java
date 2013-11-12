@@ -29,10 +29,20 @@ import org.eclipse.gmt.modisco.java.Model;
 import org.eclipse.gmt.modisco.java.Modifier;
 import org.eclipse.gmt.modisco.java.NamedElement;
 import org.eclipse.gmt.modisco.java.Package;
+import org.eclipse.gmt.modisco.java.PrimitiveTypeBoolean;
+import org.eclipse.gmt.modisco.java.PrimitiveTypeByte;
+import org.eclipse.gmt.modisco.java.PrimitiveTypeChar;
+import org.eclipse.gmt.modisco.java.PrimitiveTypeDouble;
+import org.eclipse.gmt.modisco.java.PrimitiveTypeFloat;
+import org.eclipse.gmt.modisco.java.PrimitiveTypeInt;
+import org.eclipse.gmt.modisco.java.PrimitiveTypeLong;
+import org.eclipse.gmt.modisco.java.PrimitiveTypeShort;
+import org.eclipse.gmt.modisco.java.PrimitiveTypeVoid;
 import org.eclipse.gmt.modisco.java.ReturnStatement;
 import org.eclipse.gmt.modisco.java.SingleVariableAccess;
 import org.eclipse.gmt.modisco.java.SingleVariableDeclaration;
 import org.eclipse.gmt.modisco.java.Statement;
+import org.eclipse.gmt.modisco.java.Type;
 import org.eclipse.gmt.modisco.java.TypeAccess;
 import org.eclipse.gmt.modisco.java.VariableDeclarationFragment;
 import org.eclipse.gmt.modisco.java.VisibilityKind;
@@ -276,15 +286,14 @@ public class UtilJavaModel {
 		
 		returnStatement.setExpression(single);//coloca o SingleVariableAcessNoReturnStatment..
 		
-		VariableDeclarationFragment teste = JavaFactory.eINSTANCE.createVariableDeclarationFragment();
+		VariableDeclarationFragment variableDeclarationFragment = JavaFactory.eINSTANCE.createVariableDeclarationFragment();
 		
-//		String nameToTheAttribute = "rafaelAtti";
 		
-		teste.setName(nameAttribute);
-		teste.setProxy(false);
-		teste.setExtraArrayDimensions(0);
-		teste.setOriginalCompilationUnit(classToPutTheMethod.getOriginalCompilationUnit());
-		teste.setVariablesContainer(fieldDeclaration);
+		variableDeclarationFragment.setName(nameAttribute);
+		variableDeclarationFragment.setProxy(false);
+		variableDeclarationFragment.setExtraArrayDimensions(0);
+		variableDeclarationFragment.setOriginalCompilationUnit(classToPutTheMethod.getOriginalCompilationUnit());
+		variableDeclarationFragment.setVariablesContainer(fieldDeclaration);
 		
 //		SingleVariableDeclaration singleDeclaration = JavaFactory.eINSTANCE.createSingleVariableDeclaration();
 //		singleDeclaration.setName("qualquer");
@@ -298,9 +307,8 @@ public class UtilJavaModel {
 		TypeAccess typeAccess = JavaFactory.eINSTANCE.createTypeAccess();
 		typeAccess.setType(this.getStringType(model));
 		
-//		singleDeclaration.setType(typeAccess);//falta colocar o type....
 		
-		single.setVariable(teste);
+		single.setVariable(variableDeclarationFragment);
 		
 		newMethod.setReturnType(typeAccess);//colocar quando eu pegar os tipos...
 		
@@ -324,7 +332,6 @@ public class UtilJavaModel {
 
 		Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put(
 				"xmi", xmiResourceFactoryImpl);
-
 
 		
 		String projectToPutTheNewSourceCode = ProjectSelectedToModernize.projectSelected.getProject().getLocationURI().toString().split("file:")[1];
@@ -366,6 +373,166 @@ public class UtilJavaModel {
 		}
 		
 		return field;
+	}
+	
+	
+	public Type getPrimitiveType (Model model, String typeName) {
+		
+		
+		Type type = null;
+		EList<Type> orphanTypes = model.getOrphanTypes();
+		
+		
+		
+		
+		return null;
+		
+		
+		
+		
+	}
+	
+	public PrimitiveTypeInt getPrimitiveTypeInt (Model model) {
+		
+		PrimitiveTypeInt intType = null;
+		EList<Type> orpahTypes = model.getOrphanTypes();
+		
+		for (Type type : orpahTypes) {
+			if (type.getName().equals("int")) {
+				
+				intType = (PrimitiveTypeInt) type;
+				
+			}
+		}
+		
+		
+		return intType;
+		
+		
+	}
+	
+	public PrimitiveTypeLong getPrimitiveTypeLong (Model model) {
+		
+		PrimitiveTypeLong longType = null;
+		EList<Type> orpahTypes = model.getOrphanTypes();
+		
+		for (Type type : orpahTypes) {
+			if (type.getName().equals("long")) {
+				
+				longType = (PrimitiveTypeLong) type;
+			}
+		}
+		return longType;
+		
+		
+	}
+	
+	public PrimitiveTypeFloat getPrimitiveTypeFloat (Model model) {
+		
+		PrimitiveTypeFloat floatType = null;
+		EList<Type> orpahTypes = model.getOrphanTypes();
+		
+		for (Type type : orpahTypes) {
+			if (type.getName().equals("float")) {
+				
+				floatType = (PrimitiveTypeFloat) type;
+			}
+		}
+		return floatType;
+		
+		
+	}
+	
+	public PrimitiveTypeDouble getPrimitiveTypeDouble (Model model) {
+		
+		PrimitiveTypeDouble doubleType = null;
+		EList<Type> orpahTypes = model.getOrphanTypes();
+		
+		for (Type type : orpahTypes) {
+			if (type.getName().equals("double")) {
+				
+				doubleType = (PrimitiveTypeDouble) type;
+			}
+		}
+		return doubleType;
+		
+		
+	}
+	
+	public PrimitiveTypeBoolean getPrimitiveTypeBoolean (Model model) {
+		
+		PrimitiveTypeBoolean booleanType = null;
+		EList<Type> orpahTypes = model.getOrphanTypes();
+		
+		for (Type type : orpahTypes) {
+			if (type.getName().equals("boolean")) {
+				
+				booleanType = (PrimitiveTypeBoolean) type;
+			}
+		}
+		return booleanType;
+		
+		
+	}
+	
+	public PrimitiveTypeVoid getPrimitiveTypeVoid (Model model) {
+		
+		PrimitiveTypeVoid voidType = null;
+		EList<Type> orpahTypes = model.getOrphanTypes();
+		
+		for (Type type : orpahTypes) {
+			if (type.getName().equals("void")) {
+				
+				voidType = (PrimitiveTypeVoid) type;
+			}
+		}
+		return voidType;
+		
+	}
+	
+	public PrimitiveTypeChar getPrimitiveTypeChar (Model model) {
+		
+		PrimitiveTypeChar charType = null;
+		EList<Type> orpahTypes = model.getOrphanTypes();
+		
+		for (Type type : orpahTypes) {
+			if (type.getName().equals("char")) {
+				
+				charType = (PrimitiveTypeChar) type;
+			}
+		}
+		return charType;
+		
+	}
+	
+	public PrimitiveTypeShort getPrimitiveTypeShort (Model model) {
+		
+		PrimitiveTypeShort shortType = null;
+		EList<Type> orpahTypes = model.getOrphanTypes();
+		
+		for (Type type : orpahTypes) {
+			if (type.getName().equals("short")) {
+				
+				shortType = (PrimitiveTypeShort) type;
+			}
+		}
+		return shortType;
+		
+	}
+	
+	public PrimitiveTypeByte getPrimitiveTypeByte (Model model) {
+		
+		PrimitiveTypeByte byteType = null;
+		EList<Type> orpahTypes = model.getOrphanTypes();
+		
+		for (Type type : orpahTypes) {
+			if (type.getName().equals("byte")) {
+				
+				byteType = (PrimitiveTypeByte) type;
+			}
+		}
+		return byteType;
+		
 	}
 	
 	public ClassDeclaration getStringType (Model model){
