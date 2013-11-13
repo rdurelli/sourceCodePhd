@@ -55,6 +55,9 @@ import org.eclipse.gmt.modisco.java.emf.JavaPackage;
 import org.eclipse.gmt.modisco.java.generation.files.GenerateJavaExtended;
 import org.eclipse.gmt.modisco.omg.kdm.code.ClassUnit;
 import org.eclipse.gmt.modisco.omg.kdm.code.CodeFactory;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.jruby.javasupport.Java;
 
 import com.br.utils.ProjectSelectedToModernize;
@@ -410,6 +413,38 @@ public class UtilJavaModel {
 		classToPutTheMethod.getBodyDeclarations().add(newMethod);//adiciona o method para o containner..
 		
 		return newMethod;
+	}
+	
+	public void moveFieldDeclarationToClassDeclaration(ClassDeclaration classDeclaration, FieldDeclaration fieldDeclaration) {
+		
+		
+		if (classDeclaration != null) {
+			
+			classDeclaration.getBodyDeclarations().add(fieldDeclaration);
+			
+		} else {
+			
+			Shell activeShell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+			MessageDialog.openError(activeShell, "Error", "ClassDeclaration can not be null");
+			
+		}
+		
+	}
+	
+	public void moveMethodDeclarationToClassDeclaration(ClassDeclaration classDeclaration, MethodDeclaration methodDeclaration) {
+		
+		
+		if (classDeclaration != null) {
+			
+			classDeclaration.getBodyDeclarations().add(methodDeclaration);
+			
+		} else {
+			
+			Shell activeShell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+			MessageDialog.openError(activeShell, "Error", "ClassDeclaration can not be null");
+			
+		}
+		
 	}
 	
 	

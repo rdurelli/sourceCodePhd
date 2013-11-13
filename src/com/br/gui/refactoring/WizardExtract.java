@@ -47,8 +47,6 @@ public class WizardExtract extends Wizard {
 		
 		ArrayList<FieldDeclaration> filds = getSelectedFieldDeclaration();
 		
-		System.out.println(filds.size());
-		
 		UtilJavaModel utilJavaModel = new UtilJavaModel();
 		
 //		utilJavaModel.
