@@ -53,6 +53,9 @@ import org.eclipse.gmt.modisco.omg.kdm.source.SourceFactory;
 import org.eclipse.gmt.modisco.omg.kdm.source.SourceFile;
 import org.eclipse.gmt.modisco.omg.kdm.source.SourceRef;
 import org.eclipse.gmt.modisco.omg.kdm.source.SourceRegion;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.omg.IOP.CodecFactory;
 
 import com.br.databaseDDL.Column;
@@ -296,6 +299,37 @@ public Segment load(String KDMModelFullPath){
 	}
 	
 	
+	public void moveStorableUnitToClassUnit (ClassUnit classUnit, StorableUnit storableUnit) {
+		
+		
+		if ( classUnit!= null) {
+			
+			classUnit.getCodeElement().add(storableUnit);
+			
+		} else {
+			Shell activeShell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+			MessageDialog.openError(activeShell, "Error", "ClassUnit can not be null");
+			
+		}
+		
+		
+	}
+	
+	public void moveMethodUnitToClassUnit (ClassUnit classUnit, MethodUnit methodUnit) {
+		
+		
+		if ( classUnit!= null) {
+			
+			classUnit.getCodeElement().add(methodUnit);
+			
+		} else {
+			Shell activeShell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+			MessageDialog.openError(activeShell, "Error", "ClassUnit can not be null");
+			
+		}
+		
+		
+	}
 	
 	
 	private Attribute criarAttibuteForStorableUnit () {
