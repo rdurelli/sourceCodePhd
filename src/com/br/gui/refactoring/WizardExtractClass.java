@@ -17,6 +17,8 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 
 public class WizardExtractClass extends WizardPage {
 	private Text text;
@@ -91,6 +93,18 @@ public class WizardExtractClass extends WizardPage {
 		tblclmnName.setText("Name");
 		
 		Button btnEdit = new Button(container, SWT.NONE);
+		btnEdit.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				
+				TableItem[] items =  table.getSelection();
+				
+				System.out.println(table.getSelectionIndex());
+				
+				System.out.println(items);
+				
+			}
+		});
 		btnEdit.setBounds(428, 106, 94, 28);
 		btnEdit.setText("Edit...");
 		

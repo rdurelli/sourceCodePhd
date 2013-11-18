@@ -25,6 +25,7 @@ import org.eclipse.gmt.modisco.java.Model;
 import org.eclipse.gmt.modisco.java.emf.JavaPackage;
 import org.eclipse.gmt.modisco.java.generation.files.GenerateJavaExtended;
 import org.eclipse.gmt.modisco.omg.kdm.action.ActionElement;
+import org.eclipse.gmt.modisco.omg.kdm.action.ActionFactory;
 import org.eclipse.gmt.modisco.omg.kdm.action.BlockUnit;
 import org.eclipse.gmt.modisco.omg.kdm.code.AbstractCodeElement;
 import org.eclipse.gmt.modisco.omg.kdm.code.BooleanType;
@@ -32,13 +33,18 @@ import org.eclipse.gmt.modisco.omg.kdm.code.CharType;
 import org.eclipse.gmt.modisco.omg.kdm.code.ClassUnit;
 import org.eclipse.gmt.modisco.omg.kdm.code.CodeFactory;
 import org.eclipse.gmt.modisco.omg.kdm.code.CodeModel;
+import org.eclipse.gmt.modisco.omg.kdm.code.ExportKind;
 import org.eclipse.gmt.modisco.omg.kdm.code.FloatType;
 import org.eclipse.gmt.modisco.omg.kdm.code.IntegerType;
 import org.eclipse.gmt.modisco.omg.kdm.code.LanguageUnit;
+import org.eclipse.gmt.modisco.omg.kdm.code.MethodKind;
 import org.eclipse.gmt.modisco.omg.kdm.code.MethodUnit;
 import org.eclipse.gmt.modisco.omg.kdm.code.OctetType;
 import org.eclipse.gmt.modisco.omg.kdm.code.Package;
+import org.eclipse.gmt.modisco.omg.kdm.code.ParameterKind;
+import org.eclipse.gmt.modisco.omg.kdm.code.ParameterUnit;
 import org.eclipse.gmt.modisco.omg.kdm.code.PrimitiveType;
+import org.eclipse.gmt.modisco.omg.kdm.code.Signature;
 import org.eclipse.gmt.modisco.omg.kdm.code.StorableKind;
 import org.eclipse.gmt.modisco.omg.kdm.code.StorableUnit;
 import org.eclipse.gmt.modisco.omg.kdm.code.StringType;
@@ -180,6 +186,7 @@ public Segment load(String KDMModelFullPath){
 	public ClassUnit getStringType (Segment segment) {
 		
 		
+		
 		List<KDMModel> models = segment.getModel();
 		
 		CodeModel codeModel = (CodeModel) models.get(1);
@@ -298,6 +305,187 @@ public Segment load(String KDMModelFullPath){
 		
 	}
 	
+	public MethodUnit createMethodUnitGETInClassUnit (ClassUnit classUnit, String name, ClassUnit stringType, Segment segment) {
+		
+		MethodUnit methodUnit = CodeFactory.eINSTANCE.createMethodUnit();
+		methodUnit.setName(name);
+		methodUnit.setKind(MethodKind.METHOD);
+		methodUnit.setExport(ExportKind.PUBLIC);
+		methodUnit.getAttribute().add(this.criarAttributeForMethodUnit());
+		methodUnit.getSource().add(this.criarSource(classUnit.getName()));
+		
+		//criar a Signature
+		
+		Signature signature = CodeFactory.eINSTANCE.createSignature();
+		signature.setName(name);
+		
+		//criar o ParameterUnit
+		
+		ParameterUnit parameterUnit = CodeFactory.eINSTANCE.createParameterUnit();
+		
+		parameterUnit.getSource().add(this.criarSource(classUnit.getName()));
+		
+		parameterUnit.setKind(ParameterKind.RETURN);
+		
+		
+		
+		parameterUnit.setType(stringType);
+		
+		signature.getParameterUnit().add(parameterUnit);
+		
+		//criar o ParameterUnit
+		
+		methodUnit.setType(signature);
+		
+		methodUnit.getCodeElement().add(signature);
+		
+		BlockUnit blockUnit = ActionFactory.eINSTANCE.createBlockUnit();
+		
+		blockUnit.getSource().add(this.criarSource(classUnit.getName()));
+		
+		ActionElement actionElement = ActionFactory.eINSTANCE.createActionElement();
+		
+		actionElement.setName("return");
+		actionElement.setKind("return");
+		actionElement.getSource().add(this.criarSource(classUnit.getName()));
+		
+		blockUnit.getCodeElement().add(actionElement);
+		
+		//colocar o blockUnit
+		methodUnit.getCodeElement().add(blockUnit);
+		
+		classUnit.getCodeElement().add(methodUnit);
+		
+		return methodUnit;
+		
+	}
+	
+	public MethodUnit createMethodUnitGETInClassUnit (ClassUnit classUnit, String name, PrimitiveType type, Segment segment) {
+		
+		MethodUnit methodUnit = CodeFactory.eINSTANCE.createMethodUnit();
+		methodUnit.setName(name);
+		methodUnit.setKind(MethodKind.METHOD);
+		methodUnit.setExport(ExportKind.PUBLIC);
+		methodUnit.getAttribute().add(this.criarAttributeForMethodUnit());
+		methodUnit.getSource().add(this.criarSource(classUnit.getName()));
+		
+		//criar a Signature
+		
+		Signature signature = CodeFactory.eINSTANCE.createSignature();
+		signature.setName(name);
+		
+		//criar o ParameterUnit
+		
+		ParameterUnit parameterUnit = CodeFactory.eINSTANCE.createParameterUnit();
+		
+		parameterUnit.getSource().add(this.criarSource(classUnit.getName()));
+		
+		parameterUnit.setKind(ParameterKind.RETURN);
+		
+		
+		
+		parameterUnit.setType(type);
+		
+		signature.getParameterUnit().add(parameterUnit);
+		
+		//criar o ParameterUnit
+		
+		methodUnit.setType(signature);
+		
+		methodUnit.getCodeElement().add(signature);
+		
+		BlockUnit blockUnit = ActionFactory.eINSTANCE.createBlockUnit();
+		
+		blockUnit.getSource().add(this.criarSource(classUnit.getName()));
+		
+		ActionElement actionElement = ActionFactory.eINSTANCE.createActionElement();
+		
+		actionElement.setName("return");
+		actionElement.setKind("return");
+		actionElement.getSource().add(this.criarSource(classUnit.getName()));
+		
+		blockUnit.getCodeElement().add(actionElement);
+		
+		//colocar o blockUnit
+		methodUnit.getCodeElement().add(blockUnit);
+		
+		classUnit.getCodeElement().add(methodUnit);
+		
+		return methodUnit;
+		
+	}
+	
+	//n‹o terminado ter que terminar ainda.......
+	public MethodUnit createMethodUnitSETInClassUnit (ClassUnit classUnit, String name, PrimitiveType type, Segment segment) {
+		
+		MethodUnit methodUnit = CodeFactory.eINSTANCE.createMethodUnit();
+		methodUnit.setName(name);
+		methodUnit.setKind(MethodKind.METHOD);
+		methodUnit.setExport(ExportKind.PUBLIC);
+		methodUnit.getAttribute().add(this.criarAttributeForMethodUnit());
+		methodUnit.getSource().add(this.criarSource(classUnit.getName()));
+		
+		//criar a Signature
+		
+		Signature signature = CodeFactory.eINSTANCE.createSignature();
+		signature.setName(name);
+		
+		//criar o ParameterUnit
+		
+		ParameterUnit parameterUnit = CodeFactory.eINSTANCE.createParameterUnit();
+		
+		parameterUnit.getSource().add(this.criarSource(classUnit.getName()));
+		
+		parameterUnit.setKind(ParameterKind.RETURN);
+		
+		ParameterUnit secondParameterUnit = CodeFactory.eINSTANCE.createParameterUnit();
+		secondParameterUnit.setName("name");//mudar aqui..
+		
+		secondParameterUnit.getSource().add(this.criarSource(classUnit.getName()));
+		
+		secondParameterUnit.setType(type);
+		
+		parameterUnit.setType(this.getPrimitiveType(segment, "void"));
+		
+		signature.getParameterUnit().add(parameterUnit);
+		signature.getParameterUnit().add(secondParameterUnit);
+		//criar o ParameterUnit
+		
+		methodUnit.setType(signature);
+		
+		methodUnit.getCodeElement().add(signature);
+		
+		BlockUnit blockUnit = ActionFactory.eINSTANCE.createBlockUnit();
+		
+		blockUnit.getSource().add(this.criarSource(classUnit.getName()));
+		
+		ActionElement actionElement = ActionFactory.eINSTANCE.createActionElement();
+		
+		actionElement.setName("expression statement");
+		actionElement.setKind("expression statement");
+		actionElement.getSource().add(this.criarSource(classUnit.getName()));
+		
+		blockUnit.getCodeElement().add(actionElement);
+		
+		//colocar o blockUnit
+		methodUnit.getCodeElement().add(blockUnit);
+		
+		classUnit.getCodeElement().add(methodUnit);
+		
+		return methodUnit;
+		
+	}
+	
+	private Attribute criarAttributeForMethodUnit () {
+		
+		Attribute att = KdmFactory.eINSTANCE.createAttribute();
+		
+		att.setTag("export");
+		att.setValue("private");
+		
+		return att;
+		
+	}
 	
 	public void moveStorableUnitToClassUnit (ClassUnit classUnit, StorableUnit storableUnit) {
 		

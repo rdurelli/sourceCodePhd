@@ -241,7 +241,7 @@ public class UtilJavaModel {
 		
 	}
 	
-	public FieldDeclaration createFieldDeclaration(String name, ClassDeclaration classDeclaration, String type, Model model) {
+	public FieldDeclaration createFieldDeclaration(String name, ClassDeclaration classDeclaration, Type type, Model model) {
 		
 		FieldDeclaration field = JavaFactory.eINSTANCE.createFieldDeclaration();
 		field.setProxy(false);
@@ -249,7 +249,8 @@ public class UtilJavaModel {
 		field.setAbstractTypeDeclaration(classDeclaration);
 		field.setModifier(this.createModifierForFieldDeclaration(field));
 		TypeAccess typeAcess = JavaFactory.eINSTANCE.createTypeAccess();
-		typeAcess.setType(this.getStringType(model));
+//		typeAcess.setType(this.getStringType(model));
+		typeAcess.setType(type);
 		field.setType(typeAcess);
 		
 		VariableDeclarationFragment teste = JavaFactory.eINSTANCE.createVariableDeclarationFragment();
@@ -266,7 +267,7 @@ public class UtilJavaModel {
 		
 	} 
 	
-	public MethodDeclaration createMethodDeclarationGET(String name, ClassDeclaration classToPutTheMethod, FieldDeclaration fieldDeclaration, String nameAttribute, Model model){
+	public MethodDeclaration createMethodDeclarationGET(String name, ClassDeclaration classToPutTheMethod, FieldDeclaration fieldDeclaration, String nameAttribute, Type type, Model model){
 		
 		MethodDeclaration newMethod = JavaFactory.eINSTANCE.createMethodDeclaration();
 		newMethod.setName(name);
@@ -312,7 +313,7 @@ public class UtilJavaModel {
 //		singleDeclaration.setMethodDeclaration(newMethod);//o problema do paramenter esta aqui...
 		
 		TypeAccess typeAccess = JavaFactory.eINSTANCE.createTypeAccess();
-		typeAccess.setType(this.getStringType(model));
+		typeAccess.setType(type);
 		
 		
 		single.setVariable(variableDeclarationFragment);
@@ -326,7 +327,7 @@ public class UtilJavaModel {
 	}
 
 	
-	public MethodDeclaration createMethodDeclarationSET(String name, ClassDeclaration classToPutTheMethod, FieldDeclaration fieldDeclaration, String nameAttribute, Model model){
+	public MethodDeclaration createMethodDeclarationSET(String name, ClassDeclaration classToPutTheMethod, FieldDeclaration fieldDeclaration, String nameAttribute, Type type, Model model){
 		
 		MethodDeclaration newMethod = JavaFactory.eINSTANCE.createMethodDeclaration();
 		newMethod.setName(name);
@@ -387,7 +388,7 @@ public class UtilJavaModel {
 		variableDeclarationFragment.setMethodDeclaration(newMethod);
 		TypeAccess typeString = JavaFactory.eINSTANCE.createTypeAccess();
 		typeString.setOriginalCompilationUnit(classToPutTheMethod.getOriginalCompilationUnit());
-		typeString.setType(this.getStringType(model));
+		typeString.setType(type);
 		variableDeclarationFragment.setType(typeString);
 //		variableDeclarationFragment.setVariablesContainer(fieldDeclaration);
 		
