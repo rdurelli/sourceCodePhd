@@ -26,7 +26,9 @@ import org.eclipse.gmt.modisco.java.emf.JavaPackage;
 import org.eclipse.gmt.modisco.java.generation.files.GenerateJavaExtended;
 import org.eclipse.gmt.modisco.omg.kdm.action.ActionElement;
 import org.eclipse.gmt.modisco.omg.kdm.action.ActionFactory;
+import org.eclipse.gmt.modisco.omg.kdm.action.Addresses;
 import org.eclipse.gmt.modisco.omg.kdm.action.BlockUnit;
+import org.eclipse.gmt.modisco.omg.kdm.action.Reads;
 import org.eclipse.gmt.modisco.omg.kdm.code.AbstractCodeElement;
 import org.eclipse.gmt.modisco.omg.kdm.code.BooleanType;
 import org.eclipse.gmt.modisco.omg.kdm.code.CharType;
@@ -291,7 +293,7 @@ public Segment load(String KDMModelFullPath){
 		
 	}
 	
-	public void createStorableUnitInAClassUnit (ClassUnit classUnit, String name, ClassUnit type) {
+	public StorableUnit createStorableUnitInAClassUnit (ClassUnit classUnit, String name, ClassUnit type) {
 		
 		StorableUnit attributeLike = CodeFactory.eINSTANCE.createStorableUnit();
 		attributeLike.setName(name);
@@ -302,6 +304,8 @@ public Segment load(String KDMModelFullPath){
 		
 		
 		classUnit.getCodeElement().add(attributeLike);
+		
+		return attributeLike;
 		
 	}
 	
@@ -416,7 +420,7 @@ public Segment load(String KDMModelFullPath){
 	}
 	
 	//n‹o terminado ter que terminar ainda.......
-	public MethodUnit createMethodUnitSETInClassUnit (ClassUnit classUnit, String name, PrimitiveType type, Segment segment) {
+	public MethodUnit createMethodUnitSETInClassUnit (ClassUnit classUnit, String name, PrimitiveType type, StorableUnit attribute, Segment segment) {
 		
 		MethodUnit methodUnit = CodeFactory.eINSTANCE.createMethodUnit();
 		methodUnit.setName(name);
@@ -464,6 +468,49 @@ public Segment load(String KDMModelFullPath){
 		actionElement.setName("expression statement");
 		actionElement.setKind("expression statement");
 		actionElement.getSource().add(this.criarSource(classUnit.getName()));
+//		actionElement.getCo
+		
+		ActionElement actionElementAssign = ActionFactory.eINSTANCE.createActionElement();
+		actionElementAssign.setName("ASSIGN");
+		actionElementAssign.setKind("assignment");
+		actionElementAssign.getSource().add(this.criarSource(classUnit.getName()));
+		
+		Reads readActionAssign = ActionFactory.eINSTANCE.createReads();
+		
+		readActionAssign.setFrom(actionElementAssign);
+		
+		actionElementAssign.getActionRelation().add(readActionAssign);
+		
+		ParameterUnit parameterUnitRead = CodeFactory.eINSTANCE.createParameterUnit();
+		parameterUnitRead.setName("name");//mudar aqui;
+		parameterUnitRead.setKind(ParameterKind.UNKNOWN);
+		parameterUnitRead.getSource().add(this.criarSource(classUnit.getName()));
+		parameterUnitRead.setType(type);
+		
+		readActionAssign.setTo(parameterUnitRead);
+		
+		actionElement.getCodeElement().add(actionElementAssign);
+		
+		ActionElement actionElementFieldAccess = ActionFactory.eINSTANCE.createActionElement();
+		actionElementFieldAccess.setName("field access");
+		actionElementFieldAccess.setKind("field access");
+		actionElementFieldAccess.getSource().add(this.criarSource(classUnit.getName()));
+		
+		Addresses addressesFieldAccess = ActionFactory.eINSTANCE.createAddresses();
+		
+		actionElementFieldAccess.getActionRelation().add(addressesFieldAccess);
+		
+		addressesFieldAccess.setFrom(actionElementFieldAccess);
+		addressesFieldAccess.setTo(attribute);
+		
+		actionElementAssign.getCodeElement().add(actionElementFieldAccess);
+		
+		ActionElement actionElementThis = ActionFactory.eINSTANCE.createActionElement();
+		actionElementThis.setName("this");
+		actionElementThis.setKind("this");
+		actionElementThis.getSource().add(this.criarSource(classUnit.getName()));
+		
+		actionElementFieldAccess.getCodeElement().add(actionElementThis);
 		
 		blockUnit.getCodeElement().add(actionElement);
 		

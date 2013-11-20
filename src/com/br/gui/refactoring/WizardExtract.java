@@ -99,7 +99,7 @@ public class WizardExtract extends Wizard {
 		FieldDeclaration link =  utilJavaModel.createFieldDeclaration(fieldName, classDeclarationToRemoveTheAttributes, classDeclarationCreated, model);
 		
 		//cria um StorableUnit em uma determinada ClassUnit...
-		utilKDM.createStorableUnitInAClassUnit(classUnitToExtract, fieldName, newClassUnit);
+		StorableUnit attributedCreated = utilKDM.createStorableUnitInAClassUnit(classUnitToExtract, fieldName, newClassUnit);
 		
 		//cria um methodDeclaration GET e coloca em uma determinada ClassDeclaration
 		utilJavaModel.createMethodDeclarationGET("get"+classDeclarationCreated.getName(), classDeclarationToRemoveTheAttributes, link, classDeclarationCreated.getName().toLowerCase(), classDeclarationCreated, model);
@@ -111,6 +111,8 @@ public class WizardExtract extends Wizard {
 		
 		
 		utilKDM.createMethodUnitGETInClassUnit(this.classUnitToExtract, "get"+newClassUnit.getName(), newClassUnit,  segment);
+		
+		utilKDM.createMethodUnitSETInClassUnit(this.classUnitToExtract, "set"+newClassUnit.getName(), utilKDM.getPrimitiveType(segment, "int"), attributedCreated, segment);
 		
 //		FieldDeclaration fieldCreated = utilJavaModel.createFieldDeclaration("attriCreated", classDeclarationToRemoveTheAttributes, utilJavaModel.getStringType(model), model);
 //		//cria o méthod get..
