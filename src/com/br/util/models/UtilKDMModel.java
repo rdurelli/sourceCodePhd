@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -34,6 +35,7 @@ import org.eclipse.gmt.modisco.omg.kdm.code.BooleanType;
 import org.eclipse.gmt.modisco.omg.kdm.code.CharType;
 import org.eclipse.gmt.modisco.omg.kdm.code.ClassUnit;
 import org.eclipse.gmt.modisco.omg.kdm.code.CodeFactory;
+import org.eclipse.gmt.modisco.omg.kdm.code.CodeItem;
 import org.eclipse.gmt.modisco.omg.kdm.code.CodeModel;
 import org.eclipse.gmt.modisco.omg.kdm.code.ExportKind;
 import org.eclipse.gmt.modisco.omg.kdm.code.FloatType;
@@ -67,6 +69,7 @@ import org.eclipse.ui.PlatformUI;
 import org.omg.IOP.CodecFactory;
 
 import com.br.databaseDDL.Column;
+import com.br.gui.refactoring.ExtractSuperClassInfo;
 import com.br.utils.ProjectSelectedToModernize;
 
 public class UtilKDMModel {
@@ -566,6 +569,82 @@ public Segment load(String KDMModelFullPath){
 		
 	}
 	
+	public void removeStorableUnit (ClassUnit classUnit, StorableUnit storableUnit) {
+		
+		
+		if ( classUnit!= null) {
+			
+			classUnit.getCodeElement().remove(storableUnit);
+			
+		} else {
+			Shell activeShell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+			MessageDialog.openError(activeShell, "Error", "ClassUnit can not be null");
+			
+		}
+		
+		
+	}
+	
+	
+	public void createSuperExtractClass (ClassUnit classUnit, LinkedHashSet<ExtractSuperClassInfo> extractSuperClassInfo) {
+		
+		
+		Iterator<ExtractSuperClassInfo> ite = extractSuperClassInfo.iterator();
+		
+		while (ite.hasNext()) {
+			
+			ExtractSuperClassInfo classInfo = ite.next();
+			
+			moveStorableUnitToClassUnit(classUnit, classInfo.getStorableUnitTo());
+			moveStorableUnitToClassUnit(classUnit, classInfo.getStorableUnitFROM());
+			
+		}
+		
+		EList<CodeItem> elements = classUnit.getCodeElement();
+		
+		for (int i = 0; i < elements.size(); i++) {
+			
+		
+			for (int j = 0; j < elements.size(); j++) {
+				
+				if (elements.get(i) instanceof StorableUnit && elements.get(i).getName().equals(elements.get(j).getName())) {
+					
+					StorableUnit elementToRemove = (StorableUnit) elements.get(j);
+					
+					//n‹o Ž a melhor ideia, pois tem lugares que tem referencia ao attributo removido..
+					removeStorableUnit(classUnit, elementToRemove);
+					
+				}
+				
+			}
+			
+			
+		}
+		
+		
+		
+		
+	}
+	
+	public List<StorableUnit> getStorablesUnit (ClassUnit classUnit) {
+		
+		EList<CodeItem> codeElements = classUnit.getCodeElement();
+		
+		List<StorableUnit> attributes = new ArrayList<StorableUnit>();
+		
+		for (CodeItem element : codeElements) {
+			
+			if (element instanceof StorableUnit) {
+				
+				attributes.add((StorableUnit)element);
+				
+			}
+			
+		}
+		return attributes;
+		
+		
+	}
 	
 	private Attribute criarAttibuteForStorableUnit () {
 		
@@ -577,6 +656,8 @@ public Segment load(String KDMModelFullPath){
 		return att;
 		
 	}
+	
+	
 	
 	
 	

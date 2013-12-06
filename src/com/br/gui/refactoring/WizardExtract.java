@@ -127,10 +127,30 @@ public class WizardExtract extends Wizard {
 			
 		}
 		
+		
+		
+		if (check == true && getAndSetJavaModel.size() > 0) {
+			
 		for (MethodDeclaration method : getAndSetJavaModel) {
 			
 			utilJavaModel.moveMethodDeclarationToClassDeclaration(classDeclarationCreated, method);
 		} 
+			
+			
+			
+		} else if (check == true && getAndSetJavaModel.size() == 0 ){
+			
+			for (FieldDeclaration field : fields) {
+				
+				//cria um methodDeclaration GET e coloca em uma determinada ClassDeclaration
+				utilJavaModel.createMethodDeclarationGET("get"+field.getFragments().get(0).getName(), classDeclarationCreated, field, field.getFragments().get(0).getName(), field.getType().getType(), model);
+				utilJavaModel.createMethodDeclarationSET("set"+field.getFragments().get(0).getName(), classDeclarationCreated, field, field.getFragments().get(0).getName(), field.getType().getType(), model);
+			}
+			
+			
+			
+			
+		}
 		
 		//move todos os StorableUnit para a nova classe Criada..
 		addStorableUnitToTheNewClass(newClassUnit, storableUnit);

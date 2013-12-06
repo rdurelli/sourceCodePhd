@@ -197,6 +197,12 @@
              label="Extract Class"
              menubarPath="TestePlugin.menu4/content">
        </action>
+       <action
+             class="com.br.actions.ExtractSuperClass"
+             id="com.actions.newActionExtractSuperClass"
+             label="Extract Super Class"
+             menubarPath="TestePlugin.menu4/content">
+       </action>
     </objectContribution>
  </extension>
 </plugin>
