@@ -592,6 +592,42 @@ public Segment load(String KDMModelFullPath){
 		
 		Iterator<ExtractSuperClassInfo> ite = extractSuperClassInfo.iterator();
 		
+	
+		ArrayList<String> classAlreadyWithInheritance = new ArrayList<String>();
+		
+		
+		
+		while (ite.hasNext()) {
+			
+			boolean alreadyWithInheritance = false;
+			
+			
+			ExtractSuperClassInfo classInfo = ite.next();
+			
+			ClassUnit classUnitSuper = classInfo.getFrom();
+			
+			
+			for (String className : classAlreadyWithInheritance) {
+				
+				if (className.equals(classUnitSuper.getName())) {
+					
+					alreadyWithInheritance = true;
+					
+				}
+				
+			}
+			
+			if (!alreadyWithInheritance) {
+				
+				this.createInheritanceExtends(classUnit, classUnitSuper);
+				classAlreadyWithInheritance.add(classUnitSuper.getName());
+				alreadyWithInheritance = false;
+			}
+				
+			
+			
+		}
+		
 		while (ite.hasNext()) {
 			
 			ExtractSuperClassInfo classInfo = ite.next();
@@ -600,6 +636,8 @@ public Segment load(String KDMModelFullPath){
 			moveStorableUnitToClassUnit(classUnit, classInfo.getStorableUnitFROM());
 			
 		}
+		
+		
 		
 		EList<CodeItem> elements = classUnit.getCodeElement();
 		
