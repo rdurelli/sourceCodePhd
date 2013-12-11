@@ -38,6 +38,7 @@ import org.eclipse.gmt.modisco.omg.kdm.code.CodeFactory;
 import org.eclipse.gmt.modisco.omg.kdm.code.CodeItem;
 import org.eclipse.gmt.modisco.omg.kdm.code.CodeModel;
 import org.eclipse.gmt.modisco.omg.kdm.code.ExportKind;
+import org.eclipse.gmt.modisco.omg.kdm.code.Extends;
 import org.eclipse.gmt.modisco.omg.kdm.code.FloatType;
 import org.eclipse.gmt.modisco.omg.kdm.code.IntegerType;
 import org.eclipse.gmt.modisco.omg.kdm.code.LanguageUnit;
@@ -864,5 +865,20 @@ public Segment load(String KDMModelFullPath){
 		return segment;
 	}
 	
+	
+	public void createInheritanceExtends (ClassUnit superClassUnit, ClassUnit subClassUnit) {
+		
+		if (superClassUnit != null && subClassUnit != null) {
+			
+			Extends extendsKDM = CodeFactory.eINSTANCE.createExtends();
+			extendsKDM.setTo(superClassUnit);
+			extendsKDM.setFrom(subClassUnit);
+			
+			subClassUnit.getCodeRelation().add(extendsKDM);
+			
+		}
+		
+	}
+
 	
 }
