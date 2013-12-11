@@ -835,4 +835,27 @@ public class UtilJavaModel {
 		
 	}
 
+	public void createInheritance (ClassDeclaration superClass, ClassDeclaration subClass) {
+		
+		
+		if (superClass != null && subClass != null) {
+			
+			
+			TypeAccess typeAccessSuperClass = JavaFactory.eINSTANCE.createTypeAccess();
+			
+			typeAccessSuperClass.setType(subClass);
+			
+			superClass.getUsagesInTypeAccess().add(typeAccessSuperClass);
+			
+			
+			TypeAccess typeAccessSubClass = JavaFactory.eINSTANCE.createTypeAccess();
+			
+			typeAccessSubClass.setType(superClass);
+			
+			subClass.setSuperClass(typeAccessSubClass);
+			
+		}
+		
+	}
+	
 }
