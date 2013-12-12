@@ -592,6 +592,8 @@ public Segment load(String KDMModelFullPath){
 		
 		Iterator<ExtractSuperClassInfo> ite = extractSuperClassInfo.iterator();
 		
+		Iterator<ExtractSuperClassInfo> ite2 = extractSuperClassInfo.iterator();
+		
 	
 		ArrayList<String> classAlreadyWithInheritance = new ArrayList<String>();
 		
@@ -628,9 +630,9 @@ public Segment load(String KDMModelFullPath){
 			
 		}
 		
-		while (ite.hasNext()) {
+		while (ite2.hasNext()) {
 			
-			ExtractSuperClassInfo classInfo = ite.next();
+			ExtractSuperClassInfo classInfo = ite2.next();
 			
 			moveStorableUnitToClassUnit(classUnit, classInfo.getStorableUnitTo());
 			moveStorableUnitToClassUnit(classUnit, classInfo.getStorableUnitFROM());

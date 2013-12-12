@@ -46,6 +46,7 @@ import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 import com.br.gui.refactoring.ExtractSuperClassInfo;
 import com.br.gui.refactoring.WizardExtract;
+import com.br.gui.refactoring.WizardExtractSuperClass;
 import com.br.util.models.UtilJavaModel;
 import com.br.util.models.UtilKDMModel;
 
@@ -182,7 +183,7 @@ public class ExtractSuperClass implements IObjectActionDelegate {
 						
 					}
 					
-					ClassUnit superClassExtractedCreated = utilKDMMODEL.createClassUnit("SuperClassExtracted", ((Package)((ClassUnit)classesSelectedToSuperExtract.get(0)).eContainer()));
+//					ClassUnit superClassExtractedCreated = utilKDMMODEL.createClassUnit("SuperClassExtracted", ((Package)((ClassUnit)classesSelectedToSuperExtract.get(0)).eContainer()));
 					
 					for (ExtractSuperClassInfo info : extractSuperClassInfo) {
 						
@@ -190,7 +191,14 @@ public class ExtractSuperClass implements IObjectActionDelegate {
 						
 					}
 					
-					utilKDMMODEL.createSuperExtractClass(superClassExtractedCreated, extractSuperClassInfo);
+					Package packageToPuTTheNewClass = ((Package)((ClassUnit)classesSelectedToSuperExtract.get(0)).eContainer());
+					
+					WizardDialog teste = new WizardDialog(shell, new WizardExtractSuperClass(extractSuperClassInfo, packageToPuTTheNewClass));
+
+					teste.open();
+					
+					
+					
 
 					}
 					
