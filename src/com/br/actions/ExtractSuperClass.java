@@ -246,7 +246,7 @@ public class ExtractSuperClass implements IObjectActionDelegate {
 					
 					
 					
-					
+					org.eclipse.gmt.modisco.java.Package packageToPutTheNewClassJavaModel = (org.eclipse.gmt.modisco.java.Package)classesSelectedJavaModel.get(0).eContainer();
 					
 //					ClassUnit superClassExtractedCreated = utilKDMMODEL.createClassUnit("SuperClassExtracted", ((Package)((ClassUnit)classesSelectedToSuperExtract.get(0)).eContainer()));
 					
@@ -258,9 +258,9 @@ public class ExtractSuperClass implements IObjectActionDelegate {
 					
 					Package packageToPuTTheNewClass = ((Package)((ClassUnit)classesSelectedToSuperExtract.get(0)).eContainer());
 					
-					WizardDialog teste = new WizardDialog(shell, new WizardExtractSuperClass(extractSuperClassInfo, packageToPuTTheNewClass));
+					WizardDialog wizard = new WizardDialog(shell, new WizardExtractSuperClass(extractSuperClassInfo, extractSuperClassInfoJAVAMODEL, packageToPuTTheNewClass, packageToPutTheNewClassJavaModel, modelJava));
 
-					teste.open();
+					wizard.open();
 					
 					UtilKDMModel utilKDM = new UtilKDMModel();
 					

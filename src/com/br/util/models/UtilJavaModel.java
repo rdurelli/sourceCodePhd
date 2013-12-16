@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -56,11 +58,14 @@ import org.eclipse.gmt.modisco.java.emf.JavaPackage;
 import org.eclipse.gmt.modisco.java.generation.files.GenerateJavaExtended;
 import org.eclipse.gmt.modisco.omg.kdm.code.ClassUnit;
 import org.eclipse.gmt.modisco.omg.kdm.code.CodeFactory;
+import org.eclipse.gmt.modisco.omg.kdm.code.Extends;
+import org.eclipse.gmt.modisco.omg.kdm.code.StorableUnit;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.jruby.javasupport.Java;
 
+import com.br.gui.refactoring.ExtractSuperClassInfoJavaModel;
 import com.br.utils.ProjectSelectedToModernize;
 
 public class UtilJavaModel {
@@ -880,5 +885,102 @@ public class UtilJavaModel {
 		
 	}
 	
+	
+	public void createInheritanceExtends (ClassDeclaration superClass, ClassDeclaration subClass) {
+		
+		if (superClass != null && subClass != null) {
+			
+			TypeAccess inheritance = JavaFactory.eINSTANCE.createTypeAccess();
+			inheritance.setType(superClass);
+			subClass.setSuperClass(inheritance);
+			
+		}
+		
+	}
+	
+	public void createSuperExtractClass (ClassDeclaration classDeclaration, LinkedHashSet<ExtractSuperClassInfoJavaModel> extractSuperClassInfo) {
+		
+		Iterator<ExtractSuperClassInfoJavaModel> ite = extractSuperClassInfo.iterator();
+		Iterator<ExtractSuperClassInfoJavaModel> ite2 = extractSuperClassInfo.iterator();
+		
+		ArrayList<String> classAlreadWithInheritance = new ArrayList<String>();
+		
+		while (ite.hasNext()) {
+			
+			boolean alreadyWithInheritance = false;
+			
+			ExtractSuperClassInfoJavaModel classInfo = ite.next();
+			
+			ClassDeclaration classDeclarationSuper = classInfo.getFrom();
+			
+			for (String className : classAlreadWithInheritance) {
+				
+				if (className.equals(classDeclarationSuper.getName())) {
+					
+					alreadyWithInheritance = true;
+					
+				}
+				
+			}
+			
+			if (!alreadyWithInheritance) {
+				
+				this.createInheritanceExtends(classDeclaration, classDeclarationSuper);
+				classAlreadWithInheritance.add(classDeclarationSuper.getName());
+				alreadyWithInheritance = false;
+			}
+			
+			while (ite2.hasNext()) {
+				ExtractSuperClassInfoJavaModel classInfoJavaModel =  ite2.next();
+				
+				this.moveFieldDeclarationToClassDeclaration(classDeclaration, classInfoJavaModel.getStorableUnitTo());
+				this.moveFieldDeclarationToClassDeclaration(classDeclaration, classInfoJavaModel.getStorableUnitFROM());
+				
+			}
+			
+			
+			
+			List<FieldDeclaration> elements = this.getFieldDeclarations(classDeclaration);
+			
+			for (int i = 0; i < elements.size(); i++) {
+				
+				for (int j = 0; j < elements.size(); j++) {
+					
+					if (elements.get(i) instanceof FieldDeclaration && elements.get(i).getFragments().get(0).getName().equals(elements.get(j).getFragments().get(0).getName())) {
+						
+						FieldDeclaration elementToRemove = elements.get(j);
+						
+						this.removeFieldDeclaration(classDeclaration, elementToRemove);
+						
+//						this. chamar para remover :D
+						
+					}
+					
+				}
+				
+			}
+			
+			
+		}
+		
+	}
+	
+	public void removeFieldDeclaration (ClassDeclaration classDeclaration, FieldDeclaration fieldDeclaration) {
+		
+		
+		if ( classDeclaration!= null) {
+			
+			
+			classDeclaration.getBodyDeclarations().remove(fieldDeclaration);
+//			classUnit.getCodeElement().remove(storableUnit);
+			
+		} else {
+			Shell activeShell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+			MessageDialog.openError(activeShell, "Error", "ClassDeclaration can not be null");
+			
+		}
+		
+		
+	}
 	
 }
