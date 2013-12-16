@@ -25,6 +25,7 @@ import org.eclipse.gmt.modisco.omg.kdm.code.ClassUnit;
 import org.eclipse.gmt.modisco.omg.kdm.code.CodeItem;
 import org.eclipse.gmt.modisco.omg.kdm.code.Package;
 import org.eclipse.gmt.modisco.omg.kdm.code.StorableUnit;
+import org.eclipse.gmt.modisco.omg.kdm.core.KDMEntity;
 import org.eclipse.gmt.modisco.omg.kdm.kdm.Segment;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -183,6 +184,11 @@ public class ExtractSuperClass implements IObjectActionDelegate {
 						
 					}
 					
+					Model modelJava = utilJavaModel.load(activeProject.getLocationURI().toString()+"/MODELS_PIM_modificado/JavaModelRefactoring.javaxmi");
+					
+					List<ClassDeclaration> classesSelectedJavaModel = this.getAllClassDeclaration(classesSelectedToSuperExtract, utilKDMMODEL, utilJavaModel, modelJava);
+					
+					
 //					ClassUnit superClassExtractedCreated = utilKDMMODEL.createClassUnit("SuperClassExtracted", ((Package)((ClassUnit)classesSelectedToSuperExtract.get(0)).eContainer()));
 					
 					for (ExtractSuperClassInfo info : extractSuperClassInfo) {
@@ -196,6 +202,31 @@ public class ExtractSuperClass implements IObjectActionDelegate {
 					WizardDialog teste = new WizardDialog(shell, new WizardExtractSuperClass(extractSuperClassInfo, packageToPuTTheNewClass));
 
 					teste.open();
+					
+					UtilKDMModel utilKDM = new UtilKDMModel();
+					
+					Segment segment = utilKDM.getSegmentToPersiste((KDMEntity)classesSelectedToSuperExtract.get(0));
+					
+					Resource resource = utilKDM.save(segment, offset.toString(), URIProject);
+					
+					closeEditor(editorPart);
+					
+					
+					IWorkspaceRoot workRoot = ResourcesPlugin.getWorkspace().getRoot();
+				
+					IPath path = new Path(resource.getURI().toFileString());
+					
+					IFile fileToOpen = workRoot.getFileForLocation(path);
+						
+					refreshLocal(activeProject);					
+					
+					
+					openEditor(fileToOpen);
+					
+					
+//					Model model = utilJavaModel.getModelToPersiste(classDeclaration);
+//					
+//					utilJavaModel.save(model, URIProject);
 					
 					
 					
@@ -252,6 +283,26 @@ public class ExtractSuperClass implements IObjectActionDelegate {
 
 		shell = targetPart.getSite().getShell();
 
+	}
+	
+	private List<ClassDeclaration> getAllClassDeclaration (List<?> classesSelectedToSuperExtract, UtilKDMModel utilKDMMODEL, UtilJavaModel utilJavaModel, Model modelJava ) {
+		
+		List<ClassDeclaration> classesSelectedJavaModel = new ArrayList<ClassDeclaration>();
+		
+		for (Object object : classesSelectedToSuperExtract) {
+			
+			
+			String [] packageKDM = utilKDMMODEL.getCompletePackageName((ClassUnit)object);
+			
+			ClassDeclaration classDeclaration = utilJavaModel.getClassDeclaration((ClassUnit)object, packageKDM, modelJava);
+			
+			classesSelectedJavaModel.add(classDeclaration);
+			
+		}
+		
+		return classesSelectedJavaModel;
+		
+		
 	}
 
 }
