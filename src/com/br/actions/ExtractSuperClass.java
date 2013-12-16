@@ -205,7 +205,37 @@ public class ExtractSuperClass implements IObjectActionDelegate {
 							
 							for (int j = 0; j < classesSelectedJavaModel.size(); j++) {
 								
+								ClassDeclaration classDeclarationSelected2 = classesSelectedJavaModel.get(j);
 								
+								if (classDeclarationSelected != classDeclarationSelected2) {
+									
+									List<FieldDeclaration> fields2 = utilJavaModel.getFieldDeclarations(classDeclarationSelected2);
+									
+									for (FieldDeclaration fieldDeclaration : fields) {
+										
+										for (FieldDeclaration fieldDeclaration2 : fields2) {
+											
+											if (fieldDeclaration.getFragments().get(0).getName().equals(fieldDeclaration2.getFragments().get(0).getName()) && 
+													fieldDeclaration.getType().getType().getName().equals(fieldDeclaration2.getType().getType().getName())) {
+												
+												ExtractSuperClassInfoJavaModel superClassInfoJavaModel = new ExtractSuperClassInfoJavaModel();
+												
+												superClassInfoJavaModel.setTo(classDeclarationSelected);
+												superClassInfoJavaModel.setFrom(classDeclarationSelected2);
+												superClassInfoJavaModel.setAttributeToExtract(fieldDeclaration.getFragments().get(0).getName());
+												superClassInfoJavaModel.setStorableUnitTo(fieldDeclaration);
+												superClassInfoJavaModel.setStorableUnitFROM(fieldDeclaration2);
+												
+												extractSuperClassInfoJAVAMODEL.add(superClassInfoJavaModel);
+												
+												
+											}
+											
+										}
+										
+									}
+									
+								}
 								
 								
 							}
