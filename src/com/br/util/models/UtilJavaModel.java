@@ -929,6 +929,7 @@ public class UtilJavaModel {
 				classAlreadWithInheritance.add(classDeclarationSuper.getName());
 				alreadyWithInheritance = false;
 			}
+		}
 			
 			while (ite2.hasNext()) {
 				ExtractSuperClassInfoJavaModel classInfoJavaModel =  ite2.next();
@@ -942,13 +943,16 @@ public class UtilJavaModel {
 			
 			List<FieldDeclaration> elements = this.getFieldDeclarations(classDeclaration);
 			
-			for (int i = 0; i < elements.size(); i++) {
+			EList<BodyDeclaration> body = classDeclaration.getBodyDeclarations();
+			
+			for (int i = 0; i < body.size(); i++) {
 				
-				for (int j = 0; j < elements.size(); j++) {
+				for (int j = 0; j < body.size(); j++) {
 					
-					if (elements.get(i) instanceof FieldDeclaration && elements.get(i).getFragments().get(0).getName().equals(elements.get(j).getFragments().get(0).getName())) {
+					if (body.get(i) instanceof FieldDeclaration && ((FieldDeclaration)body.get(i)).getFragments().get(0).getName().equals(((FieldDeclaration)body.get(j)).getFragments().get(0).getName())) {
 						
-						FieldDeclaration elementToRemove = elements.get(j);
+						
+						FieldDeclaration elementToRemove = (FieldDeclaration)body.get(j);
 						
 						this.removeFieldDeclaration(classDeclaration, elementToRemove);
 						
@@ -963,7 +967,6 @@ public class UtilJavaModel {
 			
 		}
 		
-	}
 	
 	public void removeFieldDeclaration (ClassDeclaration classDeclaration, FieldDeclaration fieldDeclaration) {
 		

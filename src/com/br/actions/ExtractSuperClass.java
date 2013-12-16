@@ -283,9 +283,9 @@ public class ExtractSuperClass implements IObjectActionDelegate {
 					openEditor(fileToOpen);
 					
 					
-//					Model model = utilJavaModel.getModelToPersiste(classDeclaration);
-//					
-//					utilJavaModel.save(model, URIProject);
+					Model model = utilJavaModel.getModelToPersiste(classesSelectedJavaModel.get(0));
+					
+					utilJavaModel.save(model, URIProject);
 					
 					
 					
