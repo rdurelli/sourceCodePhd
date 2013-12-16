@@ -20,6 +20,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.gmt.modisco.infra.browser.editors.EcoreBrowser;
 import org.eclipse.gmt.modisco.java.AbstractTypeDeclaration;
 import org.eclipse.gmt.modisco.java.ClassDeclaration;
+import org.eclipse.gmt.modisco.java.FieldDeclaration;
 import org.eclipse.gmt.modisco.java.Model;
 import org.eclipse.gmt.modisco.omg.kdm.code.ClassUnit;
 import org.eclipse.gmt.modisco.omg.kdm.code.CodeItem;
@@ -46,6 +47,7 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 import com.br.gui.refactoring.ExtractSuperClassInfo;
+import com.br.gui.refactoring.ExtractSuperClassInfoJavaModel;
 import com.br.gui.refactoring.WizardExtract;
 import com.br.gui.refactoring.WizardExtractSuperClass;
 import com.br.util.models.UtilJavaModel;
@@ -65,6 +67,8 @@ public class ExtractSuperClass implements IObjectActionDelegate {
 	public void run(IAction action) {
 
 		LinkedHashSet<ExtractSuperClassInfo> extractSuperClassInfo = new LinkedHashSet<ExtractSuperClassInfo>();
+		LinkedHashSet<ExtractSuperClassInfoJavaModel> extractSuperClassInfoJAVAMODEL = new LinkedHashSet<ExtractSuperClassInfoJavaModel>();
+		
 		
 		UtilKDMModel utilKDMMODEL = new UtilKDMModel();
 		UtilJavaModel utilJavaModel =  new UtilJavaModel();
@@ -187,6 +191,31 @@ public class ExtractSuperClass implements IObjectActionDelegate {
 					Model modelJava = utilJavaModel.load(activeProject.getLocationURI().toString()+"/MODELS_PIM_modificado/JavaModelRefactoring.javaxmi");
 					
 					List<ClassDeclaration> classesSelectedJavaModel = this.getAllClassDeclaration(classesSelectedToSuperExtract, utilKDMMODEL, utilJavaModel, modelJava);
+					
+					
+					//colocar aqui depois em um método, na verdade passar arrumando tudo e melhorar essa classe...
+					
+					for (int i = 0; i < classesSelectedJavaModel.size(); i++) {
+						
+						ClassDeclaration classDeclarationSelected = classesSelectedJavaModel.get(i);
+						
+						List<FieldDeclaration> fields = utilJavaModel.getFieldDeclarations(classDeclarationSelected);
+						
+						if (fields.size() > 0) {
+							
+							for (int j = 0; j < classesSelectedJavaModel.size(); j++) {
+								
+								
+								
+								
+							}
+							
+						}
+						
+					}
+					
+					
+					
 					
 					
 //					ClassUnit superClassExtractedCreated = utilKDMMODEL.createClassUnit("SuperClassExtracted", ((Package)((ClassUnit)classesSelectedToSuperExtract.get(0)).eContainer()));

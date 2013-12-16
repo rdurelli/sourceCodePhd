@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.EList;
@@ -857,5 +858,27 @@ public class UtilJavaModel {
 		}
 		
 	}
+	
+	public List<FieldDeclaration> getFieldDeclarations(ClassDeclaration classDeclaration) {
+		
+		List<FieldDeclaration> allFields = new ArrayList<FieldDeclaration>();
+		EList<BodyDeclaration> bodies = classDeclaration.getBodyDeclarations();
+		
+		for (BodyDeclaration bodyDeclaration : bodies) {
+			
+			if (bodyDeclaration instanceof FieldDeclaration) {
+				
+				FieldDeclaration field = (FieldDeclaration) bodyDeclaration;
+				
+				allFields.add(field);
+				
+			}
+			
+		}
+		
+		return allFields;
+		
+	}
+	
 	
 }
