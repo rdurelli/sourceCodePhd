@@ -1087,6 +1087,8 @@ public class UtilJavaModel {
 				
 				List<MethodDeclaration> teste = this.getAllGET(this.getFieldDeclarations(newClass), classDeclarationSuper);
 				
+				if (teste.size() > 0) {
+				
 				MethodDeclaration method1 = teste.get(0);
 				
 				if (method1.getBody().getStatements().get(0) instanceof ReturnStatement) {
@@ -1133,6 +1135,7 @@ public class UtilJavaModel {
 				alreadyFixed.add(classDeclarationSuper.getName());
 				alreadyVerified = false;
 			}
+		}
 		}
 		
 	}
