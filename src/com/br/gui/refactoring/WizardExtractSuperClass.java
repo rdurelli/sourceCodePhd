@@ -23,8 +23,9 @@ public class WizardExtractSuperClass extends Wizard {
 	private Package packageToPutTheNewClass = null;
 	private org.eclipse.gmt.modisco.java.Package packageToPutTheNewClassJavaModel = null;
 	private Model model = null;
+	private String URIProject = null;
 	
-	public WizardExtractSuperClass(LinkedHashSet<ExtractSuperClassInfo> extractSuperClassInfo, LinkedHashSet<ExtractSuperClassInfoJavaModel> extractSuperClassInfoJavaModel, Package packageToPutTheNewClass, org.eclipse.gmt.modisco.java.Package packageToPutTheNewClassJavaModel, Model model) {
+	public WizardExtractSuperClass(LinkedHashSet<ExtractSuperClassInfo> extractSuperClassInfo, LinkedHashSet<ExtractSuperClassInfoJavaModel> extractSuperClassInfoJavaModel, Package packageToPutTheNewClass, org.eclipse.gmt.modisco.java.Package packageToPutTheNewClassJavaModel, Model model, String URIProject) {
 		setWindowTitle("Extract Superclass");
 		this.extractSuperClassInfo = extractSuperClassInfo;
 		this.extractSuperClassInfoJavaModel = extractSuperClassInfoJavaModel;
@@ -32,6 +33,7 @@ public class WizardExtractSuperClass extends Wizard {
 		this.packageToPutTheNewClass = packageToPutTheNewClass;
 		this.packageToPutTheNewClassJavaModel = packageToPutTheNewClassJavaModel;
 		this.model = model;
+		this.URIProject = URIProject;
 	}
 
 	@Override
@@ -48,7 +50,7 @@ public class WizardExtractSuperClass extends Wizard {
 		
 		ClassDeclaration superClassExtractedCreatedJavaModel = utilJavaModel.createClassDeclaration(nameOfTheNewClass, this.packageToPutTheNewClassJavaModel, this.model);
 		
-		utilJavaModel.createSuperExtractClass(superClassExtractedCreatedJavaModel, extractSuperClassInfoJavaModel);
+		utilJavaModel.createSuperExtractClass(superClassExtractedCreatedJavaModel, extractSuperClassInfoJavaModel, model, URIProject);
 		
 		utilKDMMODEL.createSuperExtractClass(superClassExtractedCreated, extractSuperClassInfo);
 		

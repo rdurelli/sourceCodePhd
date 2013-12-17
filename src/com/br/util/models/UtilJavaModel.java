@@ -51,6 +51,7 @@ import org.eclipse.gmt.modisco.java.Statement;
 import org.eclipse.gmt.modisco.java.ThisExpression;
 import org.eclipse.gmt.modisco.java.Type;
 import org.eclipse.gmt.modisco.java.TypeAccess;
+import org.eclipse.gmt.modisco.java.VariableDeclaration;
 import org.eclipse.gmt.modisco.java.VariableDeclarationFragment;
 import org.eclipse.gmt.modisco.java.VisibilityKind;
 import org.eclipse.gmt.modisco.java.emf.JavaFactory;
@@ -898,12 +899,14 @@ public class UtilJavaModel {
 		
 	}
 	
-	public void createSuperExtractClass (ClassDeclaration classDeclaration, LinkedHashSet<ExtractSuperClassInfoJavaModel> extractSuperClassInfo) {
+	public void createSuperExtractClass (ClassDeclaration classDeclaration, LinkedHashSet<ExtractSuperClassInfoJavaModel> extractSuperClassInfo, Model model, String URI) {
 		
 		Iterator<ExtractSuperClassInfoJavaModel> ite = extractSuperClassInfo.iterator();
 		Iterator<ExtractSuperClassInfoJavaModel> ite2 = extractSuperClassInfo.iterator();
+		Iterator<ExtractSuperClassInfoJavaModel> ite3 = extractSuperClassInfo.iterator();
 		
 		ArrayList<String> classAlreadWithInheritance = new ArrayList<String>();
+		ArrayList<String> classAlreadVerified = new ArrayList<String>();
 		
 		while (ite.hasNext()) {
 			
@@ -941,7 +944,6 @@ public class UtilJavaModel {
 			
 			
 			
-			List<FieldDeclaration> elements = this.getFieldDeclarations(classDeclaration);
 			
 			EList<BodyDeclaration> body = classDeclaration.getBodyDeclarations();
 			
@@ -963,10 +965,205 @@ public class UtilJavaModel {
 				}
 				
 			}
+			//daqui para baixo desse method esta p«ssimo n‹o esta funcionando o que eu queria..
+			this.save(model, URI);
+			
+			
+			//----------------------------------------------------------------------------------------------------------------------------------------------
+			
+			
+			ExtractSuperClassInfoJavaModel pegouTeste = (ExtractSuperClassInfoJavaModel)extractSuperClassInfo.toArray()[0];
+			
+			Type typeToPass = this.getStringType(model);
+			
+			this.createMethodDeclarationGET("get"+pegouTeste.getTo().getName(), pegouTeste.getTo(), pegouTeste.getStorableUnitTo(), "rafa", typeToPass, model);
+			
+			
+			List<MethodDeclaration> teste = this.getAllGET(this.getFieldDeclarations(classDeclaration), pegouTeste.getTo());
+			
+			MethodDeclaration method1 = teste.get(0);
+			
+			if (method1.getBody().getStatements().get(0) instanceof ReturnStatement) {
+				
+				ReturnStatement retu = (ReturnStatement) method1.getBody().getStatements().get(0);
+				
+				SingleVariableAccess single = JavaFactory.eINSTANCE.createSingleVariableAccess();
+				
+				retu.setExpression(single);//coloca o SingleVariableAcessNoReturnStatment..
+				
+				VariableDeclarationFragment variableDeclarationFragment = JavaFactory.eINSTANCE.createVariableDeclarationFragment();
+				
+				
+				variableDeclarationFragment.setName("name");
+				variableDeclarationFragment.setProxy(false);
+				variableDeclarationFragment.setExtraArrayDimensions(0);
+				variableDeclarationFragment.setOriginalCompilationUnit(pegouTeste.getTo().getOriginalCompilationUnit());
+				//quando colocar um novo field ele parece funcionar......
+				variableDeclarationFragment.setVariablesContainer(this.createFieldDeclaration("teste", pegouTeste.getTo(), typeToPass, model));
+//				variableDeclarationFragment.setVariablesContainer(pegouTeste.getStorableUnitTo());
+				
+				System.out.println("O nome do mŽtodo Ž " + method1.getName());
+				
+				System.out.println("Veremos o que temos aqui." + pegouTeste.getStorableUnitTo());
+				
+				
+		
+				////
+				
+//				System.out.println("Deveria estar removido " + single.getVariable());
+//				System.out.println("Deveria estar removido " + single.getVariable().getOriginalCompilationUnit());
+				
+				//terminar isso aqui,....
+				single.setVariable(variableDeclarationFragment);
+				
+//				System.out.println(tetette);
+				
+				
+//				single.setVariable(value)
+				
+				
+			}
+			
+//----------------------------------------------------------------------------------------------------------------------------------------------
+			
+			
+//			System.out.println(teste);
+//			while (ite3.hasNext()) {
+//				
+//				boolean alreadyVerified = false;
+//				
+//				ExtractSuperClassInfoJavaModel classInfo = ite.next();
+//				
+//				ClassDeclaration classDeclarationSuper = classInfo.getFrom();
+//				
+//				for (String className : classAlreadWithInheritance) {
+//					
+//					if (className.equals(classDeclarationSuper.getName())) {
+//						
+//						alreadyVerified = true;
+//						
+//					}
+//					
+//				}
+//				
+//				if (!alreadyVerified) {
+//					
+//					this.createInheritanceExtends(classDeclaration, classDeclarationSuper);
+//					classAlreadVerified.add(classDeclarationSuper.getName());
+//					alreadyVerified = false;
+//				}
+//			}
 			
 			
 		}
+	
+	
+	private void fixGetAfterSuperExtractClass (LinkedHashSet<ExtractSuperClassInfoJavaModel> extractSuperClassInfo, Model model) {
 		
+		List<String> alreadyFixed = new ArrayList<String>();
+		Iterator<ExtractSuperClassInfoJavaModel> ite3 = extractSuperClassInfo.iterator();
+		
+		while (ite3.hasNext()) {
+			
+			boolean alreadyVerified = false;
+			
+			ExtractSuperClassInfoJavaModel classInfo = ite3.next();
+			
+			ClassDeclaration classDeclarationSuper = classInfo.getTo();
+			
+			for (String className : alreadyFixed) {
+				
+				if (className.equals(classDeclarationSuper.getName())) {
+					
+					alreadyVerified = true;
+					
+				}
+				
+			}
+			
+			if (!alreadyVerified) {
+				
+				List<MethodDeclaration> teste = this.getAllGET(this.getFieldDeclarations(classDeclarationSuper), classDeclarationSuper);
+				
+				MethodDeclaration method1 = teste.get(0);
+				
+				if (method1.getBody().getStatements().get(0) instanceof ReturnStatement) {
+					
+					ReturnStatement retu = (ReturnStatement) method1.getBody().getStatements().get(0);
+					
+					SingleVariableAccess single = JavaFactory.eINSTANCE.createSingleVariableAccess();
+					
+					retu.setExpression(single);//coloca o SingleVariableAcessNoReturnStatment..
+					
+					VariableDeclarationFragment variableDeclarationFragment = JavaFactory.eINSTANCE.createVariableDeclarationFragment();
+					
+					
+					variableDeclarationFragment.setName("name");
+					variableDeclarationFragment.setProxy(false);
+					variableDeclarationFragment.setExtraArrayDimensions(0);
+					variableDeclarationFragment.setOriginalCompilationUnit(classInfo.getTo().getOriginalCompilationUnit());
+					//quando colocar um novo field ele parece funcionar......
+					variableDeclarationFragment.setVariablesContainer(this.createFieldDeclaration("teste", classInfo.getTo(), classInfo.getStorableUnitTo().getType().getType(), model));
+//					variableDeclarationFragment.setVariablesContainer(pegouTeste.getStorableUnitTo());
+					
+					System.out.println("O nome do mŽtodo Ž " + method1.getName());
+					
+					System.out.println("Veremos o que temos aqui." + classInfo.getStorableUnitTo());
+					
+					
+			
+					////
+					
+//					System.out.println("Deveria estar removido " + single.getVariable());
+//					System.out.println("Deveria estar removido " + single.getVariable().getOriginalCompilationUnit());
+					
+					//terminar isso aqui,....
+					single.setVariable(variableDeclarationFragment);
+					
+//					System.out.println(tetette);
+					
+					
+//					single.setVariable(value)
+					
+					
+				}
+				
+				alreadyFixed.add(classDeclarationSuper.getName());
+				alreadyVerified = false;
+			}
+		}
+		
+	}
+	
+	
+	public List<MethodDeclaration> getAllGET(List<FieldDeclaration> fields, ClassDeclaration classDeclaration) {
+		
+		List<MethodDeclaration> allGET = new ArrayList<MethodDeclaration>();
+		
+		EList<BodyDeclaration> bodies = classDeclaration.getBodyDeclarations();
+		
+		for (FieldDeclaration field : fields) {
+			
+			for (BodyDeclaration bodyDeclaration : bodies) {
+					
+				if(bodyDeclaration instanceof MethodDeclaration && ((MethodDeclaration)bodyDeclaration).getName().equalsIgnoreCase("get"+field.getFragments().get(0).getName())){
+					
+//					classDeclaration.getBodyDeclarations().remove((MethodDeclaration)bodyDeclaration);
+					
+					allGET.add((MethodDeclaration)bodyDeclaration);
+					
+				}
+
+			}
+			
+		}
+		
+		
+		return allGET;
+		
+		
+	}
+	
 	
 	public void removeFieldDeclaration (ClassDeclaration classDeclaration, FieldDeclaration fieldDeclaration) {
 		

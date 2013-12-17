@@ -258,7 +258,7 @@ public class ExtractSuperClass implements IObjectActionDelegate {
 					
 					Package packageToPuTTheNewClass = ((Package)((ClassUnit)classesSelectedToSuperExtract.get(0)).eContainer());
 					
-					WizardDialog wizard = new WizardDialog(shell, new WizardExtractSuperClass(extractSuperClassInfo, extractSuperClassInfoJAVAMODEL, packageToPuTTheNewClass, packageToPutTheNewClassJavaModel, modelJava));
+					WizardDialog wizard = new WizardDialog(shell, new WizardExtractSuperClass(extractSuperClassInfo, extractSuperClassInfoJAVAMODEL, packageToPuTTheNewClass, packageToPutTheNewClassJavaModel, modelJava, URIProject ));
 
 					wizard.open();
 					
