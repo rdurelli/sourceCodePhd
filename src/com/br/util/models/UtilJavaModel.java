@@ -1088,8 +1088,9 @@ public class UtilJavaModel {
 				List<MethodDeclaration> teste = this.getAllGET(this.getFieldDeclarations(newClass), classDeclarationSuper);
 				
 				if (teste.size() > 0) {
+				//tem que ter um for aqui para fazer para todos os GETS...
 				
-				MethodDeclaration method1 = teste.get(0);
+					for (MethodDeclaration method1 : teste) {
 				
 				if (method1.getBody().getStatements().get(0) instanceof ReturnStatement) {
 					
@@ -1131,7 +1132,7 @@ public class UtilJavaModel {
 					
 					
 				}
-				
+			}
 				alreadyFixed.add(classDeclarationSuper.getName());
 				alreadyVerified = false;
 			}
