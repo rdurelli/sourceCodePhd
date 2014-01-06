@@ -44,6 +44,8 @@ public class WizardPullUpField extends Wizard {
 	@Override
 	public boolean performFinish() {
 		
+		utilKDMMODEL.actionPullUpField(pullUpFieldInfo);
+		
 //		String nameOfTheNewClass = this.page1.getText().getText();
 //		
 //		ClassUnit superClassExtractedCreated = utilKDMMODEL.createClassUnit(nameOfTheNewClass, this.packageToPutTheNewClass);

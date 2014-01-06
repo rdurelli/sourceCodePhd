@@ -944,77 +944,55 @@ public Segment load(String KDMModelFullPath){
 	}
 	
 	
-	public void actionPullUpField (ClassUnit superClass, LinkedHashSet<PullUpFieldInfo> pullUpFieldInfo){
+	public void actionPullUpField (LinkedHashSet<PullUpFieldInfo> pullUpFieldInfo){
 		
-		Iterator<PullUpFieldInfo> ite = pullUpFieldInfo.iterator();
+		ClassUnit superClass = null;
 		
 		Iterator<PullUpFieldInfo> ite2 = pullUpFieldInfo.iterator();
 		
-	
-		ArrayList<String> classAlreadyWithInheritance = new ArrayList<String>();
+		Iterator<PullUpFieldInfo> ite = pullUpFieldInfo.iterator();
 		
-		
-		while (ite.hasNext()) {
-			
-			boolean alreadyWithInheritance = false;
-			
-			
-			PullUpFieldInfo classInfo = ite.next();
-			
-			ClassUnit classUnitSuper = classInfo.getFrom();
-			
-			
-			for (String className : classAlreadyWithInheritance) {
-				
-				if (className.equals(classUnitSuper.getName())) {
-					
-					alreadyWithInheritance = true;
-					
-				}
-				
-			}
-			
-			if (!alreadyWithInheritance) {
-				
-				classAlreadyWithInheritance.add(classUnitSuper.getName());
-				alreadyWithInheritance = false;
-			}
-				
-			
-			
-		}
 		
 		while (ite2.hasNext()) {
 			
 			PullUpFieldInfo classInfo = ite2.next();
 			
-			moveStorableUnitToClassUnit(superClass, classInfo.getStorableUnitTo());
-			moveStorableUnitToClassUnit(superClass, classInfo.getStorableUnitFROM());
+			moveStorableUnitToClassUnit((ClassUnit)classInfo.getSuperElement(), classInfo.getStorableUnitTo());
+			moveStorableUnitToClassUnit((ClassUnit)classInfo.getSuperElement(), classInfo.getStorableUnitFROM());
 			
 		}
 		
-		
-		
-		EList<CodeItem> elements = superClass.getCodeElement();
-		
-		for (int i = 0; i < elements.size(); i++) {
 			
-		
-			for (int j = 0; j < elements.size(); j++) {
+			PullUpFieldInfo pullUpFieldInfo2 = (PullUpFieldInfo) ite.next();
+			
+			EList<CodeItem> elements = ((ClassUnit)pullUpFieldInfo2.getSuperElement()).getCodeElement();
+			
+			superClass = (ClassUnit)pullUpFieldInfo2.getSuperElement();
+			
+			System.out.println(elements.size());
+			
+			for (int i = 0; i < elements.size(); i++) {
 				
-				if (elements.get(i) instanceof StorableUnit && elements.get(i).getName().equals(elements.get(j).getName())) {
+			
+				for (int j = 0; j < elements.size(); j++) {
 					
-					StorableUnit elementToRemove = (StorableUnit) elements.get(j);
-					
-					//n‹o Ž a melhor ideia, pois tem lugares que tem referencia ao attributo removido..
-					removeStorableUnit(superClass, elementToRemove);
+					if (elements.get(i) instanceof StorableUnit && elements.get(i).getName().equals(elements.get(j).getName())) {
+						
+						StorableUnit elementToRemove = (StorableUnit) elements.get(j);
+						
+						//n‹o Ž a melhor ideia, pois tem lugares que tem referencia ao attributo removido..
+						removeStorableUnit((ClassUnit)pullUpFieldInfo2.getSuperElement(), elementToRemove);
+						
+					}
 					
 				}
 				
-			}
-			
-			
+				
+
+			System.out.println(superClass.getCodeElement());
 		}
+		
+		
 		
 		
 		
