@@ -11,11 +11,11 @@ import org.eclipse.jface.wizard.Wizard;
 import com.br.util.models.UtilJavaModel;
 import com.br.util.models.UtilKDMModel;
 
-public class WizardExtractSuperClass extends Wizard {
+public class WizardPullUpField extends Wizard {
 
 	
-	private WizardExtractSuperClassPage page1 = null;
-	private LinkedHashSet<ExtractSuperClassInfo> extractSuperClassInfo = null;
+	private WizardPullUpFieldPage page1 = null;
+	private LinkedHashSet<PullUpFieldInfo> pullUpFieldInfo = null;
 	private LinkedHashSet<ExtractSuperClassInfoJavaModel> extractSuperClassInfoJavaModel = null;
 	
 	private UtilKDMModel utilKDMMODEL = new UtilKDMModel();
@@ -25,11 +25,11 @@ public class WizardExtractSuperClass extends Wizard {
 	private Model model = null;
 	private String URIProject = null;
 	
-	public WizardExtractSuperClass(LinkedHashSet<ExtractSuperClassInfo> extractSuperClassInfo, LinkedHashSet<ExtractSuperClassInfoJavaModel> extractSuperClassInfoJavaModel, Package packageToPutTheNewClass, org.eclipse.gmt.modisco.java.Package packageToPutTheNewClassJavaModel, Model model, String URIProject) {
+	public WizardPullUpField(LinkedHashSet<PullUpFieldInfo> extractSuperClassInfo, LinkedHashSet<ExtractSuperClassInfoJavaModel> extractSuperClassInfoJavaModel, Package packageToPutTheNewClass, org.eclipse.gmt.modisco.java.Package packageToPutTheNewClassJavaModel, Model model, String URIProject) {
 		setWindowTitle("Extract Superclass");
-		this.extractSuperClassInfo = extractSuperClassInfo;
+		this.pullUpFieldInfo = extractSuperClassInfo;
 		this.extractSuperClassInfoJavaModel = extractSuperClassInfoJavaModel;
-		this.page1 = new WizardExtractSuperClassPage(this.extractSuperClassInfo);
+		this.page1 = new WizardPullUpFieldPage(this.pullUpFieldInfo);
 		this.packageToPutTheNewClass = packageToPutTheNewClass;
 		this.packageToPutTheNewClassJavaModel = packageToPutTheNewClassJavaModel;
 		this.model = model;
@@ -44,15 +44,15 @@ public class WizardExtractSuperClass extends Wizard {
 	@Override
 	public boolean performFinish() {
 		
-		String nameOfTheNewClass = this.page1.getText().getText();
-		
-		ClassUnit superClassExtractedCreated = utilKDMMODEL.createClassUnit(nameOfTheNewClass, this.packageToPutTheNewClass);
-		
-		ClassDeclaration superClassExtractedCreatedJavaModel = utilJavaModel.createClassDeclaration(nameOfTheNewClass, this.packageToPutTheNewClassJavaModel, this.model);
-		
-		utilJavaModel.createSuperExtractClass(superClassExtractedCreatedJavaModel, extractSuperClassInfoJavaModel, model, URIProject);
-		
-		utilKDMMODEL.actionSuperExtractClass(superClassExtractedCreated, extractSuperClassInfo);
+//		String nameOfTheNewClass = this.page1.getText().getText();
+//		
+//		ClassUnit superClassExtractedCreated = utilKDMMODEL.createClassUnit(nameOfTheNewClass, this.packageToPutTheNewClass);
+//		
+//		ClassDeclaration superClassExtractedCreatedJavaModel = utilJavaModel.createClassDeclaration(nameOfTheNewClass, this.packageToPutTheNewClassJavaModel, this.model);
+//		
+//		utilJavaModel.createSuperExtractClass(superClassExtractedCreatedJavaModel, extractSuperClassInfoJavaModel, model, URIProject);
+//		
+//		utilKDMMODEL.createSuperExtractClass(superClassExtractedCreated, extractSuperClassInfo);
 		
 		return true;
 	}

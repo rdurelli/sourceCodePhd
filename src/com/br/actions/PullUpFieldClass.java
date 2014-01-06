@@ -1,11 +1,8 @@
 package com.br.actions;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -15,15 +12,12 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.gmt.modisco.infra.browser.editors.EcoreBrowser;
-import org.eclipse.gmt.modisco.java.AbstractTypeDeclaration;
 import org.eclipse.gmt.modisco.java.ClassDeclaration;
 import org.eclipse.gmt.modisco.java.FieldDeclaration;
 import org.eclipse.gmt.modisco.java.Model;
 import org.eclipse.gmt.modisco.omg.kdm.code.ClassUnit;
-import org.eclipse.gmt.modisco.omg.kdm.code.CodeItem;
 import org.eclipse.gmt.modisco.omg.kdm.code.Package;
 import org.eclipse.gmt.modisco.omg.kdm.code.StorableUnit;
 import org.eclipse.gmt.modisco.omg.kdm.core.KDMEntity;
@@ -48,48 +42,37 @@ import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 import com.br.gui.refactoring.ExtractSuperClassInfo;
 import com.br.gui.refactoring.ExtractSuperClassInfoJavaModel;
-import com.br.gui.refactoring.WizardExtract;
+import com.br.gui.refactoring.PullUpFieldInfo;
 import com.br.gui.refactoring.WizardExtractSuperClass;
+import com.br.gui.refactoring.WizardPullUpField;
 import com.br.util.models.UtilJavaModel;
 import com.br.util.models.UtilKDMModel;
 
-public class ExtractSuperClass implements IObjectActionDelegate {
+public class PullUpFieldClass implements IObjectActionDelegate {
 
 	private Shell shell;
 	
 	
-
-	public ExtractSuperClass() {
+	public PullUpFieldClass() {
 		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public void run(IAction action) {
 
-		LinkedHashSet<ExtractSuperClassInfo> extractSuperClassInfo = new LinkedHashSet<ExtractSuperClassInfo>();
+		LinkedHashSet<PullUpFieldInfo> extractSuperClassInfo = new LinkedHashSet<PullUpFieldInfo>();
 		LinkedHashSet<ExtractSuperClassInfoJavaModel> extractSuperClassInfoJAVAMODEL = new LinkedHashSet<ExtractSuperClassInfoJavaModel>();
-		
+		//arrumar aqui no JavaModel...
 		
 		UtilKDMModel utilKDMMODEL = new UtilKDMModel();
 		UtilJavaModel utilJavaModel =  new UtilJavaModel();
-		
-		
-		
 		
 		
 		IEditorPart editorPart = org.eclipse.modisco.kdm.source.extension.Activator
 				.getDefault().getWorkbench().getActiveWorkbenchWindow()
 				.getActivePage().getActiveEditor();
 
-		System.out.println(editorPart.getTitle());
-
-		System.out.println(editorPart);
-
-		System.out.println(editorPart.getClass());
-
 		if (editorPart instanceof AbstractTextEditor) {
-
-			System.out.println("Sim....");
 
 		} else if (editorPart instanceof EcoreBrowser) {
 
@@ -152,18 +135,19 @@ public class ExtractSuperClass implements IObjectActionDelegate {
 										
 										for (StorableUnit storableUnit2 : storables2) {
 											
-											if (storableUnit.getName().equals(storableUnit2.getName()) && (storableUnit.getType().getName().equals(storableUnit2.getType().getName()))) {
+											if (storableUnit.getName().equals(storableUnit2.getName()) && (storableUnit.getType().getName().equals(storableUnit2.getType().getName())) && utilKDMMODEL.verifyInheritanceExtends(classUnitSelected, classUnitSelected2)) {
 												
 //												extractSuperClassInfo
 												
-												ExtractSuperClassInfo superClassInfo = new ExtractSuperClassInfo();
+												PullUpFieldInfo pullUpFieldInfo = new PullUpFieldInfo();
 												
-												superClassInfo.setTo(classUnitSelected);
-												superClassInfo.setFrom(classUnitSelected2);
-												superClassInfo.setAttributeToExtract(storableUnit.getName());
-												superClassInfo.setStorableUnitTo(storableUnit);
-												superClassInfo.setStorableUnitFROM(storableUnit2);
-												extractSuperClassInfo.add(superClassInfo);
+												pullUpFieldInfo.setTo(classUnitSelected);
+												pullUpFieldInfo.setFrom(classUnitSelected2);
+												pullUpFieldInfo.setAttributeToExtract(storableUnit.getName());
+												pullUpFieldInfo.setStorableUnitTo(storableUnit);
+												pullUpFieldInfo.setStorableUnitFROM(storableUnit2);
+												pullUpFieldInfo.setSuperElement(classUnitSelected.getCodeRelation().get(0).getTo());
+												extractSuperClassInfo.add(pullUpFieldInfo);
 												
 //												System.out.println("Sim somos iguais :" +classUnitSelected.getName() +" tem "+storableUnit.getName());
 //												System.out.println("Sim somos iguais :" +classUnitSelected2.getName() +" tem "+storableUnit2.getName());
@@ -195,54 +179,7 @@ public class ExtractSuperClass implements IObjectActionDelegate {
 					
 					//colocar aqui depois em um método, na verdade passar arrumando tudo e melhorar essa classe...
 					
-					for (int i = 0; i < classesSelectedJavaModel.size(); i++) {
-						
-						ClassDeclaration classDeclarationSelected = classesSelectedJavaModel.get(i);
-						
-						List<FieldDeclaration> fields = utilJavaModel.getFieldDeclarations(classDeclarationSelected);
-						
-						if (fields.size() > 0) {
-							
-							for (int j = 0; j < classesSelectedJavaModel.size(); j++) {
-								
-								ClassDeclaration classDeclarationSelected2 = classesSelectedJavaModel.get(j);
-								
-								if (classDeclarationSelected != classDeclarationSelected2) {
-									
-									List<FieldDeclaration> fields2 = utilJavaModel.getFieldDeclarations(classDeclarationSelected2);
-									
-									for (FieldDeclaration fieldDeclaration : fields) {
-										
-										for (FieldDeclaration fieldDeclaration2 : fields2) {
-											
-											if (fieldDeclaration.getFragments().get(0).getName().equals(fieldDeclaration2.getFragments().get(0).getName()) && 
-													fieldDeclaration.getType().getType().getName().equals(fieldDeclaration2.getType().getType().getName())) {
-												
-												ExtractSuperClassInfoJavaModel superClassInfoJavaModel = new ExtractSuperClassInfoJavaModel();
-												
-												superClassInfoJavaModel.setTo(classDeclarationSelected);
-												superClassInfoJavaModel.setFrom(classDeclarationSelected2);
-												superClassInfoJavaModel.setAttributeToExtract(fieldDeclaration.getFragments().get(0).getName());
-												superClassInfoJavaModel.setStorableUnitTo(fieldDeclaration);
-												superClassInfoJavaModel.setStorableUnitFROM(fieldDeclaration2);
-												
-												extractSuperClassInfoJAVAMODEL.add(superClassInfoJavaModel);
-												
-												
-											}
-											
-										}
-										
-									}
-									
-								}
-								
-								
-							}
-							
-						}
-						
-					}
+					
 					
 					
 					
@@ -250,7 +187,7 @@ public class ExtractSuperClass implements IObjectActionDelegate {
 					
 //					ClassUnit superClassExtractedCreated = utilKDMMODEL.createClassUnit("SuperClassExtracted", ((Package)((ClassUnit)classesSelectedToSuperExtract.get(0)).eContainer()));
 					
-					for (ExtractSuperClassInfo info : extractSuperClassInfo) {
+					for (PullUpFieldInfo info : extractSuperClassInfo) {
 						
 						System.out.println(info.getTo().getName() + " has similar feature with " + info.getFrom().getName() + " ( "+ info.getAttributeToExtract()+" )");
 						
@@ -258,7 +195,7 @@ public class ExtractSuperClass implements IObjectActionDelegate {
 					
 					Package packageToPuTTheNewClass = ((Package)((ClassUnit)classesSelectedToSuperExtract.get(0)).eContainer());
 					
-					WizardDialog wizard = new WizardDialog(shell, new WizardExtractSuperClass(extractSuperClassInfo, extractSuperClassInfoJAVAMODEL, packageToPuTTheNewClass, packageToPutTheNewClassJavaModel, modelJava, URIProject ));
+					WizardDialog wizard = new WizardDialog(shell, new WizardPullUpField(extractSuperClassInfo, extractSuperClassInfoJAVAMODEL, packageToPuTTheNewClass, packageToPutTheNewClassJavaModel, modelJava, URIProject ));
 
 					wizard.open();
 					
@@ -365,4 +302,3 @@ public class ExtractSuperClass implements IObjectActionDelegate {
 	}
 
 }
-

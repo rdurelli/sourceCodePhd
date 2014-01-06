@@ -31,6 +31,7 @@ import org.eclipse.gmt.modisco.omg.kdm.action.Addresses;
 import org.eclipse.gmt.modisco.omg.kdm.action.BlockUnit;
 import org.eclipse.gmt.modisco.omg.kdm.action.Reads;
 import org.eclipse.gmt.modisco.omg.kdm.code.AbstractCodeElement;
+import org.eclipse.gmt.modisco.omg.kdm.code.AbstractCodeRelationship;
 import org.eclipse.gmt.modisco.omg.kdm.code.BooleanType;
 import org.eclipse.gmt.modisco.omg.kdm.code.CharType;
 import org.eclipse.gmt.modisco.omg.kdm.code.ClassUnit;
@@ -71,6 +72,7 @@ import org.omg.IOP.CodecFactory;
 
 import com.br.databaseDDL.Column;
 import com.br.gui.refactoring.ExtractSuperClassInfo;
+import com.br.gui.refactoring.PullUpFieldInfo;
 import com.br.utils.ProjectSelectedToModernize;
 
 public class UtilKDMModel {
@@ -587,7 +589,7 @@ public Segment load(String KDMModelFullPath){
 	}
 	
 	
-	public void createSuperExtractClass (ClassUnit classUnit, LinkedHashSet<ExtractSuperClassInfo> extractSuperClassInfo) {
+	public void actionSuperExtractClass (ClassUnit classUnit, LinkedHashSet<ExtractSuperClassInfo> extractSuperClassInfo) {
 		
 		
 		Iterator<ExtractSuperClassInfo> ite = extractSuperClassInfo.iterator();
@@ -905,6 +907,121 @@ public Segment load(String KDMModelFullPath){
 		return segment;
 	}
 	
+	
+	public boolean verifyInheritanceExtends (ClassUnit classOne, ClassUnit classTwo) {
+		
+		EList<AbstractCodeRelationship> relationShips = classOne.getCodeRelation();
+		
+		EList<AbstractCodeRelationship> relationShipsClassTwo = classTwo.getCodeRelation();
+		
+		for (AbstractCodeRelationship abstractCodeRelationship : relationShips) {
+			
+			if (abstractCodeRelationship instanceof Extends) {
+				
+				Extends extends1 = (Extends) abstractCodeRelationship;
+				
+				for (AbstractCodeRelationship abstractCodeRelationship2 : relationShipsClassTwo) {
+					
+					if (abstractCodeRelationship2 instanceof Extends) {
+						
+						Extends extends2 = (Extends) abstractCodeRelationship2;
+						
+						if (extends1.getTo().getName().equals(extends2.getTo().getName())) {
+							
+							return true;
+							
+						}
+						
+					}
+					
+				}
+				
+			}
+			
+		}
+		return false;
+		
+	}
+	
+	
+	public void actionPullUpField (ClassUnit superClass, LinkedHashSet<PullUpFieldInfo> pullUpFieldInfo){
+		
+		Iterator<PullUpFieldInfo> ite = pullUpFieldInfo.iterator();
+		
+		Iterator<PullUpFieldInfo> ite2 = pullUpFieldInfo.iterator();
+		
+	
+		ArrayList<String> classAlreadyWithInheritance = new ArrayList<String>();
+		
+		
+		while (ite.hasNext()) {
+			
+			boolean alreadyWithInheritance = false;
+			
+			
+			PullUpFieldInfo classInfo = ite.next();
+			
+			ClassUnit classUnitSuper = classInfo.getFrom();
+			
+			
+			for (String className : classAlreadyWithInheritance) {
+				
+				if (className.equals(classUnitSuper.getName())) {
+					
+					alreadyWithInheritance = true;
+					
+				}
+				
+			}
+			
+			if (!alreadyWithInheritance) {
+				
+				classAlreadyWithInheritance.add(classUnitSuper.getName());
+				alreadyWithInheritance = false;
+			}
+				
+			
+			
+		}
+		
+		while (ite2.hasNext()) {
+			
+			PullUpFieldInfo classInfo = ite2.next();
+			
+			moveStorableUnitToClassUnit(superClass, classInfo.getStorableUnitTo());
+			moveStorableUnitToClassUnit(superClass, classInfo.getStorableUnitFROM());
+			
+		}
+		
+		
+		
+		EList<CodeItem> elements = superClass.getCodeElement();
+		
+		for (int i = 0; i < elements.size(); i++) {
+			
+		
+			for (int j = 0; j < elements.size(); j++) {
+				
+				if (elements.get(i) instanceof StorableUnit && elements.get(i).getName().equals(elements.get(j).getName())) {
+					
+					StorableUnit elementToRemove = (StorableUnit) elements.get(j);
+					
+					//n‹o Ž a melhor ideia, pois tem lugares que tem referencia ao attributo removido..
+					removeStorableUnit(superClass, elementToRemove);
+					
+				}
+				
+			}
+			
+			
+		}
+		
+		
+		
+	
+		
+		
+	}
 	
 	public void createInheritanceExtends (ClassUnit superClassUnit, ClassUnit subClassUnit) {
 		

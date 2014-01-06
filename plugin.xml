@@ -203,6 +203,12 @@
              label="Extract Super Class"
              menubarPath="TestePlugin.menu4/content">
        </action>
+       <action
+             class="com.br.actions.PullUpFieldClass"
+             id="com.actions.newActionPullUpField"
+             label="Pull Up Field"
+             menubarPath="TestePlugin.menu4/content">
+       </action>
     </objectContribution>
  </extension>
 </plugin>
