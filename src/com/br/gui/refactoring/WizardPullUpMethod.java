@@ -44,6 +44,8 @@ public class WizardPullUpMethod extends Wizard {
 	@Override
 	public boolean performFinish() {
 		
+		utilKDMMODEL.actionPullUpMethod(pullUpMethodInfo);
+		
 //		utilKDMMODEL.actionPullUpField(pullUpMethodInfo);
 		
 //		String nameOfTheNewClass = this.page1.getText().getText();
