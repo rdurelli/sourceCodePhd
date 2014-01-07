@@ -210,6 +210,12 @@
              menubarPath="TestePlugin.menu4/content">
        </action>
        <action
+             class="com.br.actions.PullDownFieldClass"
+             id="com.actions.newActionPullDownField"
+             label="Pull Down Field"
+             menubarPath="TestePlugin.menu4/content">
+       </action>
+       <action
              class="com.br.actions.PullUpMethodClass"
              id="com.actions.newActionPullUpMethod"
              label="Pull Up Method"
