@@ -948,6 +948,8 @@ public Segment load(String KDMModelFullPath){
 		
 		ClassUnit superClass = null;
 		
+		ArrayList<String> alreadyRemoveStorableUnit = new ArrayList<String>();
+		
 		Iterator<PullUpFieldInfo> ite2 = pullUpFieldInfo.iterator();
 		
 		Iterator<PullUpFieldInfo> ite = pullUpFieldInfo.iterator();
@@ -962,7 +964,9 @@ public Segment load(String KDMModelFullPath){
 			
 		}
 		
-			
+		
+			while (ite.hasNext()){
+				
 			PullUpFieldInfo pullUpFieldInfo2 = (PullUpFieldInfo) ite.next();
 			
 			EList<CodeItem> elements = ((ClassUnit)pullUpFieldInfo2.getSuperElement()).getCodeElement();
@@ -970,6 +974,8 @@ public Segment load(String KDMModelFullPath){
 			superClass = (ClassUnit)pullUpFieldInfo2.getSuperElement();
 			
 			System.out.println(elements.size());
+			
+			if (!alreadyRemoveStorableUnit.contains(superClass.getName())) {
 			
 			for (int i = 0; i < elements.size(); i++) {
 				
@@ -988,10 +994,11 @@ public Segment load(String KDMModelFullPath){
 				}
 				
 				
-
+				alreadyRemoveStorableUnit.add(superClass.getName());		
 			System.out.println(superClass.getCodeElement());
 		}
-		
+			}
+			}
 		
 		
 		
