@@ -94,121 +94,32 @@ public class PullDownFieldClass implements IObjectActionDelegate {
 					String URIProject = activeProject.getLocationURI()
 							.toString();
 
-					System.out.println("Location URI "
-							+ activeProject.getLocationURI().toString());
-
-					System.out.println("O nome do Projeto é "
-							+ activeProjectName);
 
 					ISelection iSelection = selectionProvider.getSelection();
 
 					// offset
 					offset = ((StructuredSelection) iSelection);
 					
-					List<?> classesSelectedToSuperExtract = offset.toList();
+					Object objectSelected = offset.getFirstElement();
 					
-					if (classesSelectedToSuperExtract.size() == 1) {
+					ClassUnit classesSelectedToSuperExtract = null;
+					
+					
+					if (! (objectSelected instanceof ClassUnit)) {
 						
-						MessageDialog.openError(shell, "Error", "Please be sure you have selected at least two ClassUnits to realize the Super Extract Class.");
+						MessageDialog.openError(shell, "Error", "Please be sure you have selected at a ClassUnit to realize the Pull Down Field.");
 						
 					} else {
 					
-					for (int i = 0; i < classesSelectedToSuperExtract.size(); i++) {
-						
-						ClassUnit classUnitSelected = (ClassUnit) classesSelectedToSuperExtract.get(i);
-						
-						List<MethodUnit>  methodUnits = utilKDMMODEL.getMethodsUnit(classUnitSelected);
-						
-						ArrayList<Boolean> equalsMethods = new ArrayList<Boolean>();
-						
-						if (methodUnits.size() > 0) {
-							
-							for (int j = 0; j < classesSelectedToSuperExtract.size(); j++) {
-								
-								ClassUnit classUnitSelected2 = (ClassUnit) classesSelectedToSuperExtract.get(j);
-								
-								if (classUnitSelected != classUnitSelected2) {
-								
-									List<MethodUnit> methodUnits2 = utilKDMMODEL.getMethodsUnit(classUnitSelected2);
-								
-									
-									for (MethodUnit methodUnit : methodUnits) {
-										
-										
-										for (MethodUnit methodUnit2 : methodUnits2) {
-											
-											if (methodUnit.getName().equals(methodUnit2.getName()) && (((Signature)methodUnit.getType()).getParameterUnit().get(0).getType().getName().equals(((Signature)methodUnit2.getType()).getParameterUnit().get(0).getType().getName())) && utilKDMMODEL.verifyInheritanceExtends(classUnitSelected, classUnitSelected2)) {
-												
-												if (((Signature)methodUnit.getCodeElement().get(0)).getParameterUnit().size() == ((Signature)methodUnit2.getCodeElement().get(0)).getParameterUnit().size()) {
-													
-													boolean equals = true;
-													EList<ParameterUnit> paramentsMethodUnit1 = ((Signature)methodUnit.getCodeElement().get(0)).getParameterUnit();
-													
-													EList<ParameterUnit> paramentsMethodUnit2 = ((Signature)methodUnit2.getCodeElement().get(0)).getParameterUnit();
-													
-													for (int k = 1; k < paramentsMethodUnit1.size(); k++) {
+						classesSelectedToSuperExtract = (ClassUnit)objectSelected;
 														
-														if (!((paramentsMethodUnit1.get(k).getName().equals(paramentsMethodUnit2.get(k).getName())) && (paramentsMethodUnit1.get(k).getType().getName().equals(paramentsMethodUnit2.get(k).getType().getName())))){
-															
-															equalsMethods.add(false);
-															
-														}else {
-															
-															equalsMethods.add(true);
-															
-														}
-														
-													}
-													
-													
-													
-												}
-												
-												if (equalsMethods.contains(false)) {
-													
-													System.out
-															.println("Os metodos são diferentes..");
-													
-												} else {
-													
-												
-													PullUpMethodInfo pullUpMethodInfo = new PullUpMethodInfo();
-													
-													pullUpMethodInfo.setTo(classUnitSelected);
-													pullUpMethodInfo.setFrom(classUnitSelected2);
-													pullUpMethodInfo.setMethodToExtract(methodUnit.getName());
-													pullUpMethodInfo.setMethodUnitTo(methodUnit);
-													pullUpMethodInfo.setMethodUnitFROM(methodUnit2);
-													pullUpMethodInfo.setSuperElement(classUnitSelected.getCodeRelation().get(0).getTo());
-													extractSuperClassInfo.add(pullUpMethodInfo);
-													
-												}
-												
-
-//												
-											}
-											
-										}
-										
-									}
 									
-//									System.out.println(storables);
-//									System.out.println(storables2);
-//								
-								}
-								
-							}
-							
-						}
-						
-						
-						
 						
 					}
 					
 					Model modelJava = utilJavaModel.load(activeProject.getLocationURI().toString()+"/MODELS_PIM_modificado/JavaModelRefactoring.javaxmi");
 					
-					List<ClassDeclaration> classesSelectedJavaModel = this.getAllClassDeclaration(classesSelectedToSuperExtract, utilKDMMODEL, utilJavaModel, modelJava);
+//					List<ClassDeclaration> classesSelectedJavaModel = this.getAllClassDeclaration(classesSelectedToSuperExtract, utilKDMMODEL, utilJavaModel, modelJava);
 					
 					
 					//colocar aqui depois em um método, na verdade passar arrumando tudo e melhorar essa classe...
@@ -217,7 +128,7 @@ public class PullDownFieldClass implements IObjectActionDelegate {
 					
 					
 					
-					org.eclipse.gmt.modisco.java.Package packageToPutTheNewClassJavaModel = (org.eclipse.gmt.modisco.java.Package)classesSelectedJavaModel.get(0).eContainer();
+//					org.eclipse.gmt.modisco.java.Package packageToPutTheNewClassJavaModel = (org.eclipse.gmt.modisco.java.Package)classesSelectedJavaModel.get(0).eContainer();
 					
 //					ClassUnit superClassExtractedCreated = utilKDMMODEL.createClassUnit("SuperClassExtracted", ((Package)((ClassUnit)classesSelectedToSuperExtract.get(0)).eContainer()));
 					
@@ -227,7 +138,7 @@ public class PullDownFieldClass implements IObjectActionDelegate {
 						
 					}
 					
-					Package packageToPuTTheNewClass = ((Package)((ClassUnit)classesSelectedToSuperExtract.get(0)).eContainer());
+//					Package packageToPuTTheNewClass = ((Package)((ClassUnit)classesSelectedToSuperExtract.get(0)).eContainer());
 					
 					if (extractSuperClassInfo.size() == 0 ) {
 						
@@ -236,35 +147,35 @@ public class PullDownFieldClass implements IObjectActionDelegate {
 					}else {
 					
 					
-					WizardDialog wizard = new WizardDialog(shell, new WizardPullUpMethod(extractSuperClassInfo, extractSuperClassInfoJAVAMODEL, packageToPuTTheNewClass, packageToPutTheNewClassJavaModel, modelJava, URIProject));
+//					WizardDialog wizard = new WizardDialog(shell, new WizardPullUpMethod(extractSuperClassInfo, extractSuperClassInfoJAVAMODEL, packageToPuTTheNewClass, packageToPutTheNewClassJavaModel, modelJava, URIProject));
 					
-					wizard.open();
+//					wizard.open();
 					
 				
 					UtilKDMModel utilKDM = new UtilKDMModel();
 					
-					Segment segment = utilKDM.getSegmentToPersiste((KDMEntity)classesSelectedToSuperExtract.get(0));
+//					Segment segment = utilKDM.getSegmentToPersiste((KDMEntity)classesSelectedToSuperExtract.get(0));
 					
-					Resource resource = utilKDM.save(segment, offset.toString(), URIProject);
+//					Resource resource = utilKDM.save(segment, offset.toString(), URIProject);
 					
 					closeEditor(editorPart);
 					
 					
 					IWorkspaceRoot workRoot = ResourcesPlugin.getWorkspace().getRoot();
 				
-					IPath path = new Path(resource.getURI().toFileString());
+//					IPath path = new Path(resource.getURI().toFileString());
 					
-					IFile fileToOpen = workRoot.getFileForLocation(path);
+//					IFile fileToOpen = workRoot.getFileForLocation(path);
 						
 					refreshLocal(activeProject);					
 					
 					
-					openEditor(fileToOpen);
+//					openEditor(fileToOpen);
 					
 					
-					Model model = utilJavaModel.getModelToPersiste(classesSelectedJavaModel.get(0));
+//					Model model = utilJavaModel.getModelToPersiste(classesSelectedJavaModel.get(0));
 					
-					utilJavaModel.save(model, URIProject);
+//					utilJavaModel.save(model, URIProject);
 					
 					}
 					
@@ -275,7 +186,7 @@ public class PullDownFieldClass implements IObjectActionDelegate {
 			}
 		}
 
-	}
+	
 	
 	private void closeEditor (IEditorPart editorPart) {
 		
@@ -324,24 +235,24 @@ public class PullDownFieldClass implements IObjectActionDelegate {
 
 	}
 	
-	private List<ClassDeclaration> getAllClassDeclaration (List<?> classesSelectedToSuperExtract, UtilKDMModel utilKDMMODEL, UtilJavaModel utilJavaModel, Model modelJava ) {
-		
-		List<ClassDeclaration> classesSelectedJavaModel = new ArrayList<ClassDeclaration>();
-		
-		for (Object object : classesSelectedToSuperExtract) {
-			
-			
-			String [] packageKDM = utilKDMMODEL.getCompletePackageName((ClassUnit)object);
-			
-			ClassDeclaration classDeclaration = utilJavaModel.getClassDeclaration((ClassUnit)object, packageKDM, modelJava);
-			
-			classesSelectedJavaModel.add(classDeclaration);
-			
-		}
-		
-		return classesSelectedJavaModel;
-		
-		
-	}
+//	private List<ClassDeclaration> getAllClassDeclaration (List<?> classesSelectedToSuperExtract, UtilKDMModel utilKDMMODEL, UtilJavaModel utilJavaModel, Model modelJava ) {
+//		
+//		List<ClassDeclaration> classesSelectedJavaModel = new ArrayList<ClassDeclaration>();
+//		
+//		for (Object object : classesSelectedToSuperExtract) {
+//			
+//			
+//			String [] packageKDM = utilKDMMODEL.getCompletePackageName((ClassUnit)object);
+//			
+//			ClassDeclaration classDeclaration = utilJavaModel.getClassDeclaration((ClassUnit)object, packageKDM, modelJava);
+//			
+//			classesSelectedJavaModel.add(classDeclaration);
+//			
+//		}
+//		
+//		return classesSelectedJavaModel;
+//		
+//		
+//	}
 
 }
