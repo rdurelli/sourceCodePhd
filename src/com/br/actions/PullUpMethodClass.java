@@ -12,12 +12,16 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.gmt.modisco.infra.browser.editors.EcoreBrowser;
 import org.eclipse.gmt.modisco.java.ClassDeclaration;
 import org.eclipse.gmt.modisco.java.Model;
 import org.eclipse.gmt.modisco.omg.kdm.code.ClassUnit;
+import org.eclipse.gmt.modisco.omg.kdm.code.MethodUnit;
 import org.eclipse.gmt.modisco.omg.kdm.code.Package;
+import org.eclipse.gmt.modisco.omg.kdm.code.ParameterUnit;
+import org.eclipse.gmt.modisco.omg.kdm.code.Signature;
 import org.eclipse.gmt.modisco.omg.kdm.code.StorableUnit;
 import org.eclipse.gmt.modisco.omg.kdm.core.KDMEntity;
 import org.eclipse.gmt.modisco.omg.kdm.kdm.Segment;
@@ -43,6 +47,7 @@ import com.br.gui.refactoring.ExtractSuperClassInfoJavaModel;
 import com.br.gui.refactoring.PullUpFieldInfo;
 import com.br.gui.refactoring.PullUpMethodInfo;
 import com.br.gui.refactoring.WizardPullUpField;
+import com.br.gui.refactoring.WizardPullUpMethod;
 import com.br.util.models.UtilJavaModel;
 import com.br.util.models.UtilKDMModel;
 
@@ -115,9 +120,11 @@ public class PullUpMethodClass implements IObjectActionDelegate {
 						
 						ClassUnit classUnitSelected = (ClassUnit) classesSelectedToSuperExtract.get(i);
 						
-						List<StorableUnit>  storables = utilKDMMODEL.getStorablesUnit(classUnitSelected);
+						List<MethodUnit>  methodUnits = utilKDMMODEL.getMethodsUnit(classUnitSelected);
 						
-						if (storables.size() > 0) {
+						ArrayList<Boolean> equalsMethods = new ArrayList<Boolean>();
+						
+						if (methodUnits.size() > 0) {
 							
 							for (int j = 0; j < classesSelectedToSuperExtract.size(); j++) {
 								
@@ -125,30 +132,62 @@ public class PullUpMethodClass implements IObjectActionDelegate {
 								
 								if (classUnitSelected != classUnitSelected2) {
 								
-									List<StorableUnit> storables2 = utilKDMMODEL.getStorablesUnit(classUnitSelected2);
+									List<MethodUnit> methodUnits2 = utilKDMMODEL.getMethodsUnit(classUnitSelected2);
 								
 									
-									for (StorableUnit storableUnit : storables) {
+									for (MethodUnit methodUnit : methodUnits) {
 										
 										
-										for (StorableUnit storableUnit2 : storables2) {
+										for (MethodUnit methodUnit2 : methodUnits2) {
 											
-											if (storableUnit.getName().equals(storableUnit2.getName()) && (storableUnit.getType().getName().equals(storableUnit2.getType().getName())) && utilKDMMODEL.verifyInheritanceExtends(classUnitSelected, classUnitSelected2)) {
+											if (methodUnit.getName().equals(methodUnit2.getName()) && (((Signature)methodUnit.getType()).getParameterUnit().get(0).getType().getName().equals(((Signature)methodUnit2.getType()).getParameterUnit().get(0).getType().getName())) && utilKDMMODEL.verifyInheritanceExtends(classUnitSelected, classUnitSelected2)) {
 												
-//												extractSuperClassInfo
+												if (((Signature)methodUnit.getCodeElement().get(0)).getParameterUnit().size() == ((Signature)methodUnit2.getCodeElement().get(0)).getParameterUnit().size()) {
+													
+													boolean equals = true;
+													EList<ParameterUnit> paramentsMethodUnit1 = ((Signature)methodUnit.getCodeElement().get(0)).getParameterUnit();
+													
+													EList<ParameterUnit> paramentsMethodUnit2 = ((Signature)methodUnit2.getCodeElement().get(0)).getParameterUnit();
+													
+													for (int k = 1; k < paramentsMethodUnit1.size(); k++) {
+														
+														if (!((paramentsMethodUnit1.get(k).getName().equals(paramentsMethodUnit2.get(k).getName())) && (paramentsMethodUnit1.get(k).getType().getName().equals(paramentsMethodUnit2.get(k).getType().getName())))){
+															
+															equalsMethods.add(false);
+															
+														}else {
+															
+															equalsMethods.add(true);
+															
+														}
+														
+													}
+													
+													
+													
+												}
 												
-												PullUpMethodInfo pullUpMethodInfo = new PullUpMethodInfo();
+												if (equalsMethods.contains(false)) {
+													
+													System.out
+															.println("Os metodos s‹o diferentes..");
+													
+												} else {
+													
 												
-												pullUpMethodInfo.setTo(classUnitSelected);
-												pullUpMethodInfo.setFrom(classUnitSelected2);
-												pullUpMethodInfo.setAttributeToExtract(storableUnit.getName());
-												pullUpMethodInfo.setStorableUnitTo(storableUnit);
-												pullUpMethodInfo.setStorableUnitFROM(storableUnit2);
-												pullUpMethodInfo.setSuperElement(classUnitSelected.getCodeRelation().get(0).getTo());
-												extractSuperClassInfo.add(pullUpMethodInfo);
+													PullUpMethodInfo pullUpMethodInfo = new PullUpMethodInfo();
+													
+													pullUpMethodInfo.setTo(classUnitSelected);
+													pullUpMethodInfo.setFrom(classUnitSelected2);
+													pullUpMethodInfo.setMethodToExtract(methodUnit.getName());
+													pullUpMethodInfo.setMethodUnitTo(methodUnit);
+													pullUpMethodInfo.setMethodUnitFROM(methodUnit2);
+													pullUpMethodInfo.setSuperElement(classUnitSelected.getCodeRelation().get(0).getTo());
+													extractSuperClassInfo.add(pullUpMethodInfo);
+													
+												}
 												
-//												System.out.println("Sim somos iguais :" +classUnitSelected.getName() +" tem "+storableUnit.getName());
-//												System.out.println("Sim somos iguais :" +classUnitSelected2.getName() +" tem "+storableUnit2.getName());
+
 //												
 											}
 											
@@ -187,7 +226,7 @@ public class PullUpMethodClass implements IObjectActionDelegate {
 					
 					for (PullUpMethodInfo info : extractSuperClassInfo) {
 						
-						System.out.println(info.getTo().getName() + " has similar feature with " + info.getFrom().getName() + " ( "+ info.getAttributeToExtract()+" )");
+						System.out.println(info.getTo().getName() + " has similar feature with " + info.getFrom().getName() + " ( "+ info.getMethodToExtract()+" )");
 						
 					}
 					
@@ -199,10 +238,12 @@ public class PullUpMethodClass implements IObjectActionDelegate {
 						
 					}else {
 					
-//					WizardDialog wizard = new WizardDialog(shell, new WizardPullUpField(extractSuperClassInfo, extractSuperClassInfoJAVAMODEL, packageToPuTTheNewClass, packageToPutTheNewClassJavaModel, modelJava, URIProject ));
-//
-//					wizard.open();
 					
+					WizardDialog wizard = new WizardDialog(shell, new WizardPullUpMethod(extractSuperClassInfo, extractSuperClassInfoJAVAMODEL, packageToPuTTheNewClass, packageToPutTheNewClassJavaModel, modelJava, URIProject));
+					
+					wizard.open();
+					
+				
 					UtilKDMModel utilKDM = new UtilKDMModel();
 					
 					Segment segment = utilKDM.getSegmentToPersiste((KDMEntity)classesSelectedToSuperExtract.get(0));
@@ -270,6 +311,7 @@ public class PullUpMethodClass implements IObjectActionDelegate {
 		}					
 		
 	}
+
 	
 
 	@Override

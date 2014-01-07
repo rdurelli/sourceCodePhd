@@ -669,6 +669,26 @@ public Segment load(String KDMModelFullPath){
 		
 	}
 	
+	public List<MethodUnit> getMethodsUnit (ClassUnit classUnit) {
+		
+		
+		EList<CodeItem> codeElements = classUnit.getCodeElement();
+		
+		List<MethodUnit> methods = new ArrayList<MethodUnit>();
+		
+		for (CodeItem element : codeElements) {
+			
+			if (element instanceof MethodUnit) {
+				
+				methods.add((MethodUnit)element);
+				
+			}
+			
+		}
+		return methods;
+		
+	}
+	
 	public List<StorableUnit> getStorablesUnit (ClassUnit classUnit) {
 		
 		EList<CodeItem> codeElements = classUnit.getCodeElement();

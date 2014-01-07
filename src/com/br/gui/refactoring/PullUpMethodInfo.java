@@ -1,6 +1,7 @@
 package com.br.gui.refactoring;
 
 import org.eclipse.gmt.modisco.omg.kdm.code.ClassUnit;
+import org.eclipse.gmt.modisco.omg.kdm.code.MethodUnit;
 import org.eclipse.gmt.modisco.omg.kdm.code.StorableUnit;
 import org.eclipse.gmt.modisco.omg.kdm.core.KDMEntity;
 
@@ -12,11 +13,11 @@ public class PullUpMethodInfo {
 	
 	private KDMEntity superElement;
 	
-	private String attributeToExtract;
+	private String methodToExtract;
 
-	private StorableUnit storableUnitTo;
+	private MethodUnit methodUniTo;
 	
-	private StorableUnit storableUnitFROM;
+	private MethodUnit methodUniFROM;
 	
 	public PullUpMethodInfo() {
 		
@@ -27,7 +28,7 @@ public class PullUpMethodInfo {
 		super();
 		this.to = to;
 		this.from = from;
-		this.attributeToExtract = attributeToExtract;
+		this.methodToExtract = attributeToExtract;
 	}
 
 
@@ -48,28 +49,28 @@ public class PullUpMethodInfo {
 		this.from = from;
 	}
 
-	public String getAttributeToExtract() {
-		return attributeToExtract;
+	public String getMethodToExtract() {
+		return methodToExtract;
 	}
 
-	public void setAttributeToExtract(String attributeToExtract) {
-		this.attributeToExtract = attributeToExtract;
+	public void setMethodToExtract(String methodToExtract) {
+		this.methodToExtract = methodToExtract;
 	}
 	
-	public StorableUnit getStorableUnitTo() {
-		return storableUnitTo;
+	public MethodUnit getMethodUnitTo() {
+		return methodUniTo;
 	}
 
-	public void setStorableUnitTo(StorableUnit storableUnitTo) {
-		this.storableUnitTo = storableUnitTo;
+	public void setMethodUnitTo(MethodUnit methodUnitTo) {
+		this.methodUniTo = methodUnitTo;
 	}
 
-	public StorableUnit getStorableUnitFROM() {
-		return storableUnitFROM;
+	public MethodUnit getMethodUnitFROM() {
+		return methodUniFROM;
 	}
 
-	public void setStorableUnitFROM(StorableUnit storableUnitFROM) {
-		this.storableUnitFROM = storableUnitFROM;
+	public void setMethodUnitFROM(MethodUnit methodUnitFROM) {
+		this.methodUniFROM = methodUnitFROM;
 	}
 
 	@Override
@@ -79,7 +80,7 @@ public class PullUpMethodInfo {
 		return  ((obj instanceof PullUpMethodInfo) && 
 				(((PullUpMethodInfo)obj).getTo()) == this.getTo() && 
 				(((PullUpMethodInfo)obj).getFrom()) == this.getFrom() && 
-				(((PullUpMethodInfo)obj).getAttributeToExtract()).equals(this.getAttributeToExtract()));
+				(((PullUpMethodInfo)obj).getMethodToExtract()).equals(this.getMethodToExtract()));
 	}
 	
 	public KDMEntity getSuperElement() {
