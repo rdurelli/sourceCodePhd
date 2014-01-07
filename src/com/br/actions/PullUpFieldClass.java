@@ -195,6 +195,12 @@ public class PullUpFieldClass implements IObjectActionDelegate {
 					
 					Package packageToPuTTheNewClass = ((Package)((ClassUnit)classesSelectedToSuperExtract.get(0)).eContainer());
 					
+					if (extractSuperClassInfo.size() == 0 ) {
+						
+						MessageDialog.openError(shell, "Error", "It was not possible to find any bad smell related to Pull Up Field.");
+						
+					}else {
+					
 					WizardDialog wizard = new WizardDialog(shell, new WizardPullUpField(extractSuperClassInfo, extractSuperClassInfoJAVAMODEL, packageToPuTTheNewClass, packageToPutTheNewClassJavaModel, modelJava, URIProject ));
 
 					wizard.open();
@@ -224,7 +230,7 @@ public class PullUpFieldClass implements IObjectActionDelegate {
 					
 					utilJavaModel.save(model, URIProject);
 					
-					
+					}
 					
 
 					}
