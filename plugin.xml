@@ -209,6 +209,12 @@
              label="Pull Up Field"
              menubarPath="TestePlugin.menu4/content">
        </action>
+       <action
+             class="com.br.actions.PullUpMethodClass"
+             id="com.actions.newActionPullUpMethod"
+             label="Pull Up Method"
+             menubarPath="TestePlugin.menu4/content">
+       </action>
     </objectContribution>
  </extension>
 </plugin>
