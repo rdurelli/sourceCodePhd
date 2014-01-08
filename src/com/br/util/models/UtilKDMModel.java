@@ -1117,6 +1117,70 @@ public Segment load(String KDMModelFullPath){
 		}
 		
 	}
+	
+	public ArrayList<ClassUnit> getAllClasses (Segment segment) {
+		
+		ArrayList<ClassUnit> allClasses = new ArrayList<ClassUnit>();
+		
+		CodeModel codeModel = (CodeModel)segment.getModel().get(0);
+		
+		EList<AbstractCodeElement> elements = codeModel.getCodeElement();
+		
+		for (int i = 0; i < elements.size()-1; i++) {
+			
+			System.out.println(elements.get(i));
+			
+			if (elements.get(i) instanceof Package) {
+			
+				Package packageKDM = (Package) elements.get(i);
+				
+				this.getClasses(packageKDM.getCodeElement(), allClasses);
+				
+			}
+			
+			
+			
+			
+		}
+		
+		
+		return allClasses;
+		
+		
+	}
+	
+	private void getClasses(EList<AbstractCodeElement> elements, ArrayList<ClassUnit> allClasses) {
+		
+		for (AbstractCodeElement abstractCodeElement : elements) {
+			
+			if (abstractCodeElement instanceof ClassUnit) {
+				
+				allClasses.add((ClassUnit)abstractCodeElement);
+				
+			} else if (abstractCodeElement instanceof Package) {
+				
+				Package packageToPass = (Package) abstractCodeElement;
+				
+				getClasses(packageToPass.getCodeElement(), allClasses);
+				
+			}
+			
+		}
+		
+		
+//		if (elements instanceof ClassUnit) {
+//			
+//			allClasses.add((ClassUnit)elements);
+//			
+//		} else {
+//			
+//			System.out.println(elements);
+//			
+//			this.getClasses(((org.eclipse.gmt.modisco.omg.kdm.code.Package)elements).getCodeElement(), allClasses);
+//			
+//		}
+		
+	}
 
 	
 }

@@ -57,10 +57,13 @@ import org.eclipse.gmt.modisco.java.VisibilityKind;
 import org.eclipse.gmt.modisco.java.emf.JavaFactory;
 import org.eclipse.gmt.modisco.java.emf.JavaPackage;
 import org.eclipse.gmt.modisco.java.generation.files.GenerateJavaExtended;
+import org.eclipse.gmt.modisco.omg.kdm.code.AbstractCodeElement;
 import org.eclipse.gmt.modisco.omg.kdm.code.ClassUnit;
 import org.eclipse.gmt.modisco.omg.kdm.code.CodeFactory;
+import org.eclipse.gmt.modisco.omg.kdm.code.CodeModel;
 import org.eclipse.gmt.modisco.omg.kdm.code.Extends;
 import org.eclipse.gmt.modisco.omg.kdm.code.StorableUnit;
+import org.eclipse.gmt.modisco.omg.kdm.kdm.Segment;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
@@ -1170,6 +1173,7 @@ public class UtilJavaModel {
 		
 	}
 	
+
 	
 	public void removeFieldDeclaration (ClassDeclaration classDeclaration, FieldDeclaration fieldDeclaration) {
 		

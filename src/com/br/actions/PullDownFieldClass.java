@@ -113,7 +113,13 @@ public class PullDownFieldClass implements IObjectActionDelegate {
 					
 						classesSelectedToSuperExtract = (ClassUnit)objectSelected;
 														
-									
+						UtilKDMModel utilKDM = new UtilKDMModel();
+						
+						Segment segment = utilKDM.getSegmentToPersiste(classesSelectedToSuperExtract);
+						
+						ArrayList<ClassUnit> classUnitsTodas = utilKDM.getAllClasses(segment);			
+						
+						System.out.println(classUnitsTodas.size());
 						
 					}
 					
@@ -152,9 +158,7 @@ public class PullDownFieldClass implements IObjectActionDelegate {
 //					wizard.open();
 					
 				
-					UtilKDMModel utilKDM = new UtilKDMModel();
 					
-//					Segment segment = utilKDM.getSegmentToPersiste((KDMEntity)classesSelectedToSuperExtract.get(0));
 					
 //					Resource resource = utilKDM.save(segment, offset.toString(), URIProject);
 					
