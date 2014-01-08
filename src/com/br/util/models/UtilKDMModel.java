@@ -38,6 +38,7 @@ import org.eclipse.gmt.modisco.omg.kdm.code.ClassUnit;
 import org.eclipse.gmt.modisco.omg.kdm.code.CodeFactory;
 import org.eclipse.gmt.modisco.omg.kdm.code.CodeItem;
 import org.eclipse.gmt.modisco.omg.kdm.code.CodeModel;
+import org.eclipse.gmt.modisco.omg.kdm.code.Datatype;
 import org.eclipse.gmt.modisco.omg.kdm.code.ExportKind;
 import org.eclipse.gmt.modisco.omg.kdm.code.Extends;
 import org.eclipse.gmt.modisco.omg.kdm.code.FloatType;
@@ -1166,21 +1167,45 @@ public Segment load(String KDMModelFullPath){
 			}
 			
 		}
-		
-		
-//		if (elements instanceof ClassUnit) {
-//			
-//			allClasses.add((ClassUnit)elements);
-//			
-//		} else {
-//			
-//			System.out.println(elements);
-//			
-//			this.getClasses(((org.eclipse.gmt.modisco.omg.kdm.code.Package)elements).getCodeElement(), allClasses);
-//			
-//		}
-		
+				
 	}
-
+	
+	public ArrayList<ClassUnit> getRelationShipInheritancePassingTheSuper(ClassUnit classUnit, ArrayList<ClassUnit> allClasses) {
+		
+		ArrayList<ClassUnit> relationShipInheritancePassingTheSuper = new ArrayList<ClassUnit>();
+		
+		for (ClassUnit classes : allClasses) {
+			
+			EList<AbstractCodeRelationship> codeRelationShip = classes.getCodeRelation();
+			
+			for (AbstractCodeRelationship abstractCodeRelationship : codeRelationShip) {
+				
+				if (abstractCodeRelationship instanceof Extends) {
+					
+					Extends extendsKDM = (Extends) abstractCodeRelationship;
+					
+					if (extendsKDM.getTo() instanceof ClassUnit) {
+					
+						Datatype dataType = extendsKDM.getTo();
+						
+						if (dataType.getName().equals(classUnit.getName())) {
+							
+							relationShipInheritancePassingTheSuper.add(classes);
+							
+						}
+						
+					}
+					
+					
+					
+					
+				}
+				
+			}
+			
+		}
+		return relationShipInheritancePassingTheSuper ;
+				
+	}
 	
 }

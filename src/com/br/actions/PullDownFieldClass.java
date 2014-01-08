@@ -119,6 +119,10 @@ public class PullDownFieldClass implements IObjectActionDelegate {
 						
 						ArrayList<ClassUnit> classUnitsTodas = utilKDM.getAllClasses(segment);			
 						
+						ArrayList<ClassUnit> apenasHeranca = utilKDM.getRelationShipInheritancePassingTheSuper(classesSelectedToSuperExtract, classUnitsTodas);
+						
+						System.out.println(apenasHeranca.size());
+						
 						System.out.println(classUnitsTodas.size());
 						
 					}
