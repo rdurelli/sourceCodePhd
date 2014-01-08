@@ -121,6 +121,13 @@ public class PullDownFieldClass implements IObjectActionDelegate {
 						
 						ArrayList<ClassUnit> apenasHeranca = utilKDM.getRelationShipInheritancePassingTheSuper(classesSelectedToSuperExtract, classUnitsTodas);
 						
+						if (apenasHeranca.size() == 0) {
+							
+							MessageDialog.openInformation(shell, "Error", "Push Down is not allowed on type " + classesSelectedToSuperExtract.getName() + ", since it does not have subclasses to which members could be pushed down.");
+							
+						}
+						
+						
 						System.out.println(apenasHeranca.size());
 						
 						System.out.println(classUnitsTodas.size());
