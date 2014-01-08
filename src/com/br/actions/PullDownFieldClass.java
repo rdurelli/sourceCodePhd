@@ -22,6 +22,7 @@ import org.eclipse.gmt.modisco.omg.kdm.code.MethodUnit;
 import org.eclipse.gmt.modisco.omg.kdm.code.Package;
 import org.eclipse.gmt.modisco.omg.kdm.code.ParameterUnit;
 import org.eclipse.gmt.modisco.omg.kdm.code.Signature;
+import org.eclipse.gmt.modisco.omg.kdm.code.StorableUnit;
 import org.eclipse.gmt.modisco.omg.kdm.core.KDMEntity;
 import org.eclipse.gmt.modisco.omg.kdm.kdm.Segment;
 import org.eclipse.jface.action.IAction;
@@ -60,8 +61,6 @@ public class PullDownFieldClass implements IObjectActionDelegate {
 	@Override
 	public void run(IAction action) {
 
-		LinkedHashSet<PullUpMethodInfo> extractSuperClassInfo = new LinkedHashSet<PullUpMethodInfo>();
-		LinkedHashSet<ExtractSuperClassInfoJavaModel> extractSuperClassInfoJAVAMODEL = new LinkedHashSet<ExtractSuperClassInfoJavaModel>();
 		//arrumar aqui no JavaModel...
 		
 		UtilKDMModel utilKDMMODEL = new UtilKDMModel();
@@ -113,25 +112,34 @@ public class PullDownFieldClass implements IObjectActionDelegate {
 					
 						classesSelectedToSuperExtract = (ClassUnit)objectSelected;
 														
-						UtilKDMModel utilKDM = new UtilKDMModel();
 						
-						Segment segment = utilKDM.getSegmentToPersiste(classesSelectedToSuperExtract);
+						Segment segment = utilKDMMODEL.getSegmentToPersiste(classesSelectedToSuperExtract);
 						
-						ArrayList<ClassUnit> classUnitsTodas = utilKDM.getAllClasses(segment);			
+						ArrayList<ClassUnit> classUnitsTodas = utilKDMMODEL.getAllClasses(segment);			
 						
-						ArrayList<ClassUnit> apenasHeranca = utilKDM.getRelationShipInheritancePassingTheSuper(classesSelectedToSuperExtract, classUnitsTodas);
+						ArrayList<ClassUnit> apenasHeranca = utilKDMMODEL.getRelationShipInheritancePassingTheSuper(classesSelectedToSuperExtract, classUnitsTodas);
 						
 						if (apenasHeranca.size() == 0) {
 							
 							MessageDialog.openInformation(shell, "Error", "Push Down is not allowed on type " + classesSelectedToSuperExtract.getName() + ", since it does not have subclasses to which members could be pushed down.");
 							
+						} else {
+							
+							
+							List<StorableUnit> storablesUnits = utilKDMMODEL.getStorablesUnit(classesSelectedToSuperExtract);
+							
+							if (storablesUnits.size() == 0) {
+								
+								MessageDialog.openInformation(shell, "Error", "Push Down is not allowed on type " + classesSelectedToSuperExtract.getName() + ", since it does not have subclasses to which members could be pushed down.");
+								
+							}
+							
+							System.out.println(storablesUnits);
+							
+							
+							
 						}
-						
-						
-						System.out.println(apenasHeranca.size());
-						
-						System.out.println(classUnitsTodas.size());
-						
+												
 					}
 					
 					Model modelJava = utilJavaModel.load(activeProject.getLocationURI().toString()+"/MODELS_PIM_modificado/JavaModelRefactoring.javaxmi");
@@ -149,19 +157,9 @@ public class PullDownFieldClass implements IObjectActionDelegate {
 					
 //					ClassUnit superClassExtractedCreated = utilKDMMODEL.createClassUnit("SuperClassExtracted", ((Package)((ClassUnit)classesSelectedToSuperExtract.get(0)).eContainer()));
 					
-					for (PullUpMethodInfo info : extractSuperClassInfo) {
-						
-						System.out.println(info.getTo().getName() + " has similar feature with " + info.getFrom().getName() + " ( "+ info.getMethodToExtract()+" )");
-						
-					}
 					
 //					Package packageToPuTTheNewClass = ((Package)((ClassUnit)classesSelectedToSuperExtract.get(0)).eContainer());
 					
-					if (extractSuperClassInfo.size() == 0 ) {
-						
-						MessageDialog.openError(shell, "Error", "It was not possible to find any bad smell related to Pull Up Field.");
-						
-					}else {
 					
 					
 //					WizardDialog wizard = new WizardDialog(shell, new WizardPullUpMethod(extractSuperClassInfo, extractSuperClassInfoJAVAMODEL, packageToPuTTheNewClass, packageToPutTheNewClassJavaModel, modelJava, URIProject));
@@ -198,7 +196,7 @@ public class PullDownFieldClass implements IObjectActionDelegate {
 					}
 					
 				}
-			}
+			
 		}
 
 	
