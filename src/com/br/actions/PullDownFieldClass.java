@@ -130,11 +130,9 @@ public class PullDownFieldClass implements IObjectActionDelegate {
 							
 							if (storablesUnits.size() == 0) {
 								
-								MessageDialog.openInformation(shell, "Error", "Push Down is not allowed on type " + classesSelectedToSuperExtract.getName() + ", since it does not have subclasses to which members could be pushed down.");
+								MessageDialog.openInformation(shell, "Error", "There is none StorableUnit (Attributes) to apply the Pull Down Field.");
 								
 							}
-							
-							System.out.println(storablesUnits);
 							
 							
 							
