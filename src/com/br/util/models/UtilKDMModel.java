@@ -317,6 +317,22 @@ public Segment load(String KDMModelFullPath){
 		
 	}
 	
+	public StorableUnit createStorableUnitInAClassUnit (ClassUnit classUnit, String name, Datatype type) {
+		
+		StorableUnit attributeLike = CodeFactory.eINSTANCE.createStorableUnit();
+		attributeLike.setName(name);
+		attributeLike.setKind(StorableKind.GLOBAL);
+		attributeLike.getAttribute().add(this.criarAttibuteForStorableUnit());
+		attributeLike.getSource().add(this.criarSource(classUnit.getName()));
+		attributeLike.setType(type);
+		
+		
+		classUnit.getCodeElement().add(attributeLike);
+		
+		return attributeLike;
+		
+	}
+	
 	public MethodUnit createMethodUnitGETInClassUnit (ClassUnit classUnit, String name, ClassUnit stringType, Segment segment) {
 		
 		MethodUnit methodUnit = CodeFactory.eINSTANCE.createMethodUnit();
@@ -1004,7 +1020,31 @@ public Segment load(String KDMModelFullPath){
 	
 	public void actionPullDownField (ClassUnit classToRemoveTheStorableUnit, List<ClassUnit> classesToPullDownTheStorableUnit, List<StorableUnit> storableUnitsToPullDown) {
 		
-		
+		if (classesToPullDownTheStorableUnit.size() == 1) {
+			
+			for (StorableUnit storableUnit : storableUnitsToPullDown) {
+				
+				ClassUnit classToMoveTheStorableUnit = classesToPullDownTheStorableUnit.get(0);
+				
+				this.moveStorableUnitToClassUnit(classToMoveTheStorableUnit, storableUnit);
+			}
+			
+		}else {
+			
+			for (ClassUnit classesUnits : classesToPullDownTheStorableUnit) {
+				
+				for (StorableUnit storableUnit : storableUnitsToPullDown) {
+				
+					this.createStorableUnitInAClassUnit(classesUnits, storableUnit.getName(), storableUnit.getType());
+					
+				}
+				
+				
+				
+			}
+			
+			
+		}
 		
 		
 		
