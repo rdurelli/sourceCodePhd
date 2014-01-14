@@ -1,4 +1,5 @@
 package com.br.actions;
+
 import java.util.ArrayList;
 
 import org.eclipse.core.resources.IFile;
@@ -25,15 +26,15 @@ import com.br.catalogue.refactorings.util.PopulateKDMIntoMemory;
 import com.br.models.graphviz.Elements;
 import com.br.models.graphviz.generate.image.GenerateImageFactory;
 
-
 public class GenerateUMLDiagramBasedOnKDM implements IObjectActionDelegate {
 
 	private Shell shell;
-	
+
 	public GenerateUMLDiagramBasedOnKDM() {
 		// TODO Auto-generated constructor stub
 	}
-
+	
+	
 	@Override
 	public void run(IAction action) {
 		IEditorPart editorPart = org.eclipse.modisco.kdm.source.extension.Activator
@@ -50,9 +51,8 @@ public class GenerateUMLDiagramBasedOnKDM implements IObjectActionDelegate {
 				// get selection provider
 				ISelectionProvider selectionProvider = iEditorSite
 						.getSelectionProvider();
-				
-				if (selectionProvider != null) {
 
+				if (selectionProvider != null) {
 
 					IFileEditorInput input = (IFileEditorInput) editorPart
 							.getEditorInput();
@@ -63,43 +63,43 @@ public class GenerateUMLDiagramBasedOnKDM implements IObjectActionDelegate {
 					String URIProject = activeProject.getLocationURI()
 							.toString();
 
-
 					ISelection iSelection = selectionProvider.getSelection();
 
 					// offset
 					offset = ((StructuredSelection) iSelection);
-					
-					Object objectSelected = offset.getFirstElement();
-					
-					Segment segmentToApplyTheUMLDIAGRAM = null;
-					
-					
-					if (! (objectSelected instanceof Segment)) {
-						
-						MessageDialog.openError(shell, "Error", "Please be sure you have selected at the Segment to generate the Diagrama UML.");
-						
-					}else{
-						
-						segmentToApplyTheUMLDIAGRAM = (Segment) objectSelected;
-						
-						PopulateKDMIntoMemory populateKDM = new PopulateKDMIntoMemory(segmentToApplyTheUMLDIAGRAM);
-						
-						ArrayList<Elements> classesPopulated = populateKDM.getClasses();
-						
-						GenerateImageFactory generate = GenerateImageFactory.getInstance();
-						generate.createClassGraphviz(classesPopulated);
-						
-						MessageDialog.openInformation(shell, "Information", "UML Diagram generated.");
-						
-					}
-					
-					
-					
 
-	}
-			}
+					Object objectSelected = offset.getFirstElement();
+
+					Segment segmentToApplyTheUMLDIAGRAM = null;
+
+					if (!(objectSelected instanceof Segment)) {
+
+						MessageDialog
+								.openError(shell, "Error",
+										"Please be sure you have selected at the Segment to generate the Diagrama UML.");
+
+					} else {
+
+						segmentToApplyTheUMLDIAGRAM = (Segment) objectSelected;
+
+						PopulateKDMIntoMemory populateKDM = new PopulateKDMIntoMemory(
+								segmentToApplyTheUMLDIAGRAM);
+
+						ArrayList<Elements> classesPopulated = populateKDM
+								.getClasses();
+
+						GenerateImageFactory generate = GenerateImageFactory
+								.getInstance();
+						generate.createClassGraphviz(classesPopulated);
+
+						MessageDialog.openInformation(shell, "Information",
+								"UML Diagram generated.");
+
+					}
+				}
 			}
 		}
+	}
 
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
