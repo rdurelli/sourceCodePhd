@@ -388,6 +388,8 @@ public Segment load(String KDMModelFullPath){
 		
 	}
 	
+	
+	
 	public MethodUnit createMethodUnitGETInClassUnit (ClassUnit classUnit, String name, PrimitiveType type, Segment segment) {
 		
 		MethodUnit methodUnit = CodeFactory.eINSTANCE.createMethodUnit();
@@ -723,6 +725,7 @@ public Segment load(String KDMModelFullPath){
 		
 	}
 	
+	
 	public List<StorableUnit> getStorablesUnit (ClassUnit classUnit) {
 		
 		EList<CodeItem> codeElements = classUnit.getCodeElement();
@@ -766,6 +769,32 @@ public Segment load(String KDMModelFullPath){
 		
 	}
 	
+	public MethodUnit getMethodsUnitByName (ClassUnit classUnit, String name) {
+		
+		
+		EList<CodeItem> codeElements = classUnit.getCodeElement();
+		
+		MethodUnit method = null;
+		
+		for (CodeItem element : codeElements) {
+			
+			
+			System.out.println(name);
+			System.out.println(element.getName());
+			
+			if (element instanceof MethodUnit && element.getName().startsWith(name)) {
+				
+				method = (MethodUnit) element;
+				break;
+			
+				
+			}
+			
+		}
+		return method;
+		
+	}
+	
 	private Attribute criarAttibuteForStorableUnit () {
 		
 		Attribute att = KdmFactory.eINSTANCE.createAttribute();
@@ -776,10 +805,6 @@ public Segment load(String KDMModelFullPath){
 		return att;
 		
 	}
-	
-	
-	
-	
 	
 	//this method is used to generate source-code based on the Java model as input.
 	public void generateNewSourceCode() throws IOException {
@@ -1047,6 +1072,52 @@ public Segment load(String KDMModelFullPath){
 			for (StorableUnit storableUnit : storableUnitsToPullDown) {
 				
 				this.removeStorableUnit(classToRemoveTheStorableUnit, storableUnit);
+			}
+			
+			
+		}
+		
+		
+		
+	}
+	
+	public void actionPullDownMethod (ClassUnit classToRemoveTheMethodUnit, List<ClassUnit> classesToPullDownTheMethodUnit, List<MethodUnit> methodUnitToPullDown) {
+		
+		if (classesToPullDownTheMethodUnit.size() == 1) {
+			
+			for (MethodUnit methodUnit : methodUnitToPullDown) {
+				
+				ClassUnit classToMoveTheStorableUnit = classesToPullDownTheMethodUnit.get(0);
+				
+				this.moveMethodUnitToClassUnit(classToMoveTheStorableUnit, methodUnit);
+				
+			}
+			
+		}else {
+			
+			for (ClassUnit classesUnits : classesToPullDownTheMethodUnit) {
+				
+				for (MethodUnit methodUnit : methodUnitToPullDown) {
+				
+
+					MethodUnit methodNew = methodUnit;
+					
+					
+					EList<CodeItem> codeItem = classesUnits.getCodeElement();
+					
+					codeItem.add(methodNew);
+					
+					this.createStorableUnitInAClassUnit(classesUnits, methodUnit.getName(), methodUnit.getType());
+					
+				}
+				
+			}
+			
+			for (MethodUnit methodUnit : methodUnitToPullDown) {
+				
+				this.removeMethodUnit(classToRemoveTheMethodUnit, methodUnit);
+				
+//				this.removeStorableUnit(classToRemoveTheMethodUnit, storableUnit);
 			}
 			
 			

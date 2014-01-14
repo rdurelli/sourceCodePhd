@@ -221,6 +221,12 @@
              label="Pull Up Method"
              menubarPath="TestePlugin.menu4/content">
        </action>
+       <action
+             class="com.br.actions.PullDownMethodClass"
+             id="com.actions.newActionPullUpMethod"
+             label="Pull Down Method"
+             menubarPath="TestePlugin.menu4/content">
+       </action>
        <menu
              icon="icons/1389726303_question-type-one-correct.png"
              id="TestePlugin.menu5"
