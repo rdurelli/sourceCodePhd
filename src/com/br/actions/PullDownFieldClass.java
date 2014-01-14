@@ -46,6 +46,7 @@ import org.eclipse.ui.texteditor.AbstractTextEditor;
 import com.br.gui.refactoring.ExtractSuperClassInfoJavaModel;
 import com.br.gui.refactoring.PullUpMethodInfo;
 import com.br.gui.refactoring.WizardPullUpMethod;
+import com.br.gui.refactoring.WizardPushDownField;
 import com.br.util.models.UtilJavaModel;
 import com.br.util.models.UtilKDMModel;
 
@@ -101,7 +102,7 @@ public class PullDownFieldClass implements IObjectActionDelegate {
 					
 					Object objectSelected = offset.getFirstElement();
 					
-					ClassUnit classesSelectedToSuperExtract = null;
+					ClassUnit classesSelectedToApplyThePullDownField = null;
 					
 					
 					if (! (objectSelected instanceof ClassUnit)) {
@@ -110,27 +111,55 @@ public class PullDownFieldClass implements IObjectActionDelegate {
 						
 					} else {
 					
-						classesSelectedToSuperExtract = (ClassUnit)objectSelected;
+						classesSelectedToApplyThePullDownField = (ClassUnit)objectSelected;
 														
 						
-						Segment segment = utilKDMMODEL.getSegmentToPersiste(classesSelectedToSuperExtract);
+						Segment segment = utilKDMMODEL.getSegmentToPersiste(classesSelectedToApplyThePullDownField);
 						
 						ArrayList<ClassUnit> classUnitsTodas = utilKDMMODEL.getAllClasses(segment);			
 						
-						ArrayList<ClassUnit> apenasHeranca = utilKDMMODEL.getRelationShipInheritancePassingTheSuper(classesSelectedToSuperExtract, classUnitsTodas);
+						ArrayList<ClassUnit> inheritance = utilKDMMODEL.getRelationShipInheritancePassingTheSuper(classesSelectedToApplyThePullDownField, classUnitsTodas);
 						
-						if (apenasHeranca.size() == 0) {
+						if (inheritance.size() == 0) {
 							
-							MessageDialog.openInformation(shell, "Error", "Push Down is not allowed on type " + classesSelectedToSuperExtract.getName() + ", since it does not have subclasses to which members could be pushed down.");
+							MessageDialog.openInformation(shell, "Error", "Push Down is not allowed on type " + classesSelectedToApplyThePullDownField.getName() + ", since it does not have subclasses to which members could be pushed down.");
 							
 						} else {
 							
 							
-							List<StorableUnit> storablesUnits = utilKDMMODEL.getStorablesUnit(classesSelectedToSuperExtract);
+							List<StorableUnit> storablesUnits = utilKDMMODEL.getStorablesUnit(classesSelectedToApplyThePullDownField);
 							
 							if (storablesUnits.size() == 0) {
 								
 								MessageDialog.openInformation(shell, "Error", "There is none StorableUnit (Attributes) to apply the Pull Down Field.");
+								
+							} else {
+								Model modelJava = utilJavaModel.load(activeProject.getLocationURI().toString()+"/MODELS_PIM_modificado/JavaModelRefactoring.javaxmi");
+								
+								
+//								List<ClassDeclaration> classesSelectedJavaModel = this.getAllClassDeclaration(classesSelectedToSuperExtract, utilKDMMODEL, utilJavaModel, modelJava);
+//								org.eclipse.gmt.modisco.java.Package packageToPutTheNewClassJavaModel = (org.eclipse.gmt.modisco.java.Package)classesSelectedJavaModel.get(0).eContainer();
+								
+								
+								WizardDialog wizard = new WizardDialog(shell, new WizardPushDownField(classesSelectedToApplyThePullDownField, inheritance));
+								
+								wizard.open();
+								
+								Resource resource = utilKDMMODEL.save(segment, offset.toString(), URIProject);
+								
+								closeEditor(editorPart);
+								
+								IWorkspaceRoot workRoot = ResourcesPlugin.getWorkspace().getRoot();
+								
+								IPath path = new Path(resource.getURI().toFileString());
+								
+								IFile fileToOpen = workRoot.getFileForLocation(path);
+									
+								refreshLocal(activeProject);					
+								
+								
+								openEditor(fileToOpen);
+								
 								
 							}
 							
@@ -140,9 +169,9 @@ public class PullDownFieldClass implements IObjectActionDelegate {
 												
 					}
 					
-					Model modelJava = utilJavaModel.load(activeProject.getLocationURI().toString()+"/MODELS_PIM_modificado/JavaModelRefactoring.javaxmi");
 					
-//					List<ClassDeclaration> classesSelectedJavaModel = this.getAllClassDeclaration(classesSelectedToSuperExtract, utilKDMMODEL, utilJavaModel, modelJava);
+					
+//					
 					
 					
 					//colocar aqui depois em um método, na verdade passar arrumando tudo e melhorar essa classe...
@@ -151,7 +180,7 @@ public class PullDownFieldClass implements IObjectActionDelegate {
 					
 					
 					
-//					org.eclipse.gmt.modisco.java.Package packageToPutTheNewClassJavaModel = (org.eclipse.gmt.modisco.java.Package)classesSelectedJavaModel.get(0).eContainer();
+//					
 					
 //					ClassUnit superClassExtractedCreated = utilKDMMODEL.createClassUnit("SuperClassExtracted", ((Package)((ClassUnit)classesSelectedToSuperExtract.get(0)).eContainer()));
 					
@@ -167,21 +196,10 @@ public class PullDownFieldClass implements IObjectActionDelegate {
 				
 					
 					
-//					Resource resource = utilKDM.save(segment, offset.toString(), URIProject);
-					
-					closeEditor(editorPart);
 					
 					
-					IWorkspaceRoot workRoot = ResourcesPlugin.getWorkspace().getRoot();
-				
-//					IPath path = new Path(resource.getURI().toFileString());
-					
-//					IFile fileToOpen = workRoot.getFileForLocation(path);
-						
-					refreshLocal(activeProject);					
 					
 					
-//					openEditor(fileToOpen);
 					
 					
 //					Model model = utilJavaModel.getModelToPersiste(classesSelectedJavaModel.get(0));
@@ -246,24 +264,24 @@ public class PullDownFieldClass implements IObjectActionDelegate {
 
 	}
 	
-//	private List<ClassDeclaration> getAllClassDeclaration (List<?> classesSelectedToSuperExtract, UtilKDMModel utilKDMMODEL, UtilJavaModel utilJavaModel, Model modelJava ) {
-//		
-//		List<ClassDeclaration> classesSelectedJavaModel = new ArrayList<ClassDeclaration>();
-//		
-//		for (Object object : classesSelectedToSuperExtract) {
-//			
-//			
-//			String [] packageKDM = utilKDMMODEL.getCompletePackageName((ClassUnit)object);
-//			
-//			ClassDeclaration classDeclaration = utilJavaModel.getClassDeclaration((ClassUnit)object, packageKDM, modelJava);
-//			
-//			classesSelectedJavaModel.add(classDeclaration);
-//			
-//		}
-//		
-//		return classesSelectedJavaModel;
-//		
-//		
-//	}
+	private List<ClassDeclaration> getAllClassDeclaration (List<?> classesSelectedToSuperExtract, UtilKDMModel utilKDMMODEL, UtilJavaModel utilJavaModel, Model modelJava ) {
+		
+		List<ClassDeclaration> classesSelectedJavaModel = new ArrayList<ClassDeclaration>();
+		
+		for (Object object : classesSelectedToSuperExtract) {
+			
+			
+			String [] packageKDM = utilKDMMODEL.getCompletePackageName((ClassUnit)object);
+			
+			ClassDeclaration classDeclaration = utilJavaModel.getClassDeclaration((ClassUnit)object, packageKDM, modelJava);
+			
+			classesSelectedJavaModel.add(classDeclaration);
+			
+		}
+		
+		return classesSelectedJavaModel;
+		
+		
+	}
 
 }

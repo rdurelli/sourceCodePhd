@@ -727,6 +727,26 @@ public Segment load(String KDMModelFullPath){
 		
 	}
 	
+	public List<StorableUnit> getStorablesUnitByName (ClassUnit classUnit, String name) {
+		
+		EList<CodeItem> codeElements = classUnit.getCodeElement();
+		
+		List<StorableUnit> attributes = new ArrayList<StorableUnit>();
+		
+		for (CodeItem element : codeElements) {
+			
+			if (element instanceof StorableUnit && element.getName().equals(name)) {
+				
+				attributes.add((StorableUnit)element);
+				
+			}
+			
+		}
+		return attributes;
+		
+		
+	}
+	
 	private Attribute criarAttibuteForStorableUnit () {
 		
 		Attribute att = KdmFactory.eINSTANCE.createAttribute();
@@ -981,6 +1001,14 @@ public Segment load(String KDMModelFullPath){
 		
 	}
 	
+	
+	public void actionPullDownField (ClassUnit classToRemoveTheStorableUnit, List<ClassUnit> classesToPullDownTheStorableUnit, List<StorableUnit> storableUnitsToPullDown) {
+		
+		
+		
+		
+		
+	}
 	
 	public void actionPullUpField (LinkedHashSet<PullUpFieldInfo> pullUpFieldInfo){
 		
