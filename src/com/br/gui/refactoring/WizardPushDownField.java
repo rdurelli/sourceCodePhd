@@ -65,7 +65,7 @@ public class WizardPushDownField extends Wizard {
 	@Override
 	public boolean performFinish() {
 		
-		List<StorableUnit> selectedStorableUnit = null;
+		List<StorableUnit> selectedStorableUnit = new ArrayList<StorableUnit>();
 		
 		TableItem[] selectedItem = this.page1.getTable().getSelection();
 		
@@ -75,14 +75,22 @@ public class WizardPushDownField extends Wizard {
 			
 			String nameOfstorableUnitSelected = selectedItem[i].getText(1);
 			
-			selectedStorableUnit = utilKDMMODEL.getStorablesUnitByName(pullDownFieldInfo, nameOfstorableUnitSelected);
+			StorableUnit storableIdentified = utilKDMMODEL.getStorablesUnitByName(pullDownFieldInfo, nameOfstorableUnitSelected);
+			
+			if (storableIdentified != null) {
+				
+				selectedStorableUnit.add(storableIdentified);
+				
+			}
+			
 			
 			System.out.println(selectedItem[i].getText(1));
 		}
 		
-		if (selectedStorableUnit != null) {
+		if (selectedStorableUnit.size() != 0) {
 			
-//			utilKDMMODEL.actionPullDownField();
+			
+			utilKDMMODEL.actionPullDownField(pullDownFieldInfo, inheritance, selectedStorableUnit);
 			
 		} else {
 			

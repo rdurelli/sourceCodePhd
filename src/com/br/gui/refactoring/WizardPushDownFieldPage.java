@@ -54,7 +54,7 @@ public class WizardPushDownFieldPage extends WizardPage {
 
 		setControl(container);
 		
-		table = new Table(container, SWT.BORDER | SWT.CHECK | SWT.FULL_SELECTION);
+		table = new Table(container, SWT.BORDER | SWT.CHECK | SWT.FULL_SELECTION | SWT.MULTI);
 		table.setBounds(10, 58, 309, 110);
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
@@ -79,7 +79,7 @@ public class WizardPushDownFieldPage extends WizardPage {
 		tree.setBounds(425, 58, 109, 110);
 		
 		
-		fillTable(table, tree);
+		
 		
 		Button btnSelectAll = new Button(container, SWT.NONE);
 		btnSelectAll.setBounds(325, 58, 94, 28);
@@ -99,6 +99,7 @@ public class WizardPushDownFieldPage extends WizardPage {
 	        Label lblInheritance = new Label(container, SWT.NONE);
 	        lblInheritance.setBounds(425, 38, 73, 14);
 	        lblInheritance.setText("Inheritance:");
+	        fillTable(table, tree);
 	}
 	
 	
@@ -124,6 +125,8 @@ public class WizardPushDownFieldPage extends WizardPage {
 		            .setText(new String[] { classInheritance.getName() });
 	    	 
 		}
+	     
+	     table.setRedraw(true);
 	}
 	
 	

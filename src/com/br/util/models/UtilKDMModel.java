@@ -743,22 +743,25 @@ public Segment load(String KDMModelFullPath){
 		
 	}
 	
-	public List<StorableUnit> getStorablesUnitByName (ClassUnit classUnit, String name) {
+	public StorableUnit getStorablesUnitByName (ClassUnit classUnit, String name) {
 		
 		EList<CodeItem> codeElements = classUnit.getCodeElement();
 		
-		List<StorableUnit> attributes = new ArrayList<StorableUnit>();
+		StorableUnit storableToReturn = null;
 		
 		for (CodeItem element : codeElements) {
 			
 			if (element instanceof StorableUnit && element.getName().equals(name)) {
 				
-				attributes.add((StorableUnit)element);
+				storableToReturn = (StorableUnit)element;
+				
+				break;
 				
 			}
 			
 		}
-		return attributes;
+		
+		return storableToReturn;
 		
 		
 	}
@@ -1039,8 +1042,11 @@ public Segment load(String KDMModelFullPath){
 					
 				}
 				
+			}
+			
+			for (StorableUnit storableUnit : storableUnitsToPullDown) {
 				
-				
+				this.removeStorableUnit(classToRemoveTheStorableUnit, storableUnit);
 			}
 			
 			
