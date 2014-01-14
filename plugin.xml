@@ -221,6 +221,25 @@
              label="Pull Up Method"
              menubarPath="TestePlugin.menu4/content">
        </action>
+       <menu
+             icon="icons/1389726303_question-type-one-correct.png"
+             id="TestePlugin.menu5"
+             label="Show UML Diagram"
+             path="additions">
+          <groupMarker
+                name="content">
+          </groupMarker>
+          <separator
+                name="additions">
+          </separator>
+       </menu>
+       <action
+             class="com.br.actions.GenerateUMLDiagramBasedOnKDM"
+             icon="icons/1389726397_sprocket_dark.png"
+             id="com.actions.newActionExtractClass"
+             label="Generate UML Diagram based on KDM"
+             menubarPath="TestePlugin.menu5/content">
+       </action>
     </objectContribution>
  </extension>
 </plugin>
