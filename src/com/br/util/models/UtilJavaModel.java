@@ -285,7 +285,33 @@ public class UtilJavaModel {
 		
 		return field;
 		
-	} 
+	}
+	
+	public FieldDeclaration createFieldDeclaration(String name, ClassDeclaration classDeclaration, Type type) {
+		
+		FieldDeclaration field = JavaFactory.eINSTANCE.createFieldDeclaration();
+		field.setProxy(false);
+		field.setOriginalCompilationUnit(classDeclaration.getOriginalCompilationUnit());
+		field.setAbstractTypeDeclaration(classDeclaration);
+		field.setModifier(this.createModifierForFieldDeclaration(field));
+		TypeAccess typeAcess = JavaFactory.eINSTANCE.createTypeAccess();
+//		typeAcess.setType(this.getStringType(model));
+		typeAcess.setType(type);
+		field.setType(typeAcess);
+		
+		VariableDeclarationFragment teste = JavaFactory.eINSTANCE.createVariableDeclarationFragment();
+		
+		teste.setName(name);
+		teste.setProxy(false);
+		teste.setExtraArrayDimensions(0);
+		teste.setOriginalCompilationUnit(classDeclaration.getOriginalCompilationUnit());
+		//teste.setVariablesContainer(field);
+		//field.getFragments().add(teste);
+		
+		
+		return field;
+		
+	}
 	
 	public MethodDeclaration createMethodDeclarationGET(String name, ClassDeclaration classToPutTheMethod, FieldDeclaration fieldDeclaration, String nameAttribute, Type type, Model model){
 		
@@ -1323,6 +1349,44 @@ public class UtilJavaModel {
 		}
 
 	}
+	
+	
+	public void actionPullDownField (ClassDeclaration classToRemoveTheFieldDeclaration, List<ClassDeclaration> classesToPullDownTheFieldDeclaration, List<FieldDeclaration> fieldDeclarationsToPullDown) {
+		
+		if (classesToPullDownTheFieldDeclaration.size() == 1) {
+			
+			for (FieldDeclaration fieldDeclaration : fieldDeclarationsToPullDown) {
+				
+				ClassDeclaration classToMoveTheStorableUnit = classesToPullDownTheFieldDeclaration.get(0);
+				
+				this.moveFieldDeclarationToClassDeclaration(classToMoveTheStorableUnit, fieldDeclaration);
+			}
+			
+		}else {
+			
+			for (ClassDeclaration classesDeclaration : classesToPullDownTheFieldDeclaration) {
+				
+				for (FieldDeclaration fieldDeclaration : fieldDeclarationsToPullDown) {
+				
+					this.createFieldDeclaration(fieldDeclaration.getFragments().get(0).getName(), classesDeclaration, fieldDeclaration.getType().getType());
+					
+					
+				}
+				
+			}
+			
+			for (FieldDeclaration fieldDeclaration : fieldDeclarationsToPullDown) {
+				
+				this.removeFieldDeclaration(classToRemoveTheFieldDeclaration, fieldDeclaration);
+			}
+			
+			
+		}
+		
+		
+		
+	}
+	
 	
 	public void actionPullUpMethod(
 			LinkedHashSet<PullUpMethodInfoJavaModel> pullUpMethodInfo) {

@@ -85,10 +85,12 @@ public class WizardPushDownField extends Wizard {
 			
 			String nameOfstorableUnitSelected = selectedItem[i].getText(1);
 			StorableUnit storableIdentified = utilKDMMODEL.getStorablesUnitByName(pullDownFieldInfo, nameOfstorableUnitSelected);
+			FieldDeclaration fieldDeclarationIdentified = utilJavaModel.getFieldDeclarationByName(pullDownFieldClassJavaModel, nameOfstorableUnitSelected);
 			
-			if (storableIdentified != null) {
+			if (storableIdentified != null && fieldDeclarationIdentified != null) {
 				
 				selectedStorableUnit.add(storableIdentified);
+				selectedFieldDeclaration.add(fieldDeclarationIdentified);
 				
 			}
 			
@@ -96,10 +98,11 @@ public class WizardPushDownField extends Wizard {
 			System.out.println(selectedItem[i].getText(1));
 		}
 		
-		if (selectedStorableUnit.size() != 0) {
+		if (selectedStorableUnit.size() != 0 && selectedFieldDeclaration.size() != 0) {
 			
 			
 			utilKDMMODEL.actionPullDownField(pullDownFieldInfo, inheritance, selectedStorableUnit);
+			utilJavaModel.actionPullDownField(pullDownFieldClassJavaModel, inheritanceJavaModel, selectedFieldDeclaration);
 			
 		} else {
 			
