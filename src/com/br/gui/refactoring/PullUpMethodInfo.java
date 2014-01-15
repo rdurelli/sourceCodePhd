@@ -2,7 +2,6 @@ package com.br.gui.refactoring;
 
 import org.eclipse.gmt.modisco.omg.kdm.code.ClassUnit;
 import org.eclipse.gmt.modisco.omg.kdm.code.MethodUnit;
-import org.eclipse.gmt.modisco.omg.kdm.code.StorableUnit;
 import org.eclipse.gmt.modisco.omg.kdm.core.KDMEntity;
 
 public class PullUpMethodInfo {

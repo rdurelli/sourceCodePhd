@@ -1253,7 +1253,7 @@ public class UtilJavaModel {
 								&& ((FieldDeclaration)elements.get(i)).getFragments().get(0).getName()
 										.equals(((FieldDeclaration)elements.get(j)).getFragments().get(0).getName())) {
 
-							FieldDeclaration elementToRemove = (FieldDeclaration) elements;
+							FieldDeclaration elementToRemove = (FieldDeclaration) elements.get(j);
 							
 							this.removeFieldDeclaration(superClass, elementToRemove);
 							
