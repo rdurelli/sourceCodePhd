@@ -156,6 +156,9 @@ public class PullDownFieldClass implements IObjectActionDelegate {
 								
 								wizard.open();
 								
+								
+								utilJavaModel.save(modelJava, URIProject);
+								
 								Resource resource = utilKDMMODEL.save(segment, offset.toString(), URIProject);
 								
 								closeEditor(editorPart);

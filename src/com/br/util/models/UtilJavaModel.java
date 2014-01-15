@@ -306,7 +306,7 @@ public class UtilJavaModel {
 		teste.setExtraArrayDimensions(0);
 		teste.setOriginalCompilationUnit(classDeclaration.getOriginalCompilationUnit());
 		//teste.setVariablesContainer(field);
-		//field.getFragments().add(teste);
+		field.getFragments().add(teste);
 		
 		
 		return field;
