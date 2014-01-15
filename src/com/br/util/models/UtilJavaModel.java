@@ -58,8 +58,10 @@ import org.eclipse.gmt.modisco.java.emf.JavaFactory;
 import org.eclipse.gmt.modisco.java.emf.JavaPackage;
 import org.eclipse.gmt.modisco.java.generation.files.GenerateJavaExtended;
 import org.eclipse.gmt.modisco.omg.kdm.code.AbstractCodeElement;
+import org.eclipse.gmt.modisco.omg.kdm.code.AbstractCodeRelationship;
 import org.eclipse.gmt.modisco.omg.kdm.code.ClassUnit;
 import org.eclipse.gmt.modisco.omg.kdm.code.CodeFactory;
+import org.eclipse.gmt.modisco.omg.kdm.code.CodeItem;
 import org.eclipse.gmt.modisco.omg.kdm.code.CodeModel;
 import org.eclipse.gmt.modisco.omg.kdm.code.Extends;
 import org.eclipse.gmt.modisco.omg.kdm.code.StorableUnit;
@@ -70,6 +72,8 @@ import org.eclipse.ui.PlatformUI;
 import org.jruby.javasupport.Java;
 
 import com.br.gui.refactoring.ExtractSuperClassInfoJavaModel;
+import com.br.gui.refactoring.PullUpFieldInfo;
+import com.br.gui.refactoring.PullUpFieldInfoJavaModel;
 import com.br.utils.ProjectSelectedToModernize;
 
 public class UtilJavaModel {
@@ -1174,6 +1178,22 @@ public class UtilJavaModel {
 	}
 	
 
+	public boolean verifyInheritanceExtends (ClassDeclaration classOne, ClassDeclaration classTwo) {
+		
+		
+		if ( (classOne.getSuperClass() != null && classTwo.getSuperClass() != null) ) {
+			
+			if (classOne.getSuperClass().getType().getName().equals(classTwo.getSuperClass().getType().getName())) {
+				
+				return true;
+			}
+			
+		}
+		
+		return false;
+		
+	}
+	
 	
 	public void removeFieldDeclaration (ClassDeclaration classDeclaration, FieldDeclaration fieldDeclaration) {
 		
@@ -1192,5 +1212,68 @@ public class UtilJavaModel {
 		
 		
 	}
+	
+	public void actionPullUpField(LinkedHashSet<PullUpFieldInfoJavaModel> pullUpFieldInfo) {
+
+		ClassUnit superClass = null;
+
+		ArrayList<String> alreadyRemoveStorableUnit = new ArrayList<String>();
+
+		Iterator<PullUpFieldInfoJavaModel> ite2 = pullUpFieldInfo.iterator();
+
+		Iterator<PullUpFieldInfoJavaModel> ite = pullUpFieldInfo.iterator();
+
+		while (ite2.hasNext()) {
+
+			PullUpFieldInfoJavaModel classInfo = ite2.next();
+
+			moveFieldDeclarationToClassDeclaration(classInfo.getSuperElement(), classInfo.getFieldDeclarationTo());
+			moveFieldDeclarationToClassDeclaration(classInfo.getSuperElement(), classInfo.getFieldDeclarationFROM());
+			
+		}
+
+		while (ite.hasNext()) {
+
+			PullUpFieldInfoJavaModel pullUpFieldInfo2 = (PullUpFieldInfoJavaModel) ite.next();
+
+			EList<CodeItem> elements = ((ClassUnit) pullUpFieldInfo2
+					.getSuperElement()).getCodeElement();
+
+			superClass = (ClassUnit) pullUpFieldInfo2.getSuperElement();
+
+			System.out.println(elements.size());
+
+			if (!alreadyRemoveStorableUnit.contains(superClass.getName())) {
+
+				for (int i = 0; i < elements.size(); i++) {
+
+					for (int j = 0; j < elements.size(); j++) {
+
+						if (elements.get(i) instanceof StorableUnit
+								&& elements.get(i).getName()
+										.equals(elements.get(j).getName())) {
+
+							StorableUnit elementToRemove = (StorableUnit) elements
+									.get(j);
+
+							// n‹o Ž a melhor ideia, pois tem lugares que tem
+							// referencia ao attributo removido..
+							removeStorableUnit(
+									(ClassUnit) pullUpFieldInfo2
+											.getSuperElement(),
+									elementToRemove);
+
+						}
+
+					}
+
+					alreadyRemoveStorableUnit.add(superClass.getName());
+					System.out.println(superClass.getCodeElement());
+				}
+			}
+		}
+
+	}
+	
 	
 }

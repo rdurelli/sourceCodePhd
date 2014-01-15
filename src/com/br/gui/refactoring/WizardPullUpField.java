@@ -16,7 +16,7 @@ public class WizardPullUpField extends Wizard {
 	
 	private WizardPullUpFieldPage page1 = null;
 	private LinkedHashSet<PullUpFieldInfo> pullUpFieldInfo = null;
-	private LinkedHashSet<ExtractSuperClassInfoJavaModel> extractSuperClassInfoJavaModel = null;
+	private LinkedHashSet<PullUpFieldInfoJavaModel> extractSuperClassInfoJavaModel = null;
 	
 	private UtilKDMModel utilKDMMODEL = new UtilKDMModel();
 	private UtilJavaModel utilJavaModel = new UtilJavaModel();
@@ -25,7 +25,7 @@ public class WizardPullUpField extends Wizard {
 	private Model model = null;
 	private String URIProject = null;
 	
-	public WizardPullUpField(LinkedHashSet<PullUpFieldInfo> extractSuperClassInfo, LinkedHashSet<ExtractSuperClassInfoJavaModel> extractSuperClassInfoJavaModel, Package packageToPutTheNewClass, org.eclipse.gmt.modisco.java.Package packageToPutTheNewClassJavaModel, Model model, String URIProject) {
+	public WizardPullUpField(LinkedHashSet<PullUpFieldInfo> extractSuperClassInfo, LinkedHashSet<PullUpFieldInfoJavaModel> extractSuperClassInfoJavaModel, Package packageToPutTheNewClass, org.eclipse.gmt.modisco.java.Package packageToPutTheNewClassJavaModel, Model model, String URIProject) {
 		setWindowTitle("Extract Superclass");
 		this.pullUpFieldInfo = extractSuperClassInfo;
 		this.extractSuperClassInfoJavaModel = extractSuperClassInfoJavaModel;

@@ -43,6 +43,7 @@ import org.eclipse.ui.texteditor.AbstractTextEditor;
 import com.br.gui.refactoring.ExtractSuperClassInfo;
 import com.br.gui.refactoring.ExtractSuperClassInfoJavaModel;
 import com.br.gui.refactoring.PullUpFieldInfo;
+import com.br.gui.refactoring.PullUpFieldInfoJavaModel;
 import com.br.gui.refactoring.WizardExtractSuperClass;
 import com.br.gui.refactoring.WizardPullUpField;
 import com.br.util.models.UtilJavaModel;
@@ -61,7 +62,7 @@ public class PullUpFieldClass implements IObjectActionDelegate {
 	public void run(IAction action) {
 
 		LinkedHashSet<PullUpFieldInfo> extractSuperClassInfo = new LinkedHashSet<PullUpFieldInfo>();
-		LinkedHashSet<ExtractSuperClassInfoJavaModel> extractSuperClassInfoJAVAMODEL = new LinkedHashSet<ExtractSuperClassInfoJavaModel>();
+		LinkedHashSet<PullUpFieldInfoJavaModel> extractSuperClassInfoJAVAMODEL = new LinkedHashSet<PullUpFieldInfoJavaModel>();
 		//arrumar aqui no JavaModel...
 		
 		UtilKDMModel utilKDMMODEL = new UtilKDMModel();
@@ -176,12 +177,73 @@ public class PullUpFieldClass implements IObjectActionDelegate {
 					
 					List<ClassDeclaration> classesSelectedJavaModel = this.getAllClassDeclaration(classesSelectedToSuperExtract, utilKDMMODEL, utilJavaModel, modelJava);
 					
-					
-					//colocar aqui depois em um método, na verdade passar arrumando tudo e melhorar essa classe...
-					
-					
-					
-					
+					if (classesSelectedJavaModel.size() == 1) {
+						
+						MessageDialog.openError(shell, "Error", "Please be sure you have selected at least two ClassUnits to realize the Super Extract Class.");
+						
+					} else {
+						
+						for (int i = 0; i < classesSelectedJavaModel.size(); i++) {
+							
+							ClassDeclaration classDeclationSelected = (ClassDeclaration) classesSelectedJavaModel.get(i);
+							
+							List<FieldDeclaration> storables = utilJavaModel.getFieldDeclarations(classDeclationSelected);
+							
+							
+							if (storables.size() > 0) {
+								
+								for (int j = 0; j < classesSelectedToSuperExtract.size(); j++) {
+									
+									ClassDeclaration classUnitSelected2 = (ClassDeclaration) classesSelectedJavaModel.get(j);
+									
+									if (classDeclationSelected != classUnitSelected2) {
+									
+										List<FieldDeclaration> storables2 = utilJavaModel.getFieldDeclarations(classUnitSelected2);
+									
+										
+										for (FieldDeclaration storableUnit : storables) {
+											
+											
+											for (FieldDeclaration storableUnit2 : storables2) {
+												
+												if (storableUnit.getFragments().get(0).getName().equals(storableUnit2.getFragments().get(0).getName()) && (storableUnit.getType().getType().getName().equals(storableUnit2.getType().getType().getName())) && utilJavaModel.verifyInheritanceExtends(classDeclationSelected, classUnitSelected2)) {
+													
+//													extractSuperClassInfo
+													
+													PullUpFieldInfoJavaModel pullUpFieldInfo = new PullUpFieldInfoJavaModel();
+													
+													pullUpFieldInfo.setTo(classDeclationSelected);
+													pullUpFieldInfo.setFrom(classUnitSelected2);
+													pullUpFieldInfo.setAttributeToExtract(storableUnit.getName());
+													pullUpFieldInfo.setFieldDeclarationTo(storableUnit);
+													pullUpFieldInfo.setFieldDeclarationFROM(storableUnit2);
+													pullUpFieldInfo.setSuperElement((ClassDeclaration)classDeclationSelected.getSuperClass().getType());
+													extractSuperClassInfoJAVAMODEL.add(pullUpFieldInfo);
+													
+//													System.out.println("Sim somos iguais :" +classUnitSelected.getName() +" tem "+storableUnit.getName());
+//													System.out.println("Sim somos iguais :" +classUnitSelected2.getName() +" tem "+storableUnit2.getName());
+//													
+												}
+												
+											}
+											
+										}
+										
+//										System.out.println(storables);
+//										System.out.println(storables2);
+//									
+									}
+									
+								}
+								
+							}
+							
+							
+							
+							
+						}
+						
+					}
 					
 					org.eclipse.gmt.modisco.java.Package packageToPutTheNewClassJavaModel = (org.eclipse.gmt.modisco.java.Package)classesSelectedJavaModel.get(0).eContainer();
 					
