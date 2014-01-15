@@ -129,6 +129,8 @@ public class PullDownFieldClass implements IObjectActionDelegate {
 						
 						ArrayList<ClassUnit> inheritanceSubClasses = utilKDMMODEL.getRelationShipInheritancePassingTheSuper(classesSelectedToApplyThePullDownField, allClassUnits);
 						
+						ArrayList<ClassDeclaration> inheritanceSubClassesJavaModel = utilJavaModel.getRelationShipInheritancePassingTheSuper(classDeclaration, allClassDeclarations);
+						
 						if (inheritanceSubClasses.size() == 0) {
 							
 							MessageDialog.openInformation(shell, "Error", "Push Down is not allowed on type " + classesSelectedToApplyThePullDownField.getName() + ", since it does not have subclasses to which members could be pushed down.");
@@ -150,7 +152,7 @@ public class PullDownFieldClass implements IObjectActionDelegate {
 //								org.eclipse.gmt.modisco.java.Package packageToPutTheNewClassJavaModel = (org.eclipse.gmt.modisco.java.Package)classesSelectedJavaModel.get(0).eContainer();
 								
 								
-								WizardDialog wizard = new WizardDialog(shell, new WizardPushDownField(classesSelectedToApplyThePullDownField, inheritanceSubClasses));
+								WizardDialog wizard = new WizardDialog(shell, new WizardPushDownField(classesSelectedToApplyThePullDownField, inheritanceSubClasses, classDeclaration, inheritanceSubClassesJavaModel));
 								
 								wizard.open();
 								

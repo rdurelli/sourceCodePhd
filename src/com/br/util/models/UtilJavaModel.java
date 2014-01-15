@@ -1461,4 +1461,26 @@ public class UtilJavaModel {
 
 	}
 	
+	public FieldDeclaration getFieldDeclarationByName (ClassDeclaration classDeclaration, String name) {
+		
+		EList<BodyDeclaration> bodyDeclaration = classDeclaration.getBodyDeclarations();
+		
+		FieldDeclaration fieldDeclaratioToReturn = null;
+		
+		for (BodyDeclaration element : bodyDeclaration) {
+			
+			if (element instanceof FieldDeclaration && ((FieldDeclaration)element).getFragments().get(0).getName().equals(name)) {
+				
+				fieldDeclaratioToReturn = (FieldDeclaration)element;
+				break;
+				
+			}
+			
+		}
+		
+		return fieldDeclaratioToReturn;
+		
+		
+	}
+	
 }

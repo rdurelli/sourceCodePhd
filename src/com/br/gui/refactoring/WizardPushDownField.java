@@ -5,6 +5,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.eclipse.gmt.modisco.java.ClassDeclaration;
+import org.eclipse.gmt.modisco.java.FieldDeclaration;
 import org.eclipse.gmt.modisco.java.Model;
 import org.eclipse.gmt.modisco.omg.kdm.code.ClassUnit;
 import org.eclipse.gmt.modisco.omg.kdm.code.Package;
@@ -23,6 +24,8 @@ public class WizardPushDownField extends Wizard {
 	private WizardPushDownFieldPage page1 = null;
 	private ClassUnit pullDownFieldInfo = null;
 	private ArrayList<ClassUnit> inheritance = null;
+	private ClassDeclaration pullDownFieldClassJavaModel;
+	private ArrayList<ClassDeclaration> inheritanceJavaModel;
 	private LinkedHashSet<ExtractSuperClassInfoJavaModel> extractSuperClassInfoJavaModel = null;//arrrumar aqui
 	
 	private UtilKDMModel utilKDMMODEL = new UtilKDMModel();
@@ -44,10 +47,15 @@ public class WizardPushDownField extends Wizard {
 //		this.URIProject = URIProject;
 //	}
 	
-	public WizardPushDownField(ClassUnit pullDownFieldClass, ArrayList<ClassUnit> inheritance) {
+	public WizardPushDownField(ClassUnit pullDownFieldClass, ArrayList<ClassUnit> inheritance, ClassDeclaration pullDownFieldClassJavaModel, ArrayList<ClassDeclaration> inheritanceJavaModel ) {
 		setWindowTitle("Extract Superclass");
 		this.pullDownFieldInfo = pullDownFieldClass;
 		this.inheritance = inheritance;
+		
+		this.pullDownFieldClassJavaModel = pullDownFieldClassJavaModel;
+		this.inheritanceJavaModel = inheritanceJavaModel;
+		
+		
 //		this.extractSuperClassInfoJavaModel = extractSuperClassInfoJavaModel;
 		this.page1 = new WizardPushDownFieldPage(this.pullDownFieldInfo, inheritance);
 //		this.packageToPutTheNewClass = packageToPutTheNewClass;
@@ -67,6 +75,8 @@ public class WizardPushDownField extends Wizard {
 		
 		List<StorableUnit> selectedStorableUnit = new ArrayList<StorableUnit>();
 		
+		List<FieldDeclaration> selectedFieldDeclaration = new ArrayList<FieldDeclaration>();
+		
 		TableItem[] selectedItem = this.page1.getTable().getSelection();
 		
 		System.out.println(this.page1.getTable().getSelectionIndex());
@@ -74,7 +84,6 @@ public class WizardPushDownField extends Wizard {
 		for (int i = 0; i < selectedItem.length; i++) {
 			
 			String nameOfstorableUnitSelected = selectedItem[i].getText(1);
-			
 			StorableUnit storableIdentified = utilKDMMODEL.getStorablesUnitByName(pullDownFieldInfo, nameOfstorableUnitSelected);
 			
 			if (storableIdentified != null) {
