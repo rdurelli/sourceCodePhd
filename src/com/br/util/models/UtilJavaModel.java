@@ -1387,32 +1387,50 @@ public class UtilJavaModel {
 		
 		ArrayList<ClassDeclaration> allClasses = new ArrayList<ClassDeclaration>();
 		
-		CodeModel codeModel = (CodeModel)model.getModel().get(0);
-		
-		EList<AbstractCodeElement> elements = codeModel.getCodeElement();
-		
-		for (int i = 0; i < elements.size()-1; i++) {
+		if (model.getOwnedElements().size() != 0 ) {
 			
-			System.out.println(elements.get(i));
+			EList<Package> packages = model.getOwnedElements();
 			
-			if (elements.get(i) instanceof Package) {
+			for (Package pack : packages) {
 			
-				Package packageKDM = (Package) elements.get(i);
-				
-				this.getClasses(packageKDM.getCodeElement(), allClasses);
-				
+				this.getClasses(pack, allClasses);
 			}
 			
 			
 			
-			
 		}
-		
 		
 		return allClasses;
 		
 		
 	}
 	
+	private void getClasses(Package packageJava, ArrayList<ClassDeclaration> allClasses) {
+		
+		if (packageJava.getOwnedElements().size() != 0) {
+			
+			EList<AbstractTypeDeclaration> allTypes = packageJava.getOwnedElements();
+			
+			for (AbstractTypeDeclaration abstractTypeDeclaration : allTypes) {
+				if (abstractTypeDeclaration instanceof ClassDeclaration) {
+					ClassDeclaration classToAdd = (ClassDeclaration) abstractTypeDeclaration;
+					allClasses.add(classToAdd);
+				}
+			}
+			
+		}else {
+			
+			EList<Package> packages = packageJava.getOwnedPackages();
+			
+			for (Package pack : packages) {
+			
+				this.getClasses(pack, allClasses);
+			}
+			
+			
+		}
+		
+		
+	}
 	
 }

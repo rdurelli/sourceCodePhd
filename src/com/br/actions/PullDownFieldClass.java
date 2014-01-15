@@ -125,6 +125,8 @@ public class PullDownFieldClass implements IObjectActionDelegate {
 						
 						ArrayList<ClassUnit> allClassUnits = utilKDMMODEL.getAllClasses(segment);			
 						
+						ArrayList<ClassDeclaration> allClassDeclarations = utilJavaModel.getAllClasses(modelJava);
+						
 						ArrayList<ClassUnit> inheritanceSubClasses = utilKDMMODEL.getRelationShipInheritancePassingTheSuper(classesSelectedToApplyThePullDownField, allClassUnits);
 						
 						if (inheritanceSubClasses.size() == 0) {
