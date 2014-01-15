@@ -65,6 +65,7 @@ import org.eclipse.gmt.modisco.omg.kdm.code.ClassUnit;
 import org.eclipse.gmt.modisco.omg.kdm.code.CodeFactory;
 import org.eclipse.gmt.modisco.omg.kdm.code.CodeItem;
 import org.eclipse.gmt.modisco.omg.kdm.code.CodeModel;
+import org.eclipse.gmt.modisco.omg.kdm.code.Datatype;
 import org.eclipse.gmt.modisco.omg.kdm.code.Extends;
 import org.eclipse.gmt.modisco.omg.kdm.code.MethodUnit;
 import org.eclipse.gmt.modisco.omg.kdm.code.StorableUnit;
@@ -1431,6 +1432,33 @@ public class UtilJavaModel {
 		}
 		
 		
+	}
+	
+	public ArrayList<ClassDeclaration> getRelationShipInheritancePassingTheSuper(
+			ClassDeclaration classDeclaration,
+			ArrayList<ClassDeclaration> allClasses) {
+
+		ArrayList<ClassDeclaration> relationShipInheritancePassingTheSuper = new ArrayList<ClassDeclaration>();
+
+		for (ClassDeclaration classes : allClasses) {
+
+			TypeAccess superClass = classes.getSuperClass();
+
+			if (superClass != null) {
+
+				if ((superClass.getType() instanceof ClassDeclaration)
+						&& (superClass.getType().getName()
+								.equals(classDeclaration.getName()))) {
+
+					relationShipInheritancePassingTheSuper.add(classes);
+
+				}
+
+			}
+
+		}
+		return relationShipInheritancePassingTheSuper;
+
 	}
 	
 }
