@@ -1215,7 +1215,7 @@ public class UtilJavaModel {
 	
 	public void actionPullUpField(LinkedHashSet<PullUpFieldInfoJavaModel> pullUpFieldInfo) {
 
-		ClassUnit superClass = null;
+		ClassDeclaration superClass = null;
 
 		ArrayList<String> alreadyRemoveStorableUnit = new ArrayList<String>();
 
@@ -1236,10 +1236,10 @@ public class UtilJavaModel {
 
 			PullUpFieldInfoJavaModel pullUpFieldInfo2 = (PullUpFieldInfoJavaModel) ite.next();
 
-			EList<CodeItem> elements = ((ClassUnit) pullUpFieldInfo2
-					.getSuperElement()).getCodeElement();
+			EList<BodyDeclaration> elements = pullUpFieldInfo2.getSuperElement().getBodyDeclarations();
+			
 
-			superClass = (ClassUnit) pullUpFieldInfo2.getSuperElement();
+			superClass =  pullUpFieldInfo2.getSuperElement();
 
 			System.out.println(elements.size());
 
@@ -1249,26 +1249,30 @@ public class UtilJavaModel {
 
 					for (int j = 0; j < elements.size(); j++) {
 
-						if (elements.get(i) instanceof StorableUnit
-								&& elements.get(i).getName()
-										.equals(elements.get(j).getName())) {
+						if (elements.get(i) instanceof FieldDeclaration
+								&& ((FieldDeclaration)elements.get(i)).getFragments().get(0).getName()
+										.equals(((FieldDeclaration)elements.get(j)).getFragments().get(0).getName())) {
 
-							StorableUnit elementToRemove = (StorableUnit) elements
-									.get(j);
+							FieldDeclaration elementToRemove = (FieldDeclaration) elements;
+							
+							this.removeFieldDeclaration(superClass, elementToRemove);
+							
+//							StorableUnit elementToRemove = (StorableUnit) elements
+//									.get(j);
 
 							// n‹o Ž a melhor ideia, pois tem lugares que tem
 							// referencia ao attributo removido..
-							removeStorableUnit(
-									(ClassUnit) pullUpFieldInfo2
-											.getSuperElement(),
-									elementToRemove);
+//							removeStorableUnit(
+//									(ClassUnit) pullUpFieldInfo2
+//											.getSuperElement(),
+//									elementToRemove);
 
 						}
 
 					}
 
 					alreadyRemoveStorableUnit.add(superClass.getName());
-					System.out.println(superClass.getCodeElement());
+//					System.out.println(superClass.getCodeElement());
 				}
 			}
 		}
