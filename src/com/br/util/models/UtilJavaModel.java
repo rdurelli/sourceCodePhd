@@ -1383,4 +1383,36 @@ public class UtilJavaModel {
 		}
 	}
 	
+	public ArrayList<ClassDeclaration> getAllClasses (Model model) {
+		
+		ArrayList<ClassDeclaration> allClasses = new ArrayList<ClassDeclaration>();
+		
+		CodeModel codeModel = (CodeModel)model.getModel().get(0);
+		
+		EList<AbstractCodeElement> elements = codeModel.getCodeElement();
+		
+		for (int i = 0; i < elements.size()-1; i++) {
+			
+			System.out.println(elements.get(i));
+			
+			if (elements.get(i) instanceof Package) {
+			
+				Package packageKDM = (Package) elements.get(i);
+				
+				this.getClasses(packageKDM.getCodeElement(), allClasses);
+				
+			}
+			
+			
+			
+			
+		}
+		
+		
+		return allClasses;
+		
+		
+	}
+	
+	
 }

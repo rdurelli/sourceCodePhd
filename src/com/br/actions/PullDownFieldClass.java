@@ -111,16 +111,23 @@ public class PullDownFieldClass implements IObjectActionDelegate {
 						
 					} else {
 					
+						Model modelJava = utilJavaModel.load(activeProject.getLocationURI().toString()+"/MODELS_PIM_modificado/JavaModelRefactoring.javaxmi");
+						
 						classesSelectedToApplyThePullDownField = (ClassUnit)objectSelected;
-														
+								
+						String [] packageKDM = utilKDMMODEL.getCompletePackageName(classesSelectedToApplyThePullDownField);
+						
+						ClassDeclaration classDeclaration = utilJavaModel.getClassDeclaration(classesSelectedToApplyThePullDownField, packageKDM, modelJava);
 						
 						Segment segment = utilKDMMODEL.getSegmentToPersiste(classesSelectedToApplyThePullDownField);
 						
-						ArrayList<ClassUnit> classUnitsTodas = utilKDMMODEL.getAllClasses(segment);			
 						
-						ArrayList<ClassUnit> inheritance = utilKDMMODEL.getRelationShipInheritancePassingTheSuper(classesSelectedToApplyThePullDownField, classUnitsTodas);
 						
-						if (inheritance.size() == 0) {
+						ArrayList<ClassUnit> allClassUnits = utilKDMMODEL.getAllClasses(segment);			
+						
+						ArrayList<ClassUnit> inheritanceSubClasses = utilKDMMODEL.getRelationShipInheritancePassingTheSuper(classesSelectedToApplyThePullDownField, allClassUnits);
+						
+						if (inheritanceSubClasses.size() == 0) {
 							
 							MessageDialog.openInformation(shell, "Error", "Push Down is not allowed on type " + classesSelectedToApplyThePullDownField.getName() + ", since it does not have subclasses to which members could be pushed down.");
 							
@@ -134,14 +141,14 @@ public class PullDownFieldClass implements IObjectActionDelegate {
 								MessageDialog.openInformation(shell, "Error", "There is none StorableUnit (Attributes) to apply the Pull Down Field.");
 								
 							} else {
-								Model modelJava = utilJavaModel.load(activeProject.getLocationURI().toString()+"/MODELS_PIM_modificado/JavaModelRefactoring.javaxmi");
+								
 								
 								
 //								List<ClassDeclaration> classesSelectedJavaModel = this.getAllClassDeclaration(classesSelectedToSuperExtract, utilKDMMODEL, utilJavaModel, modelJava);
 //								org.eclipse.gmt.modisco.java.Package packageToPutTheNewClassJavaModel = (org.eclipse.gmt.modisco.java.Package)classesSelectedJavaModel.get(0).eContainer();
 								
 								
-								WizardDialog wizard = new WizardDialog(shell, new WizardPushDownField(classesSelectedToApplyThePullDownField, inheritance));
+								WizardDialog wizard = new WizardDialog(shell, new WizardPushDownField(classesSelectedToApplyThePullDownField, inheritanceSubClasses));
 								
 								wizard.open();
 								
