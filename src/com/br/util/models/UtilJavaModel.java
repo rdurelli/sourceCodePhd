@@ -1,5 +1,7 @@
 package com.br.util.models;
 
+import groovyjarjarasm.asm.commons.Method;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -64,6 +66,7 @@ import org.eclipse.gmt.modisco.omg.kdm.code.CodeFactory;
 import org.eclipse.gmt.modisco.omg.kdm.code.CodeItem;
 import org.eclipse.gmt.modisco.omg.kdm.code.CodeModel;
 import org.eclipse.gmt.modisco.omg.kdm.code.Extends;
+import org.eclipse.gmt.modisco.omg.kdm.code.MethodUnit;
 import org.eclipse.gmt.modisco.omg.kdm.code.StorableUnit;
 import org.eclipse.gmt.modisco.omg.kdm.kdm.Segment;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -74,6 +77,8 @@ import org.jruby.javasupport.Java;
 import com.br.gui.refactoring.ExtractSuperClassInfoJavaModel;
 import com.br.gui.refactoring.PullUpFieldInfo;
 import com.br.gui.refactoring.PullUpFieldInfoJavaModel;
+import com.br.gui.refactoring.PullUpMethodInfo;
+import com.br.gui.refactoring.PullUpMethodInfoJavaModel;
 import com.br.utils.ProjectSelectedToModernize;
 
 public class UtilJavaModel {
@@ -893,6 +898,27 @@ public class UtilJavaModel {
 		
 	}
 	
+	public List<MethodDeclaration> getMethodDeclarations(ClassDeclaration classDeclaration) {
+		
+		List<MethodDeclaration> allMethods = new ArrayList<MethodDeclaration>();
+		EList<BodyDeclaration> bodies = classDeclaration.getBodyDeclarations();
+		
+		for (BodyDeclaration bodyDeclaration : bodies) {
+			
+			if (bodyDeclaration instanceof MethodDeclaration) {
+				
+				MethodDeclaration method = (MethodDeclaration) bodyDeclaration;
+				
+				allMethods.add(method);
+				
+			}
+			
+		}
+		
+		return allMethods;
+		
+	}
+	
 	
 	public void createInheritanceExtends (ClassDeclaration superClass, ClassDeclaration subClass) {
 		
@@ -1213,6 +1239,24 @@ public class UtilJavaModel {
 		
 	}
 	
+	public void removeMethodDeclaration (ClassDeclaration classDeclaration, MethodDeclaration methodDeclaration) {
+		
+		
+		if ( classDeclaration!= null) {
+			
+			
+			classDeclaration.getBodyDeclarations().remove(methodDeclaration);
+//			classUnit.getCodeElement().remove(storableUnit);
+			
+		} else {
+			Shell activeShell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+			MessageDialog.openError(activeShell, "Error", "ClassDeclaration can not be null");
+			
+		}
+		
+		
+	}
+	
 	public void actionPullUpField(LinkedHashSet<PullUpFieldInfoJavaModel> pullUpFieldInfo) {
 
 		ClassDeclaration superClass = null;
@@ -1279,5 +1323,64 @@ public class UtilJavaModel {
 
 	}
 	
+	public void actionPullUpMethod(
+			LinkedHashSet<PullUpMethodInfoJavaModel> pullUpMethodInfo) {
+
+		ClassDeclaration superClass = null;
+
+		ArrayList<String> alreadyRemoveMethodDeclaration = new ArrayList<String>();
+
+		Iterator<PullUpMethodInfoJavaModel> ite2 = pullUpMethodInfo.iterator();
+
+		Iterator<PullUpMethodInfoJavaModel> ite = pullUpMethodInfo.iterator();
+
+		while (ite2.hasNext()) {
+
+			PullUpMethodInfoJavaModel classInfo = ite2.next();
+
+			this.moveMethodDeclarationToClassDeclaration(classInfo.getSuperElement(), classInfo.getMethodDeclarationTo());
+			this.moveMethodDeclarationToClassDeclaration(classInfo.getSuperElement(), classInfo.getMethodDeclarationFROM());
+
+		}
+
+		while (ite.hasNext()) {
+
+			PullUpMethodInfoJavaModel pullUpFieldInfo2 = (PullUpMethodInfoJavaModel) ite.next();
+
+			EList<BodyDeclaration> elements = pullUpFieldInfo2.getSuperElement().getBodyDeclarations();
+			
+
+			superClass = pullUpFieldInfo2.getSuperElement();
+
+			if (!alreadyRemoveMethodDeclaration.contains(superClass.getName())) {
+
+				for (int i = 0; i < elements.size(); i++) {
+
+					for (int j = 0; j < elements.size(); j++) {
+
+						if ((elements.get(i) instanceof MethodDeclaration)
+								&& (elements.get(i).getName().equals(elements
+										.get(j).getName()))) {
+
+							MethodDeclaration elementToRemove = (MethodDeclaration) elements
+									.get(j);
+
+							this.removeMethodDeclaration(pullUpFieldInfo2.getSuperElement(), elementToRemove);
+							
+						
+							// n‹o Ž a melhor ideia, pois tem lugares que tem
+							// referencia ao attributo removido..
+			
+
+						}
+
+					}
+
+				}
+
+				alreadyRemoveMethodDeclaration.add(superClass.getName());
+			}
+		}
+	}
 	
 }

@@ -1193,70 +1193,73 @@ public Segment load(String KDMModelFullPath){
 
 	}
 	
-	public void actionPullUpMethod (LinkedHashSet<PullUpMethodInfo> pullUpMethodInfo){
-		
+	public void actionPullUpMethod(
+			LinkedHashSet<PullUpMethodInfo> pullUpMethodInfo) {
+
 		ClassUnit superClass = null;
-		
+
 		ArrayList<String> alreadyRemoveMethodUnit = new ArrayList<String>();
-		
+
 		Iterator<PullUpMethodInfo> ite2 = pullUpMethodInfo.iterator();
-		
+
 		Iterator<PullUpMethodInfo> ite = pullUpMethodInfo.iterator();
-		
-		
+
 		while (ite2.hasNext()) {
-			
+
 			PullUpMethodInfo classInfo = ite2.next();
-			
-			moveMethodUnitToClassUnit((ClassUnit)classInfo.getSuperElement(), classInfo.getMethodUnitTo());
-			moveMethodUnitToClassUnit((ClassUnit)classInfo.getSuperElement(), classInfo.getMethodUnitFROM());
-			
+
+			moveMethodUnitToClassUnit((ClassUnit) classInfo.getSuperElement(),
+					classInfo.getMethodUnitTo());
+			moveMethodUnitToClassUnit((ClassUnit) classInfo.getSuperElement(),
+					classInfo.getMethodUnitFROM());
+
 		}
-		
-		
-			while (ite.hasNext()){
-				
+
+		while (ite.hasNext()) {
+
 			PullUpMethodInfo pullUpFieldInfo2 = (PullUpMethodInfo) ite.next();
-			
-			EList<CodeItem> elements = ((ClassUnit)pullUpFieldInfo2.getSuperElement()).getCodeElement();
-			
-//			List<MethodUnit> elements = this.getMethodsUnit(((ClassUnit)pullUpFieldInfo2.getSuperElement()));
-			
-			superClass = (ClassUnit)pullUpFieldInfo2.getSuperElement();
-			
+
+			EList<CodeItem> elements = ((ClassUnit) pullUpFieldInfo2
+					.getSuperElement()).getCodeElement();
+
+			// List<MethodUnit> elements =
+			// this.getMethodsUnit(((ClassUnit)pullUpFieldInfo2.getSuperElement()));
+
+			superClass = (ClassUnit) pullUpFieldInfo2.getSuperElement();
+
 			System.out.println(elements.size());
-			
+
 			if (!alreadyRemoveMethodUnit.contains(superClass.getName())) {
-			
-			for (int i = 0; i < elements.size(); i++) {
-				
-			
-				for (int j = 0; j < elements.size(); j++) {
-					
-					
-					if ( ( elements.get(i) instanceof MethodUnit ) && ( elements.get(i).getName().equals(elements.get(j).getName()))) {
-							
-						
-							MethodUnit elementToRemove =  (MethodUnit)elements.get(j);
-							
-							//n‹o Ž a melhor ideia, pois tem lugares que tem referencia ao attributo removido..
-							removeMethodUnit((ClassUnit)pullUpFieldInfo2.getSuperElement(), elementToRemove);
-							
+
+				for (int i = 0; i < elements.size(); i++) {
+
+					for (int j = 0; j < elements.size(); j++) {
+
+						if ((elements.get(i) instanceof MethodUnit)
+								&& (elements.get(i).getName().equals(elements
+										.get(j).getName()))) {
+
+							MethodUnit elementToRemove = (MethodUnit) elements
+									.get(j);
+
+							// n‹o Ž a melhor ideia, pois tem lugares que tem
+							// referencia ao attributo removido..
+							removeMethodUnit(
+									(ClassUnit) pullUpFieldInfo2
+											.getSuperElement(),
+									elementToRemove);
+
 						}
-						
-						
-						
+
 					}
-					
+
 				}
-				
-				
-				alreadyRemoveMethodUnit.add(superClass.getName());		
-			System.out.println(superClass.getCodeElement());
+
+				alreadyRemoveMethodUnit.add(superClass.getName());
+				System.out.println(superClass.getCodeElement());
+			}
 		}
-			}
-			}
-		
+	}		
 	
 	public void createInheritanceExtends (ClassUnit superClassUnit, ClassUnit subClassUnit) {
 		

@@ -16,7 +16,7 @@ public class WizardPullUpMethod extends Wizard {
 	
 	private WizardPullUpMethodPage page1 = null;
 	private LinkedHashSet<PullUpMethodInfo> pullUpMethodInfo = null;
-	private LinkedHashSet<ExtractSuperClassInfoJavaModel> extractSuperClassInfoJavaModel = null;
+	private LinkedHashSet<PullUpMethodInfoJavaModel> extractSuperClassInfoJavaModel = null;
 	
 	private UtilKDMModel utilKDMMODEL = new UtilKDMModel();
 	private UtilJavaModel utilJavaModel = new UtilJavaModel();
@@ -25,7 +25,7 @@ public class WizardPullUpMethod extends Wizard {
 	private Model model = null;
 	private String URIProject = null;
 	
-	public WizardPullUpMethod(LinkedHashSet<PullUpMethodInfo> extractSuperClassInfo, LinkedHashSet<ExtractSuperClassInfoJavaModel> extractSuperClassInfoJavaModel, Package packageToPutTheNewClass, org.eclipse.gmt.modisco.java.Package packageToPutTheNewClassJavaModel, Model model, String URIProject) {
+	public WizardPullUpMethod(LinkedHashSet<PullUpMethodInfo> extractSuperClassInfo, LinkedHashSet<PullUpMethodInfoJavaModel> extractSuperClassInfoJavaModel, Package packageToPutTheNewClass, org.eclipse.gmt.modisco.java.Package packageToPutTheNewClassJavaModel, Model model, String URIProject) {
 		setWindowTitle("Extract Superclass");
 		this.pullUpMethodInfo = extractSuperClassInfo;
 		this.extractSuperClassInfoJavaModel = extractSuperClassInfoJavaModel;
@@ -45,6 +45,8 @@ public class WizardPullUpMethod extends Wizard {
 	public boolean performFinish() {
 		
 		utilKDMMODEL.actionPullUpMethod(pullUpMethodInfo);
+		
+		utilJavaModel.actionPullUpMethod(extractSuperClassInfoJavaModel);
 		
 //		utilKDMMODEL.actionPullUpField(pullUpMethodInfo);
 		

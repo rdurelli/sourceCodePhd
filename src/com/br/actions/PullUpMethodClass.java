@@ -16,7 +16,10 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.gmt.modisco.infra.browser.editors.EcoreBrowser;
 import org.eclipse.gmt.modisco.java.ClassDeclaration;
+import org.eclipse.gmt.modisco.java.MethodDeclaration;
 import org.eclipse.gmt.modisco.java.Model;
+import org.eclipse.gmt.modisco.java.SingleVariableAccess;
+import org.eclipse.gmt.modisco.java.SingleVariableDeclaration;
 import org.eclipse.gmt.modisco.omg.kdm.code.ClassUnit;
 import org.eclipse.gmt.modisco.omg.kdm.code.MethodUnit;
 import org.eclipse.gmt.modisco.omg.kdm.code.Package;
@@ -46,6 +49,7 @@ import org.eclipse.ui.texteditor.AbstractTextEditor;
 import com.br.gui.refactoring.ExtractSuperClassInfoJavaModel;
 import com.br.gui.refactoring.PullUpFieldInfo;
 import com.br.gui.refactoring.PullUpMethodInfo;
+import com.br.gui.refactoring.PullUpMethodInfoJavaModel;
 import com.br.gui.refactoring.WizardPullUpField;
 import com.br.gui.refactoring.WizardPullUpMethod;
 import com.br.util.models.UtilJavaModel;
@@ -64,7 +68,7 @@ public class PullUpMethodClass implements IObjectActionDelegate {
 	public void run(IAction action) {
 
 		LinkedHashSet<PullUpMethodInfo> extractSuperClassInfo = new LinkedHashSet<PullUpMethodInfo>();
-		LinkedHashSet<ExtractSuperClassInfoJavaModel> extractSuperClassInfoJAVAMODEL = new LinkedHashSet<ExtractSuperClassInfoJavaModel>();
+		LinkedHashSet<PullUpMethodInfoJavaModel> extractSuperClassInfoJAVAMODEL = new LinkedHashSet<PullUpMethodInfoJavaModel>();
 		//arrumar aqui no JavaModel...
 		
 		UtilKDMModel utilKDMMODEL = new UtilKDMModel();
@@ -195,9 +199,6 @@ public class PullUpMethodClass implements IObjectActionDelegate {
 										
 									}
 									
-//									System.out.println(storables);
-//									System.out.println(storables2);
-//								
 								}
 								
 							}
@@ -212,6 +213,102 @@ public class PullUpMethodClass implements IObjectActionDelegate {
 					Model modelJava = utilJavaModel.load(activeProject.getLocationURI().toString()+"/MODELS_PIM_modificado/JavaModelRefactoring.javaxmi");
 					
 					List<ClassDeclaration> classesSelectedJavaModel = this.getAllClassDeclaration(classesSelectedToSuperExtract, utilKDMMODEL, utilJavaModel, modelJava);
+					
+					if (classesSelectedJavaModel.size() == 1) {
+						
+						MessageDialog.openError(shell, "Error", "Please be sure you have selected at least two ClassUnits to realize the Super Extract Class.");
+						
+					}else {
+						
+						for (int i = 0; i < classesSelectedJavaModel.size(); i++) {
+							
+							ClassDeclaration classDeclationSelected = (ClassDeclaration) classesSelectedJavaModel.get(i);
+							
+							
+							
+							List<MethodDeclaration>  methodDeclations = utilJavaModel.getMethodDeclarations(classDeclationSelected);
+							
+							ArrayList<Boolean> equalsMethods = new ArrayList<Boolean>();
+							
+							if (methodDeclations.size() > 0) {
+								
+								for (int j = 0; j < classesSelectedJavaModel.size(); j++) {
+									
+									ClassDeclaration classDeclarationSelected2 = (ClassDeclaration) classesSelectedJavaModel.get(j);
+									
+									if (classDeclationSelected != classDeclarationSelected2) {
+									
+										List<MethodDeclaration> methodUnits2 = utilJavaModel.getMethodDeclarations(classDeclarationSelected2);
+									
+										
+										for (MethodDeclaration methodUnit : methodDeclations) {
+											
+											
+											for (MethodDeclaration methodUnit2 : methodUnits2) {
+												
+												if (methodUnit.getName().equals(methodUnit2.getName()) && utilJavaModel.verifyInheritanceExtends(classDeclationSelected, classDeclarationSelected2)) {
+													
+													EList<SingleVariableDeclaration> method1Parameters = methodUnit.getParameters();
+													
+													EList<SingleVariableDeclaration> method2Parameters = methodUnit.getParameters();
+													
+													for (int k = 0; k < method1Parameters.size(); k++) {
+														
+														if ( (method1Parameters.get(k).getName().equals(method2Parameters.get(k).getName())) && method1Parameters.get(k).getType().getType().getName().equals(method2Parameters.get(k).getType().getType().getName())) {
+															
+															equalsMethods.add(true);
+															
+														}else {
+															
+															equalsMethods.add(false);
+															
+														}
+														
+														
+													}
+													
+													
+													if (equalsMethods.contains(false)) {
+														
+														System.out
+																.println("Os metodos s‹o diferentes..");
+														
+													} else {
+														
+													
+														PullUpMethodInfoJavaModel pullUpMethodInfo = new PullUpMethodInfoJavaModel();
+														
+														pullUpMethodInfo.setTo(classDeclationSelected);
+														pullUpMethodInfo.setFrom(classDeclarationSelected2);
+														pullUpMethodInfo.setMethodToExtract(methodUnit.getName());
+														pullUpMethodInfo.setMethodDeclarationTo(methodUnit);
+														pullUpMethodInfo.setMethodDeclarationFROM(methodUnit2);
+														pullUpMethodInfo.setSuperElement((ClassDeclaration)classDeclationSelected.getSuperClass().getType());
+														extractSuperClassInfoJAVAMODEL.add(pullUpMethodInfo);
+														
+													}
+													
+
+//													
+												}
+												
+											}
+											
+										}
+										
+									}
+									
+								}
+								
+							}
+							
+							
+							
+							
+						}
+						
+						
+					}
 					
 					
 					//colocar aqui depois em um mŽtodo, na verdade passar arrumando tudo e melhorar essa classe...
