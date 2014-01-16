@@ -1,10 +1,25 @@
 package com.br.actions;
 
+import java.util.List;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.gmt.modisco.infra.browser.editors.EcoreBrowser;
+import org.eclipse.gmt.modisco.java.ClassDeclaration;
 import org.eclipse.gmt.modisco.omg.kdm.code.ClassUnit;
+import org.eclipse.gmt.modisco.omg.kdm.code.MethodUnit;
+import org.eclipse.gmt.modisco.omg.kdm.code.StorableUnit;
+import org.eclipse.gmt.modisco.omg.kdm.kdm.Attribute;
+import org.eclipse.gmt.modisco.omg.kdm.kdm.Segment;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -13,7 +28,11 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IObjectActionDelegate;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 import com.br.util.models.UtilJavaModel;
@@ -68,16 +87,144 @@ public class EncapsulateFieldClass implements IObjectActionDelegate {
 					
 					Object objectSelected = offset.getFirstElement();
 					
-					ClassUnit classesSelectedToApplyThePullDownField = null;
+					StorableUnit storableUnitToApplyTheEncapsulateField = null;
+					
+					if (! (objectSelected instanceof StorableUnit)) {
+						
+						MessageDialog.openError(shell, "Error", "Please be sure you have selected at a StorableUnit to realize the Encapsulate Field.");
+						
+					} else {
+						
+						storableUnitToApplyTheEncapsulateField = (StorableUnit) objectSelected;
+						
+						Attribute attributeStorableUnitToApplyTheEncapsulateField = storableUnitToApplyTheEncapsulateField.getAttribute().get(0);
+						
+						ClassUnit classThatContainTheStorableUnit = (ClassUnit)storableUnitToApplyTheEncapsulateField.eContainer();
+						
+						Segment segment = utilKDMMODEL.getSegmentToPersiste(classThatContainTheStorableUnit);
+						
+						if (attributeStorableUnitToApplyTheEncapsulateField.getValue().equals("private")) {
+							
+							boolean result = MessageDialog.openConfirm(shell, "Error", "The StorableUnit that you selected already is private. Would you like to check if it owns accessors?");
+							
+							if (result) {
+								
+								//verificar se tem get e set.
+								
+								System.out.println(storableUnitToApplyTheEncapsulateField.getName().substring(0, 1).toUpperCase() + storableUnitToApplyTheEncapsulateField.getName().substring(1).toLowerCase());
+								
+								MethodUnit methodGet = utilKDMMODEL.getMethodsUnitByName(classThatContainTheStorableUnit, "get"+storableUnitToApplyTheEncapsulateField.getName().substring(0, 1).toUpperCase() + storableUnitToApplyTheEncapsulateField.getName().substring(1).toLowerCase());
+								
+								MethodUnit methodSet = utilKDMMODEL.getMethodsUnitByName(classThatContainTheStorableUnit, "set"+storableUnitToApplyTheEncapsulateField.getName().substring(0, 1).toUpperCase() + storableUnitToApplyTheEncapsulateField.getName().substring(1).toLowerCase());
+								
+								if (methodGet != null && methodSet != null) {
+									
+									MessageDialog.openInformation(shell, "Error", "The StorableUnit that you selected already owns accessors");
+									
+								} else if (methodGet == null && methodSet != null) {
+									
+									boolean resultGET = MessageDialog.openConfirm(shell, "Error", "The StorableUnit that you selected already owns the accessor SET. Would you like to create the accerssor GET?");
+									
+									if (resultGET) {
+										
+										utilKDMMODEL.createMethodUnitGETInClassUnit(classThatContainTheStorableUnit, "get"+storableUnitToApplyTheEncapsulateField.getName().substring(0, 1).toUpperCase() + storableUnitToApplyTheEncapsulateField.getName().substring(1).toLowerCase(), storableUnitToApplyTheEncapsulateField.getType(), segment);
+										
+									}
+									
+								} else if (methodGet != null && methodSet == null) {
+									
+									boolean resultSET = MessageDialog.openConfirm(shell, "Error", "The StorableUnit that you selected already owns the accessor GET. Would you like to create the accerssor SET?");
+									
+									if (resultSET) {
+										
+										utilKDMMODEL.createMethodUnitSETInClassUnit(classThatContainTheStorableUnit, "set"+storableUnitToApplyTheEncapsulateField.getName().substring(0, 1).toUpperCase() + storableUnitToApplyTheEncapsulateField.getName().substring(1).toLowerCase(), storableUnitToApplyTheEncapsulateField.getType(), storableUnitToApplyTheEncapsulateField, segment);
+										
+									}
+									
+								} else if (methodGet == null && methodSet == null) {
+									
+									boolean resultSETandGET = MessageDialog.openConfirm(shell, "Error", "The StorableUnit that you selected does not owns the accessors. Would you like to create them?");
+									
+									if (resultSETandGET) {
+										
+										utilKDMMODEL.createMethodUnitGETInClassUnit(classThatContainTheStorableUnit, "get"+storableUnitToApplyTheEncapsulateField.getName().substring(0, 1).toUpperCase() + storableUnitToApplyTheEncapsulateField.getName().substring(1).toLowerCase(), storableUnitToApplyTheEncapsulateField.getType(), segment);
+										utilKDMMODEL.createMethodUnitSETInClassUnit(classThatContainTheStorableUnit, "set"+storableUnitToApplyTheEncapsulateField.getName().substring(0, 1).toUpperCase() + storableUnitToApplyTheEncapsulateField.getName().substring(1).toLowerCase(), storableUnitToApplyTheEncapsulateField.getType(), storableUnitToApplyTheEncapsulateField, segment);
+										
+									}
+									
+								}
+								System.out.println(methodGet);
+								
+							} else {
+								//colocar aqui..
+								
+							}
+							
+						}
+						
+						Resource resource = utilKDMMODEL.save(segment, offset.toString(), URIProject);
+						
+						closeEditor(editorPart);
+						
+						IWorkspaceRoot workRoot = ResourcesPlugin.getWorkspace().getRoot();
+						
+						IPath path = new Path(resource.getURI().toFileString());
+						
+						IFile fileToOpen = workRoot.getFileForLocation(path);
+							
+						refreshLocal(activeProject);					
+						
+						
+						openEditor(fileToOpen);
+						
+						
+					}
+					
+					
+					
 				}
 			}
 		}
 
 	}
+	
+	private void closeEditor (IEditorPart editorPart) {
+		
+		
+		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().closeEditor(editorPart, true);
+		
+	}
+	
+	private void openEditor (IFile fileToOpen) {
+		
+		 IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+			
+			try {
+				IDE.openEditor(page, fileToOpen);
+			} catch (PartInitException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		
+		
+	}
+	
+	private void refreshLocal (IProject project) {
+		
+		try {
+			ResourcesPlugin.getWorkspace().getRoot().getProject(project.getName()).refreshLocal(IResource.DEPTH_INFINITE, null);
+		} catch (CoreException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}					
+		
+	}
+
+
 
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
-		// TODO Auto-generated method stub
+		
 
 	}
 
