@@ -5,6 +5,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.eclipse.gmt.modisco.java.ClassDeclaration;
+import org.eclipse.gmt.modisco.java.MethodDeclaration;
 import org.eclipse.gmt.modisco.java.Model;
 import org.eclipse.gmt.modisco.omg.kdm.code.ClassUnit;
 import org.eclipse.gmt.modisco.omg.kdm.code.MethodUnit;
@@ -24,6 +25,8 @@ public class WizardPushDownMethod extends Wizard {
 	private WizardPushDownMethodPage page1 = null;
 	private ClassUnit pullDownMethodInfo = null;
 	private ArrayList<ClassUnit> inheritance = null;
+	private ClassDeclaration pullDownMethodInfoJavaModel = null;
+	private ArrayList<ClassDeclaration> inheritanceJavaModel = null;
 	private LinkedHashSet<ExtractSuperClassInfoJavaModel> extractSuperClassInfoJavaModel = null;//arrrumar aqui
 	
 	private UtilKDMModel utilKDMMODEL = new UtilKDMModel();
@@ -45,10 +48,12 @@ public class WizardPushDownMethod extends Wizard {
 //		this.URIProject = URIProject;
 //	}
 	
-	public WizardPushDownMethod(ClassUnit pullDownMethodClass, ArrayList<ClassUnit> inheritance) {
+	public WizardPushDownMethod(ClassUnit pullDownMethodClass, ArrayList<ClassUnit> inheritance, ClassDeclaration pullDownMethodInfoJavaModel, ArrayList<ClassDeclaration> inheritanceJavaModel) {
 		setWindowTitle("Extract Superclass");
 		this.pullDownMethodInfo = pullDownMethodClass;
 		this.inheritance = inheritance;
+		this.pullDownMethodInfoJavaModel = pullDownMethodInfoJavaModel;
+		this.inheritanceJavaModel = inheritanceJavaModel;
 //		this.extractSuperClassInfoJavaModel = extractSuperClassInfoJavaModel;
 		this.page1 = new WizardPushDownMethodPage(this.pullDownMethodInfo, inheritance);
 //		this.packageToPutTheNewClass = packageToPutTheNewClass;
@@ -67,6 +72,7 @@ public class WizardPushDownMethod extends Wizard {
 	public boolean performFinish() {
 		
 		List<MethodUnit> selectedMethodUnit = new ArrayList<MethodUnit>();
+		ArrayList<MethodDeclaration> selectedMethodDeclaration = new ArrayList<MethodDeclaration>();
 		
 		TableItem[] selectedItem = this.page1.getTable().getSelection();
 		
@@ -74,12 +80,14 @@ public class WizardPushDownMethod extends Wizard {
 			
 			String nameOfMethodUnitSelected[] = selectedItem[i].getText(1).split("\\(");
 			
+			MethodDeclaration methodDeclarationIdentified = utilJavaModel.getMethodDeclarationByName(pullDownMethodInfoJavaModel, nameOfMethodUnitSelected[0]);
 			MethodUnit methodUniIdentified = utilKDMMODEL.getMethodsUnitByName(pullDownMethodInfo, nameOfMethodUnitSelected[0]);
 			
 			
-			if (methodUniIdentified != null) {
+			if (methodUniIdentified != null && methodDeclarationIdentified != null) {
 				
 				selectedMethodUnit.add(methodUniIdentified);
+				selectedMethodDeclaration.add(methodDeclarationIdentified);
 				
 			}
 			
@@ -87,7 +95,7 @@ public class WizardPushDownMethod extends Wizard {
 			System.out.println(selectedItem[i].getText(1));
 		}
 		
-		if (selectedMethodUnit.size() != 0) {
+		if (selectedMethodUnit.size() != 0 && selectedMethodDeclaration.size() != 0) {
 			
 			
 			utilKDMMODEL.actionPullDownMethod(pullDownMethodInfo, inheritance, selectedMethodUnit);

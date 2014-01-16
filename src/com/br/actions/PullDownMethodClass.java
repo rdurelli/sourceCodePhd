@@ -16,6 +16,7 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.gmt.modisco.infra.browser.editors.EcoreBrowser;
 import org.eclipse.gmt.modisco.java.ClassDeclaration;
+import org.eclipse.gmt.modisco.java.MethodDeclaration;
 import org.eclipse.gmt.modisco.java.Model;
 import org.eclipse.gmt.modisco.omg.kdm.code.ClassUnit;
 import org.eclipse.gmt.modisco.omg.kdm.code.MethodUnit;
@@ -118,35 +119,34 @@ public class PullDownMethodClass implements IObjectActionDelegate {
 						Segment segment = utilKDMMODEL.getSegmentToPersiste(classesSelectedToApplyThePullDownMethod);
 						
 						
-						ClassDeclaration classesSelectedToApplyThePullDownFieldJavaModel = utilJavaModel.getClassDeclaration(classesSelectedToApplyThePullDownMethod, packageKDM, modelJava);
+						ClassDeclaration classesSelectedToApplyThePullDownMethodJavaModel = utilJavaModel.getClassDeclaration(classesSelectedToApplyThePullDownMethod, packageKDM, modelJava);
 						
 						ArrayList<ClassDeclaration> classDeclarations = utilJavaModel.getAllClasses(modelJava);
 						ArrayList<ClassUnit> classUnitsTodas = utilKDMMODEL.getAllClasses(segment);			
 						
 						ArrayList<ClassUnit> inheritance = utilKDMMODEL.getRelationShipInheritancePassingTheSuper(classesSelectedToApplyThePullDownMethod, classUnitsTodas);
+						ArrayList<ClassDeclaration> inheritanceJavaModel = utilJavaModel.getRelationShipInheritancePassingTheSuper(classesSelectedToApplyThePullDownMethodJavaModel, classDeclarations);
 						
-						if (inheritance.size() == 0) {
+						if (inheritance.size() == 0 && inheritanceJavaModel.size() == 0) {
 							
 							MessageDialog.openInformation(shell, "Error", "Push Down is not allowed on type " + classesSelectedToApplyThePullDownMethod.getName() + ", since it does not have subclasses to which members could be pushed down.");
 							
 						} else {
 							
 							List<MethodUnit> methodsUnits = utilKDMMODEL.getMethodsUnit(classesSelectedToApplyThePullDownMethod);
+							List<MethodDeclaration> methodDeclarations = utilJavaModel.getMethodDeclarations(classesSelectedToApplyThePullDownMethodJavaModel);
 							
-							
-							if (methodsUnits.size() == 0) {
+							if (methodsUnits.size() == 0 && methodDeclarations.size() == 0) {
 								
 								MessageDialog.openInformation(shell, "Error", "There is none MethodUnit (methods) to apply the Pull Down Method.");
 								
 							} else {
-								
-								
-								
+															
 //								List<ClassDeclaration> classesSelectedJavaModel = this.getAllClassDeclaration(classesSelectedToSuperExtract, utilKDMMODEL, utilJavaModel, modelJava);
 //								org.eclipse.gmt.modisco.java.Package packageToPutTheNewClassJavaModel = (org.eclipse.gmt.modisco.java.Package)classesSelectedJavaModel.get(0).eContainer();
 								
 								
-								WizardDialog wizard = new WizardDialog(shell, new WizardPushDownMethod(classesSelectedToApplyThePullDownMethod, inheritance));
+								WizardDialog wizard = new WizardDialog(shell, new WizardPushDownMethod(classesSelectedToApplyThePullDownMethod, inheritance, classesSelectedToApplyThePullDownMethodJavaModel, inheritanceJavaModel));
 								
 								wizard.open();
 								

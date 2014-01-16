@@ -946,6 +946,28 @@ public class UtilJavaModel {
 		
 	}
 	
+	public MethodDeclaration getMethodDeclarationByName (ClassDeclaration classDeclaration, String name) {
+		
+		
+		EList<BodyDeclaration> bodyDeclarations = classDeclaration.getBodyDeclarations();
+		
+		MethodDeclaration method = null;
+		
+		for (BodyDeclaration element : bodyDeclarations) {
+			
+			if (element instanceof MethodDeclaration && element.getName().startsWith(name)) {
+				
+				method = (MethodDeclaration) element;
+				break;
+			
+				
+			}
+			
+		}
+		return method;
+		
+	}
+	
 	
 	public void createInheritanceExtends (ClassDeclaration superClass, ClassDeclaration subClass) {
 		
@@ -1351,6 +1373,8 @@ public class UtilJavaModel {
 	}
 	
 	
+	
+	
 	public void actionPullDownField (ClassDeclaration classToRemoveTheFieldDeclaration, List<ClassDeclaration> classesToPullDownTheFieldDeclaration, List<FieldDeclaration> fieldDeclarationsToPullDown) {
 		
 		if (classesToPullDownTheFieldDeclaration.size() == 1) {
@@ -1387,6 +1411,52 @@ public class UtilJavaModel {
 		
 	}
 	
+	public void actionPullDownMethod (ClassDeclaration classToRemoveTheMethodDeclaration, List<ClassDeclaration> classesToPullDownTheMethodDeclaration, List<MethodDeclaration> methodDeclarationToPullDown) {
+		
+		if (classesToPullDownTheMethodDeclaration.size() == 1) {
+			
+			for (MethodDeclaration methodDeclaration : methodDeclarationToPullDown) {
+				
+				ClassDeclaration classToMoveTheMethodDeclaration = classesToPullDownTheMethodDeclaration.get(0);
+				
+				this.moveMethodDeclarationToClassDeclaration(classToMoveTheMethodDeclaration, methodDeclaration);
+				
+			}
+			
+		}else {
+			
+			for (ClassDeclaration classesDeclarations : classesToPullDownTheMethodDeclaration) {
+				
+				for (MethodDeclaration methodDeclaration : methodDeclarationToPullDown) {
+				
+
+					MethodDeclaration methodNew = methodDeclaration;
+					
+					
+					EList<BodyDeclaration> bodyDeclaration = classesDeclarations.getBodyDeclarations();
+					
+					bodyDeclaration.add(methodNew);
+					
+					//TODO limitação é que não eu não implementei uma forma de criar o método programaticamente...então tem que pensar nisso depois.
+//					this.createM
+					
+//					this.createStorableUnitInAClassUnit(classesDeclarations, methodDeclaration.getName(), methodDeclaration.getType());
+					
+				}
+				
+			}
+			
+			for (MethodDeclaration methodDeclaration : methodDeclarationToPullDown) {
+				
+				this.removeMethodDeclaration(classToRemoveTheMethodDeclaration, methodDeclaration);
+			}
+			
+			
+		}
+		
+		
+		
+	}
 	
 	public void actionPullUpMethod(
 			LinkedHashSet<PullUpMethodInfoJavaModel> pullUpMethodInfo) {
