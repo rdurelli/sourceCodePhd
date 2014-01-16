@@ -62,8 +62,6 @@ public class PullDownMethodClass implements IObjectActionDelegate {
 
 	@Override
 	public void run(IAction action) {
-
-		//arrumar aqui no JavaModel...
 		
 		UtilKDMModel utilKDMMODEL = new UtilKDMModel();
 		UtilJavaModel utilJavaModel =  new UtilJavaModel();
@@ -103,7 +101,7 @@ public class PullDownMethodClass implements IObjectActionDelegate {
 					
 					Object objectSelected = offset.getFirstElement();
 					
-					ClassUnit classesSelectedToApplyThePullDownField = null;
+					ClassUnit classesSelectedToApplyThePullDownMethod = null;
 					
 					
 					if (! (objectSelected instanceof ClassUnit)) {
@@ -112,22 +110,28 @@ public class PullDownMethodClass implements IObjectActionDelegate {
 						
 					} else {
 					
-						classesSelectedToApplyThePullDownField = (ClassUnit)objectSelected;
-														
+						classesSelectedToApplyThePullDownMethod = (ClassUnit)objectSelected;
 						
-						Segment segment = utilKDMMODEL.getSegmentToPersiste(classesSelectedToApplyThePullDownField);
+						String [] packageKDM = utilKDMMODEL.getCompletePackageName(classesSelectedToApplyThePullDownMethod);
 						
+						Model modelJava = utilJavaModel.load(activeProject.getLocationURI().toString()+"/MODELS_PIM_modificado/JavaModelRefactoring.javaxmi");
+						Segment segment = utilKDMMODEL.getSegmentToPersiste(classesSelectedToApplyThePullDownMethod);
+						
+						
+						ClassDeclaration classesSelectedToApplyThePullDownFieldJavaModel = utilJavaModel.getClassDeclaration(classesSelectedToApplyThePullDownMethod, packageKDM, modelJava);
+						
+						ArrayList<ClassDeclaration> classDeclarations = utilJavaModel.getAllClasses(modelJava);
 						ArrayList<ClassUnit> classUnitsTodas = utilKDMMODEL.getAllClasses(segment);			
 						
-						ArrayList<ClassUnit> inheritance = utilKDMMODEL.getRelationShipInheritancePassingTheSuper(classesSelectedToApplyThePullDownField, classUnitsTodas);
+						ArrayList<ClassUnit> inheritance = utilKDMMODEL.getRelationShipInheritancePassingTheSuper(classesSelectedToApplyThePullDownMethod, classUnitsTodas);
 						
 						if (inheritance.size() == 0) {
 							
-							MessageDialog.openInformation(shell, "Error", "Push Down is not allowed on type " + classesSelectedToApplyThePullDownField.getName() + ", since it does not have subclasses to which members could be pushed down.");
+							MessageDialog.openInformation(shell, "Error", "Push Down is not allowed on type " + classesSelectedToApplyThePullDownMethod.getName() + ", since it does not have subclasses to which members could be pushed down.");
 							
 						} else {
 							
-							List<MethodUnit> methodsUnits = utilKDMMODEL.getMethodsUnit(classesSelectedToApplyThePullDownField);
+							List<MethodUnit> methodsUnits = utilKDMMODEL.getMethodsUnit(classesSelectedToApplyThePullDownMethod);
 							
 							
 							if (methodsUnits.size() == 0) {
@@ -135,14 +139,14 @@ public class PullDownMethodClass implements IObjectActionDelegate {
 								MessageDialog.openInformation(shell, "Error", "There is none MethodUnit (methods) to apply the Pull Down Method.");
 								
 							} else {
-								Model modelJava = utilJavaModel.load(activeProject.getLocationURI().toString()+"/MODELS_PIM_modificado/JavaModelRefactoring.javaxmi");
+								
 								
 								
 //								List<ClassDeclaration> classesSelectedJavaModel = this.getAllClassDeclaration(classesSelectedToSuperExtract, utilKDMMODEL, utilJavaModel, modelJava);
 //								org.eclipse.gmt.modisco.java.Package packageToPutTheNewClassJavaModel = (org.eclipse.gmt.modisco.java.Package)classesSelectedJavaModel.get(0).eContainer();
 								
 								
-								WizardDialog wizard = new WizardDialog(shell, new WizardPushDownMethod(classesSelectedToApplyThePullDownField, inheritance));
+								WizardDialog wizard = new WizardDialog(shell, new WizardPushDownMethod(classesSelectedToApplyThePullDownMethod, inheritance));
 								
 								wizard.open();
 								
