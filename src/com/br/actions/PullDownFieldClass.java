@@ -55,9 +55,6 @@ public class PullDownFieldClass implements IObjectActionDelegate {
 	
 	private Shell shell;
 	
-	public PullDownFieldClass() {
-		// TODO Auto-generated constructor stub
-	}
 
 	@Override
 	public void run(IAction action) {

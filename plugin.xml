@@ -184,6 +184,12 @@
           </separator>
        </menu>
        <action
+             class="com.br.actions.EncapsulateFieldClass"
+             id="com.actions.newActionEncapsulateField"
+             label="Encapsulate Field"
+             menubarPath="TestePlugin.menu4/content">
+       </action>
+       <action
              class="com.br.actions.ActionRefactoringRenameClass"
              enablesFor="1"
              icon="icons/4416.png"
