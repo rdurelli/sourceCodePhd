@@ -13,6 +13,10 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.gmt.modisco.infra.browser.editors.EcoreBrowser;
 import org.eclipse.gmt.modisco.java.ClassDeclaration;
+import org.eclipse.gmt.modisco.java.FieldDeclaration;
+import org.eclipse.gmt.modisco.java.MethodDeclaration;
+import org.eclipse.gmt.modisco.java.Model;
+import org.eclipse.gmt.modisco.java.VisibilityKind;
 import org.eclipse.gmt.modisco.omg.kdm.code.ClassUnit;
 import org.eclipse.gmt.modisco.omg.kdm.code.MethodUnit;
 import org.eclipse.gmt.modisco.omg.kdm.code.StorableUnit;
@@ -95,15 +99,26 @@ public class EncapsulateFieldClass implements IObjectActionDelegate {
 						
 					} else {
 						
+						Model modelJava = utilJavaModel.load(activeProject.getLocationURI().toString()+"/MODELS_PIM_modificado/JavaModelRefactoring.javaxmi");
+						
+						
+						
+						
 						storableUnitToApplyTheEncapsulateField = (StorableUnit) objectSelected;
 						
 						Attribute attributeStorableUnitToApplyTheEncapsulateField = storableUnitToApplyTheEncapsulateField.getAttribute().get(0);
 						
 						ClassUnit classThatContainTheStorableUnit = (ClassUnit)storableUnitToApplyTheEncapsulateField.eContainer();
 						
+						String [] packageKDM = utilKDMMODEL.getCompletePackageName(classThatContainTheStorableUnit);
+						
+						ClassDeclaration classDeclaration = utilJavaModel.getClassDeclaration(classThatContainTheStorableUnit, packageKDM, modelJava);
+						
+						FieldDeclaration fieldDeclarationToApplyTheEncapsulateField =  utilJavaModel.getFieldDeclarationByName(classDeclaration, storableUnitToApplyTheEncapsulateField.getName());
+						
 						Segment segment = utilKDMMODEL.getSegmentToPersiste(classThatContainTheStorableUnit);
 						
-						if (attributeStorableUnitToApplyTheEncapsulateField.getValue().equals("private")) {
+						if (attributeStorableUnitToApplyTheEncapsulateField.getValue().equals("private") && fieldDeclarationToApplyTheEncapsulateField.getModifier().getVisibility().equals(VisibilityKind.PRIVATE)) {
 							
 							boolean result = MessageDialog.openConfirm(shell, "Error", "The StorableUnit that you selected already is private. Would you like to check if it owns accessors?");
 							
@@ -117,6 +132,11 @@ public class EncapsulateFieldClass implements IObjectActionDelegate {
 								
 								MethodUnit methodSet = utilKDMMODEL.getMethodsUnitByName(classThatContainTheStorableUnit, "set"+storableUnitToApplyTheEncapsulateField.getName().substring(0, 1).toUpperCase() + storableUnitToApplyTheEncapsulateField.getName().substring(1).toLowerCase());
 								
+								MethodDeclaration methodDeclarationGET = utilJavaModel.getMethodDeclarationByName(classDeclaration, "get"+storableUnitToApplyTheEncapsulateField.getName().substring(0, 1).toUpperCase() + storableUnitToApplyTheEncapsulateField.getName().substring(1).toLowerCase());
+								
+								MethodDeclaration methodDeclarationSET = utilJavaModel.getMethodDeclarationByName(classDeclaration, "set"+storableUnitToApplyTheEncapsulateField.getName().substring(0, 1).toUpperCase() + storableUnitToApplyTheEncapsulateField.getName().substring(1).toLowerCase());
+
+								
 								if (methodGet != null && methodSet != null) {
 									
 									MessageDialog.openInformation(shell, "Error", "The StorableUnit that you selected already owns accessors");
@@ -128,7 +148,7 @@ public class EncapsulateFieldClass implements IObjectActionDelegate {
 									if (resultGET) {
 										
 										utilKDMMODEL.createMethodUnitGETInClassUnit(classThatContainTheStorableUnit, "get"+storableUnitToApplyTheEncapsulateField.getName().substring(0, 1).toUpperCase() + storableUnitToApplyTheEncapsulateField.getName().substring(1).toLowerCase(), storableUnitToApplyTheEncapsulateField.getType(), segment);
-										
+										utilJavaModel.createMethodDeclarationGET("get"+storableUnitToApplyTheEncapsulateField.getName().substring(0, 1).toUpperCase() + storableUnitToApplyTheEncapsulateField.getName().substring(1).toLowerCase(), classDeclaration, fieldDeclarationToApplyTheEncapsulateField, storableUnitToApplyTheEncapsulateField.getName().substring(0, 1).toUpperCase() + storableUnitToApplyTheEncapsulateField.getName().substring(1).toLowerCase(), fieldDeclarationToApplyTheEncapsulateField.getType().getType(), modelJava);
 									}
 									
 								} else if (methodGet != null && methodSet == null) {
@@ -138,7 +158,7 @@ public class EncapsulateFieldClass implements IObjectActionDelegate {
 									if (resultSET) {
 										
 										utilKDMMODEL.createMethodUnitSETInClassUnit(classThatContainTheStorableUnit, "set"+storableUnitToApplyTheEncapsulateField.getName().substring(0, 1).toUpperCase() + storableUnitToApplyTheEncapsulateField.getName().substring(1).toLowerCase(), storableUnitToApplyTheEncapsulateField.getType(), storableUnitToApplyTheEncapsulateField, segment);
-										
+										utilJavaModel.createMethodDeclarationSET("set"+storableUnitToApplyTheEncapsulateField.getName().substring(0, 1).toUpperCase() + storableUnitToApplyTheEncapsulateField.getName().substring(1).toLowerCase(), classDeclaration, fieldDeclarationToApplyTheEncapsulateField, storableUnitToApplyTheEncapsulateField.getName().substring(0, 1).toUpperCase() + storableUnitToApplyTheEncapsulateField.getName().substring(1).toLowerCase(), fieldDeclarationToApplyTheEncapsulateField.getType().getType(), modelJava);
 									}
 									
 								} else if (methodGet == null && methodSet == null) {
@@ -150,16 +170,22 @@ public class EncapsulateFieldClass implements IObjectActionDelegate {
 										utilKDMMODEL.createMethodUnitGETInClassUnit(classThatContainTheStorableUnit, "get"+storableUnitToApplyTheEncapsulateField.getName().substring(0, 1).toUpperCase() + storableUnitToApplyTheEncapsulateField.getName().substring(1).toLowerCase(), storableUnitToApplyTheEncapsulateField.getType(), segment);
 										utilKDMMODEL.createMethodUnitSETInClassUnit(classThatContainTheStorableUnit, "set"+storableUnitToApplyTheEncapsulateField.getName().substring(0, 1).toUpperCase() + storableUnitToApplyTheEncapsulateField.getName().substring(1).toLowerCase(), storableUnitToApplyTheEncapsulateField.getType(), storableUnitToApplyTheEncapsulateField, segment);
 										
+										utilJavaModel.createMethodDeclarationGET("get"+storableUnitToApplyTheEncapsulateField.getName().substring(0, 1).toUpperCase() + storableUnitToApplyTheEncapsulateField.getName().substring(1).toLowerCase(), classDeclaration, fieldDeclarationToApplyTheEncapsulateField, storableUnitToApplyTheEncapsulateField.getName().substring(0, 1).toUpperCase() + storableUnitToApplyTheEncapsulateField.getName().substring(1).toLowerCase(), fieldDeclarationToApplyTheEncapsulateField.getType().getType(), modelJava);
+										utilJavaModel.createMethodDeclarationSET("set"+storableUnitToApplyTheEncapsulateField.getName().substring(0, 1).toUpperCase() + storableUnitToApplyTheEncapsulateField.getName().substring(1).toLowerCase(), classDeclaration, fieldDeclarationToApplyTheEncapsulateField, storableUnitToApplyTheEncapsulateField.getName().substring(0, 1).toUpperCase() + storableUnitToApplyTheEncapsulateField.getName().substring(1).toLowerCase(), fieldDeclarationToApplyTheEncapsulateField.getType().getType(), modelJava);
 									}
 									
 								}
 								System.out.println(methodGet);
 								
-							} else {
-								//colocar aqui..
-								
 							}
 							
+						} else if (attributeStorableUnitToApplyTheEncapsulateField.getValue().equals("public")) {
+							
+							utilKDMMODEL.createMethodUnitGETInClassUnit(classThatContainTheStorableUnit, "get"+storableUnitToApplyTheEncapsulateField.getName().substring(0, 1).toUpperCase() + storableUnitToApplyTheEncapsulateField.getName().substring(1).toLowerCase(), storableUnitToApplyTheEncapsulateField.getType(), segment);
+							utilKDMMODEL.createMethodUnitSETInClassUnit(classThatContainTheStorableUnit, "set"+storableUnitToApplyTheEncapsulateField.getName().substring(0, 1).toUpperCase() + storableUnitToApplyTheEncapsulateField.getName().substring(1).toLowerCase(), storableUnitToApplyTheEncapsulateField.getType(), storableUnitToApplyTheEncapsulateField, segment);
+							
+							utilJavaModel.createMethodDeclarationGET("get"+storableUnitToApplyTheEncapsulateField.getName().substring(0, 1).toUpperCase() + storableUnitToApplyTheEncapsulateField.getName().substring(1).toLowerCase(), classDeclaration, fieldDeclarationToApplyTheEncapsulateField, storableUnitToApplyTheEncapsulateField.getName().substring(0, 1).toUpperCase() + storableUnitToApplyTheEncapsulateField.getName().substring(1).toLowerCase(), fieldDeclarationToApplyTheEncapsulateField.getType().getType(), modelJava);
+							utilJavaModel.createMethodDeclarationSET("set"+storableUnitToApplyTheEncapsulateField.getName().substring(0, 1).toUpperCase() + storableUnitToApplyTheEncapsulateField.getName().substring(1).toLowerCase(), classDeclaration, fieldDeclarationToApplyTheEncapsulateField, storableUnitToApplyTheEncapsulateField.getName().substring(0, 1).toUpperCase() + storableUnitToApplyTheEncapsulateField.getName().substring(1).toLowerCase(), fieldDeclarationToApplyTheEncapsulateField.getType().getType(), modelJava);
 						}
 						
 						Resource resource = utilKDMMODEL.save(segment, offset.toString(), URIProject);
@@ -176,6 +202,9 @@ public class EncapsulateFieldClass implements IObjectActionDelegate {
 						
 						
 						openEditor(fileToOpen);
+						
+						utilJavaModel.save(modelJava, URIProject);
+					
 						
 						
 					}
