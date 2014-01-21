@@ -254,4 +254,46 @@
        </action>
     </objectContribution>
  </extension>
+ <extension
+       point="org.eclipse.ui.popupMenus">
+    <objectContribution
+          adaptable="false"
+          id="TestePlugin.contribution5"
+          nameFilter="MODELS_PIM_modificado"
+          objectClass="org.eclipse.core.resources.IFolder">
+       <menu
+             icon="icons/Binoculars.png"
+             id="TestePlugin.menu2"
+             label="Versions"
+             path="additions">
+          <groupMarker
+                name="content">
+          </groupMarker>
+          <separator
+                name="additions">
+          </separator>
+       </menu>
+       <action
+             class="com.br.actions.IdentifySQL"
+             enablesFor="1"
+             id="com.actions.newAction"
+             label="Create a child version"
+             menubarPath="TestePlugin.menu2/content">
+       </action>
+       <action
+             class="com.br.actions.IdentifySQL"
+             enablesFor="1"
+             id="com.actions.newActionJava"
+             label="Delete version"
+             menubarPath="TestePlugin.menu2/content">
+       </action>
+       <action
+             class="com.br.actions.IdentifyJavaModel"
+             enablesFor="1"
+             id="com.actions.newActionKDMModel"
+             label="List of changes"
+             menubarPath="TestePlugin.menu2/content">
+       </action>
+    </objectContribution>
+ </extension>
 </plugin>
