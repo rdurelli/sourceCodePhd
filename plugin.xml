@@ -31,6 +31,8 @@
             file="contexts.xml">
       </contexts>
    </extension>
+   
+   
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension
@@ -184,53 +186,11 @@
           </separator>
        </menu>
        <action
-             class="com.br.actions.EncapsulateFieldClass"
-             id="com.actions.newActionEncapsulateField"
-             label="Encapsulate Field"
-             menubarPath="TestePlugin.menu4/content">
-       </action>
-       <action
              class="com.br.actions.ActionRefactoringRenameClass"
              enablesFor="1"
              icon="icons/4416.png"
              id="com.actions.newActionRefactoringName"
              label="Rename KDMEntity"
-             menubarPath="TestePlugin.menu4/content">
-       </action>
-       <action
-             class="com.br.actions.ExtractClass"
-             id="com.actions.newActionExtractClass"
-             label="Extract Class"
-             menubarPath="TestePlugin.menu4/content">
-       </action>
-       <action
-             class="com.br.actions.ExtractSuperClass"
-             id="com.actions.newActionExtractSuperClass"
-             label="Extract Super Class"
-             menubarPath="TestePlugin.menu4/content">
-       </action>
-       <action
-             class="com.br.actions.PullUpFieldClass"
-             id="com.actions.newActionPullUpField"
-             label="Pull Up Field"
-             menubarPath="TestePlugin.menu4/content">
-       </action>
-       <action
-             class="com.br.actions.PullDownFieldClass"
-             id="com.actions.newActionPullDownField"
-             label="Pull Down Field"
-             menubarPath="TestePlugin.menu4/content">
-       </action>
-       <action
-             class="com.br.actions.PullUpMethodClass"
-             id="com.actions.newActionPullUpMethod"
-             label="Pull Up Method"
-             menubarPath="TestePlugin.menu4/content">
-       </action>
-       <action
-             class="com.br.actions.PullDownMethodClass"
-             id="com.actions.newActionPullUpMethod"
-             label="Pull Down Method"
              menubarPath="TestePlugin.menu4/content">
        </action>
        <menu
@@ -251,6 +211,102 @@
              id="com.actions.newActionExtractClass"
              label="Generate UML Diagram based on KDM"
              menubarPath="TestePlugin.menu5/content">
+       </action>
+       <action
+             class="com.br.actions.PullUpFieldClass"
+             id="com.actions.newActionPullUpField"
+             label="Move Method"
+             menubarPath="TestePlugin.menu4/content">
+       </action>
+       <action
+             class="com.br.actions.PullUpFieldClass"
+             id="com.actions.newActionPullUpField"
+             label="Move Field"
+             menubarPath="TestePlugin.menu4/content">
+       </action>
+       <action
+             class="com.br.actions.ExtractClass"
+             id="com.actions.newActionExtractClass"
+             label="Extract Class"
+             menubarPath="TestePlugin.menu4/content">
+       </action>
+       <action
+             class="com.br.actions.PullUpFieldClass"
+             id="com.actions.newActionPullUpField"
+             label="InLine Class"
+             menubarPath="TestePlugin.menu4/content">
+       </action>
+       <action
+             class="com.br.actions.EncapsulateFieldClass"
+             id="com.actions.newActionEncapsulateField"
+             label="Encapsulate Field"
+             menubarPath="TestePlugin.menu4/content">
+       </action>
+       <action
+             class="com.br.actions.PullUpFieldClass"
+             id="com.actions.newActionPullUpField"
+             label="Replace Data value With Object"
+             menubarPath="TestePlugin.menu4/content">
+       </action>
+       <action
+             class="com.br.actions.PullUpFieldClass"
+             id="com.actions.newActionPullUpField"
+             label="Replace Type Code With Class"
+             menubarPath="TestePlugin.menu4/content">
+       </action>
+       <action
+             class="com.br.actions.PullUpFieldClass"
+             id="com.actions.newActionPullUpField"
+             label="Replace Type Code With SubClass"
+             menubarPath="TestePlugin.menu4/content">
+       </action>
+       <action
+             class="com.br.actions.PullUpFieldClass"
+             id="com.actions.newActionPullUpField"
+             label="Replace Type Code With State/Strategy"
+             menubarPath="TestePlugin.menu4/content">
+       </action>
+       <action
+             class="com.br.actions.PullUpFieldClass"
+             id="com.actions.newActionPullUpField"
+             label="Collapse Hierarchy"
+             menubarPath="TestePlugin.menu4/content">
+       </action>
+       <action
+             class="com.br.actions.ExtractSuperClass"
+             id="com.actions.newActionExtractSuperClass"
+             label="Extract Super Class"
+             menubarPath="TestePlugin.menu4/content">
+       </action>
+       <action
+             class="com.br.actions.PullUpFieldClass"
+             id="com.actions.newActionPullUpField"
+             label="Extract SubClass"
+             menubarPath="TestePlugin.menu4/content">
+       </action>
+       <action
+             class="com.br.actions.PullDownMethodClass"
+             id="com.actions.newActionPullUpMethod"
+             label="Pull Down Method"
+             menubarPath="TestePlugin.menu4/content">
+       </action>
+       <action
+             class="com.br.actions.PullDownFieldClass"
+             id="com.actions.newActionPullDownField"
+             label="Pull Down Field"
+             menubarPath="TestePlugin.menu4/content">
+       </action>
+       <action
+             class="com.br.actions.PullUpMethodClass"
+             id="com.actions.newActionPullUpMethod"
+             label="Pull Up Method"
+             menubarPath="TestePlugin.menu4/content">
+       </action>
+       <action
+             class="com.br.actions.PullUpFieldClass"
+             id="com.actions.newActionPullUpField"
+             label="Pull Up Field"
+             menubarPath="TestePlugin.menu4/content">
        </action>
     </objectContribution>
  </extension>
