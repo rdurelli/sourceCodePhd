@@ -93,7 +93,7 @@ public class EncapsulateFieldClass implements IObjectActionDelegate {
 					
 					StorableUnit storableUnitToApplyTheEncapsulateField = null;
 					
-					if (! (objectSelected instanceof StorableUnit)) {
+					if (! (objectSelected instanceof StorableUnit)) { //verifica se o ELEMENTE selecionado Ž um StorableUnit
 						
 						MessageDialog.openError(shell, "Error", "Please be sure you have selected at a StorableUnit to realize the Encapsulate Field.");
 						
@@ -101,18 +101,15 @@ public class EncapsulateFieldClass implements IObjectActionDelegate {
 						
 						Model modelJava = utilJavaModel.load(activeProject.getLocationURI().toString()+"/MODELS_PIM_modificado/JavaModelRefactoring.javaxmi");
 						
+						storableUnitToApplyTheEncapsulateField = (StorableUnit) objectSelected;//caso o Objeto selecionado Ž um Object do tipo StorableUnit ent‹o faz o CAST
 						
+						Attribute attributeStorableUnitToApplyTheEncapsulateField = storableUnitToApplyTheEncapsulateField.getAttribute().get(0);//utiliza esse Attribute para verificar se Ž private
 						
+						ClassUnit classThatContainTheStorableUnit = (ClassUnit) storableUnitToApplyTheEncapsulateField.eContainer(); //Obtem a ClassUnit que possui um determinado StorableUnit
 						
-						storableUnitToApplyTheEncapsulateField = (StorableUnit) objectSelected;
+						String [] packageKDM = utilKDMMODEL.getCompletePackageName(classThatContainTheStorableUnit); //obtem o nome completo dos pacotes.
 						
-						Attribute attributeStorableUnitToApplyTheEncapsulateField = storableUnitToApplyTheEncapsulateField.getAttribute().get(0);
-						
-						ClassUnit classThatContainTheStorableUnit = (ClassUnit)storableUnitToApplyTheEncapsulateField.eContainer();
-						
-						String [] packageKDM = utilKDMMODEL.getCompletePackageName(classThatContainTheStorableUnit);
-						
-						ClassDeclaration classDeclaration = utilJavaModel.getClassDeclaration(classThatContainTheStorableUnit, packageKDM, modelJava);
+						ClassDeclaration classDeclaration = utilJavaModel.getClassDeclaration(classThatContainTheStorableUnit, packageKDM, modelJava); //obtem uma instancia do ClassDeclaration equivalente ao ClassUnit.
 						
 						FieldDeclaration fieldDeclarationToApplyTheEncapsulateField =  utilJavaModel.getFieldDeclarationByName(classDeclaration, storableUnitToApplyTheEncapsulateField.getName());
 						
@@ -188,72 +185,68 @@ public class EncapsulateFieldClass implements IObjectActionDelegate {
 							utilJavaModel.createMethodDeclarationSET("set"+storableUnitToApplyTheEncapsulateField.getName().substring(0, 1).toUpperCase() + storableUnitToApplyTheEncapsulateField.getName().substring(1).toLowerCase(), classDeclaration, fieldDeclarationToApplyTheEncapsulateField, storableUnitToApplyTheEncapsulateField.getName().substring(0, 1).toUpperCase() + storableUnitToApplyTheEncapsulateField.getName().substring(1).toLowerCase(), fieldDeclarationToApplyTheEncapsulateField.getType().getType(), modelJava);
 						}
 						
-						Resource resource = utilKDMMODEL.save(segment, offset.toString(), URIProject);
-						
+						Resource resource = utilKDMMODEL.save(segment,
+								offset.toString(), URIProject);
+
 						closeEditor(editorPart);
-						
-						IWorkspaceRoot workRoot = ResourcesPlugin.getWorkspace().getRoot();
-						
+
+						IWorkspaceRoot workRoot = ResourcesPlugin
+								.getWorkspace().getRoot();
+
 						IPath path = new Path(resource.getURI().toFileString());
-						
+
 						IFile fileToOpen = workRoot.getFileForLocation(path);
-							
-						refreshLocal(activeProject);					
-						
-						
+
+						refreshLocal(activeProject);
+
 						openEditor(fileToOpen);
-						
+
 						utilJavaModel.save(modelJava, URIProject);
-					
-						
-						
+
 					}
-					
-					
-					
+
 				}
 			}
 		}
 
 	}
 	
-	private void closeEditor (IEditorPart editorPart) {
-		
-		
-		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().closeEditor(editorPart, true);
-		
+	private void closeEditor(IEditorPart editorPart) {
+
+		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+				.closeEditor(editorPart, true);
+
 	}
-	
-	private void openEditor (IFile fileToOpen) {
-		
-		 IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-			
-			try {
-				IDE.openEditor(page, fileToOpen);
-			} catch (PartInitException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		
-		
-	}
-	
-	private void refreshLocal (IProject project) {
-		
+
+	private void openEditor(IFile fileToOpen) {
+
+		IWorkbenchPage page = PlatformUI.getWorkbench()
+				.getActiveWorkbenchWindow().getActivePage();
+
 		try {
-			ResourcesPlugin.getWorkspace().getRoot().getProject(project.getName()).refreshLocal(IResource.DEPTH_INFINITE, null);
+			IDE.openEditor(page, fileToOpen);
+		} catch (PartInitException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+	private void refreshLocal(IProject project) {
+
+		try {
+			ResourcesPlugin.getWorkspace().getRoot()
+					.getProject(project.getName())
+					.refreshLocal(IResource.DEPTH_INFINITE, null);
 		} catch (CoreException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
-		}					
-		
+		}
+
 	}
-
-
 
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
-		
 
 	}
 

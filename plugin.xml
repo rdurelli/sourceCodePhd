@@ -166,6 +166,11 @@
           id="com.br.gui.refactoring.RenameClassUnit"
           name="Rename ClassUnit">
     </view>
+    <view
+          class="com.br.gui.refactoring.TraceLog"
+          id="com.br.gui.refactoring.TraceLog"
+          name="Changes Log">
+    </view>
  </extension>
  <extension
        point="org.eclipse.ui.popupMenus">

@@ -97,36 +97,29 @@ public class ExtractClass implements IObjectActionDelegate {
 					
 					if (offset.getFirstElement() instanceof ClassUnit) {
 						
-						UtilJavaModel utilJavaModel =  new UtilJavaModel();
+						UtilJavaModel utilJavaModel =  new UtilJavaModel(); //utilizado para ajudar a lidar com o JavaModel
 						
 						Model modelJava = utilJavaModel.load(activeProject.getLocationURI().toString()+"/MODELS_PIM_modificado/JavaModelRefactoring.javaxmi");
 						
-						ClassUnit classUnitToExtract = (ClassUnit) offset.getFirstElement();
+						ClassUnit classUnitToExtract = (ClassUnit) offset.getFirstElement();//obtem o elemento no View do Java e deve fazer um cast para transforma-lo para um ClassUnit
 						
 						
-						UtilKDMModel utilKDMMODEL = new UtilKDMModel();
+						UtilKDMModel utilKDMMODEL = new UtilKDMModel(); //class criada para ajudar a ligar com o KDMModel
 						
-						String [] packageKDM = utilKDMMODEL.getCompletePackageName(classUnitToExtract);
+						String [] packageKDM = utilKDMMODEL.getCompletePackageName(classUnitToExtract); //method utilizado para obter o nome do Pacote, deve-se passar umq classUnit.
 						
-						
-						
-					
 						
 						ClassDeclaration classDeclaration = utilJavaModel.getClassDeclaration(classUnitToExtract, packageKDM, modelJava);
 						
-						
-						
-						
-						WizardDialog teste = new WizardDialog(shell,
+						WizardDialog wizardExtractClass = new WizardDialog(shell,
 								new WizardExtract(classUnitToExtract, classDeclaration));
 
-						teste.open();
+						wizardExtractClass.open();
 						
-						UtilKDMModel utilKDM = new UtilKDMModel();
 						
-						Segment segment = utilKDM.getSegmentToPersiste(classUnitToExtract);
+						Segment segment = utilKDMMODEL.getSegmentToPersiste(classUnitToExtract);
 						
-						Resource resource = utilKDM.save(segment, offset.toString(), URIProject);
+						Resource resource = utilKDMMODEL.save(segment, offset.toString(), URIProject);
 						
 						closeEditor(editorPart);
 						
@@ -147,9 +140,6 @@ public class ExtractClass implements IObjectActionDelegate {
 						
 						utilJavaModel.save(model, URIProject);
 						
-
-						
-						
 					} else {
 						
 						
@@ -164,38 +154,39 @@ public class ExtractClass implements IObjectActionDelegate {
 
 	}
 	
-private void closeEditor (IEditorPart editorPart) {
-		
-		
-		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().closeEditor(editorPart, true);
-		
+	private void closeEditor(IEditorPart editorPart) {
+
+		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+				.closeEditor(editorPart, true);
+
 	}
-	
-	private void openEditor (IFile fileToOpen) {
-		
-		 IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-			
-			try {
-				IDE.openEditor(page, fileToOpen);
-			} catch (PartInitException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		
-		
-	}
-	
-	private void refreshLocal (IProject project) {
-		
+
+	private void openEditor(IFile fileToOpen) {
+
+		IWorkbenchPage page = PlatformUI.getWorkbench()
+				.getActiveWorkbenchWindow().getActivePage();
+
 		try {
-			ResourcesPlugin.getWorkspace().getRoot().getProject(project.getName()).refreshLocal(IResource.DEPTH_INFINITE, null);
+			IDE.openEditor(page, fileToOpen);
+		} catch (PartInitException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+	private void refreshLocal(IProject project) {
+
+		try {
+			ResourcesPlugin.getWorkspace().getRoot()
+					.getProject(project.getName())
+					.refreshLocal(IResource.DEPTH_INFINITE, null);
 		} catch (CoreException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
-		}					
-		
+		}
+
 	}
-	
 
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {

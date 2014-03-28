@@ -85,6 +85,14 @@ import com.br.utils.ProjectSelectedToModernize;
 public class UtilJavaModel {
 
 
+	
+	/**
+	 * Metodo utilizado para retornar um Model, maior objeto do JAVAModel.
+	 * 
+	 * @author rafaeldurelli
+	 * @param String javaModelFullPath String informando o caminho completo para retornar um Object Model
+	 * @return Model 
+	 * */ 
 	public Model load(String javaModelFullPath){
 
 		
@@ -766,7 +774,13 @@ public class UtilJavaModel {
 
 	}
 	
-//	this method is used to save the JavaModel 
+//	this method is used to save the JavaModel
+	/**
+	 * @author rafaeldurelli
+	 * @param Model model para salvar as alterações realizadas no JAVAMODEL.
+	 * @param String path representa o caminho onde esta armazenado o JAVAModel
+	 * @return void 
+	 * */ 
 	public void save(Model model, String path)  {
 
 
@@ -778,9 +792,6 @@ public class UtilJavaModel {
 
 		// Obtain a new resource set
 		ResourceSet resSet = new ResourceSetImpl();
-
-		
-		
 		
 		Resource resource = resSet.createResource(URI.createURI(path+"/MODELS_PIM_modificado/JavaModelRefactoring.javaxmi"));
 
@@ -796,6 +807,15 @@ public class UtilJavaModel {
 
 	}
 	
+	
+
+	/**
+	 * @author rafaeldurelli
+	 * @param ClassUnit classUnit para obter sua semelhante instancia no JavaModel ou seja uma ClassDeclaration
+	 * @param String[] packageComplete representa todos os pacotes que o ClassUnit possui
+	 * @param Model model representa o modelo instanciado do Java Model para saber onde buscar o ClassDeclaration
+	 * @return ClassDeclaration - retorna uma ClassDeclaration que na verdade é um espelho do ClassUnit só que em nível de PSM.
+	 * */ 
 	public ClassDeclaration getClassDeclaration (ClassUnit classUnit, String[] packageComplete, Model model) {
 		
 		ClassDeclaration classToReturn = null;
@@ -855,6 +875,11 @@ public class UtilJavaModel {
 		return classToReturn;
 	}
 	
+	/**
+	 * @author rafaeldurelli
+	 * @param NamedElement namedElement representa o ClassDeclaration para ser persistido
+	 * @return Model - retorna o Model pois é o maior objeto do modelo Java. 
+	 * */ 
 	public Model getModelToPersiste(NamedElement namedElement) {
 		
 		Model model = null;
@@ -946,6 +971,15 @@ public class UtilJavaModel {
 		
 	}
 	
+	
+	/**
+	 * Metodo utilizado para obter um objeto do tipo MethodDeclaration passando o nome e a ClassDeclaration
+	 *
+	 * @author rafaeldurelli
+	 * @param ClassDeclaration classUnit
+	 * @param String name representa o nome do method
+	 * @return MethodDeclaration retorna um determinado MethodDeclaration
+	 * */ 
 	public MethodDeclaration getMethodDeclarationByName (ClassDeclaration classDeclaration, String name) {
 		
 		
@@ -1595,6 +1629,15 @@ public class UtilJavaModel {
 
 	}
 	
+	
+	/**
+	 * Metodo utilizado para obter um objeto do tipo FieldDeclaration passando o nome e a ClassDeclaration
+	 *
+	 * @author rafaeldurelli
+	 * @param ClassDeclaration classDeclaration
+	 * @param String name representa o nome do attributo 
+	 * @return FieldDeclaration retorna um fieldDeclaration 
+	 * */ 
 	public FieldDeclaration getFieldDeclarationByName (ClassDeclaration classDeclaration, String name) {
 		
 		EList<BodyDeclaration> bodyDeclaration = classDeclaration.getBodyDeclarations();

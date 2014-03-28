@@ -445,6 +445,17 @@ public Segment load(String KDMModelFullPath){
 		
 	}
 	
+	
+	/**
+	 * Metodo utilizado para obter criar um MethodUnit que representa um GET
+	 *
+	 * @author rafaeldurelli
+	 * @param ClassUnit classUnit
+	 * @param String name
+	 * @param Datatype type
+	 * @param Segment segment
+	 * @return MethodUnit retorna um determinado MethodUnit
+	 * */ 
 	public MethodUnit createMethodUnitGETInClassUnit (ClassUnit classUnit, String name, Datatype type, Segment segment) {
 		
 		MethodUnit methodUnit = CodeFactory.eINSTANCE.createMethodUnit();
@@ -501,6 +512,16 @@ public Segment load(String KDMModelFullPath){
 	}
 	
 	//não terminado ter que terminar ainda.......
+	/**
+	 * Metodo utilizado para obter criar um MethodUnit que representa um SET. PS: Esse metodo tem algumas inconsistências.
+	 *
+	 * @author rafaeldurelli
+	 * @param ClassUnit classUnit
+	 * @param String name
+	 * @param PrimitiveType type
+	 * @param Segment segment
+	 * @return MethodUnit retorna um determinado MethodUnit
+	 * */ 
 	public MethodUnit createMethodUnitSETInClassUnit (ClassUnit classUnit, String name, PrimitiveType type, StorableUnit attribute, Segment segment) {
 		
 		MethodUnit methodUnit = CodeFactory.eINSTANCE.createMethodUnit();
@@ -604,6 +625,18 @@ public Segment load(String KDMModelFullPath){
 		
 	}
 	
+	
+	
+		/**
+		 * Metodo utilizado para obter criar um MethodUnit que representa um SET. PS: Esse metodo tem algumas inconsistências.
+		 *
+		 * @author rafaeldurelli
+		 * @param ClassUnit classUnit
+		 * @param String name
+		 * @param PrimitiveType type
+		 * @param Segment segment
+		 * @return MethodUnit retorna um determinado MethodUnit
+		 * */ 
 	public MethodUnit createMethodUnitSETInClassUnit (ClassUnit classUnit, String name, Datatype type, StorableUnit attribute, Segment segment) {
 		
 		MethodUnit methodUnit = CodeFactory.eINSTANCE.createMethodUnit();
@@ -927,6 +960,15 @@ public Segment load(String KDMModelFullPath){
 		
 	}
 	
+	
+	/**
+	 * Metodo utilizado para obter um objeto do tipo MethodUnit passando o nome e a ClassUnit
+	 *
+	 * @author rafaeldurelli
+	 * @param ClassUnit classUnit
+	 * @param String name representa o nome do method
+	 * @return MethodUnit retorna um determinado MethodUnit
+	 * */ 
 	public MethodUnit getMethodsUnitByName (ClassUnit classUnit, String name) {
 		
 		
@@ -1031,6 +1073,13 @@ public Segment load(String KDMModelFullPath){
 	}
 	
 //	this method is used to save the JavaModel 
+	/**
+	 * @author rafaeldurelli
+	 * @param Segment Segment para salvar as alterações realizadas no KDMModel.
+	 * @param String name representa o nome 
+	 * @param String projectURI representa o caminho onde esta armazenado o KDMMOdel.
+	 * @return Resource - retorna um Objeto Resource 
+	 * */ 
 	public Resource save(Segment model, String name, String projectURI)  {
 
 
@@ -1067,6 +1116,13 @@ public Segment load(String KDMModelFullPath){
 		
 	}
 	
+	/**
+	 * 
+	 * 
+	 * @author rafaeldurelli
+	 * @param ClassUnit classUnit para obter uma representação do Package do KDM 
+	 * @return  String[] - essa string contem todos os pacotes de uma determina ClassUnit.
+	 * */ 
 	public String[] getCompletePackageName (ClassUnit classUnit) {
 		
 		CodeModel codeModel = null;
@@ -1103,6 +1159,12 @@ public Segment load(String KDMModelFullPath){
 		return packages;
 	}
 	
+	
+	/**
+	 * @author rafaeldurelli
+	 * @param KDMEntity passa uma KDMEntity (ClassUnit, MethodUnit, StorableUnit) e ele ira fazer uma recursão para buscar o objeto Segmento para fazer a persistencia
+	 * @return Segment - retorna o Segmento para realizar as mudanças e depois persistir.
+	 * */ 
 	public Segment getSegmentToPersiste(KDMEntity kdmEntity) {
 		
 		Segment segment = null;
