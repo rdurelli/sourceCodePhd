@@ -50,6 +50,7 @@ import com.br.gui.refactoring.ExtractSuperClassInfo;
 import com.br.gui.refactoring.ExtractSuperClassInfoJavaModel;
 import com.br.gui.refactoring.WizardExtract;
 import com.br.gui.refactoring.WizardExtractSuperClass;
+import com.br.trace.refactoring.PersisteTraceLogRefactoring;
 import com.br.util.models.UtilJavaModel;
 import com.br.util.models.UtilKDMModel;
 
@@ -287,6 +288,7 @@ public class ExtractSuperClass implements IObjectActionDelegate {
 					
 					utilJavaModel.save(model, URIProject);
 					
+					PersisteTraceLogRefactoring.saveTrace(activeProjectName, "ExtractSuperClass", "Rafael Durelli");
 					
 					
 

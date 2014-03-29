@@ -47,6 +47,7 @@ import com.br.gui.refactoring.ExtractSuperClassInfoJavaModel;
 import com.br.gui.refactoring.PullUpMethodInfo;
 import com.br.gui.refactoring.WizardPullUpMethod;
 import com.br.gui.refactoring.WizardPushDownField;
+import com.br.trace.refactoring.PersisteTraceLogRefactoring;
 import com.br.util.models.UtilJavaModel;
 import com.br.util.models.UtilKDMModel;
 
@@ -171,6 +172,7 @@ public class PullDownFieldClass implements IObjectActionDelegate {
 								
 								openEditor(fileToOpen);
 								
+								PersisteTraceLogRefactoring.saveTrace(activeProjectName, "PullDownField", "Rafael Durelli");
 								
 							}
 							

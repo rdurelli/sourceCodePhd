@@ -49,6 +49,7 @@ import com.br.gui.refactoring.PullUpMethodInfo;
 import com.br.gui.refactoring.WizardPullUpMethod;
 import com.br.gui.refactoring.WizardPushDownField;
 import com.br.gui.refactoring.WizardPushDownMethod;
+import com.br.trace.refactoring.PersisteTraceLogRefactoring;
 import com.br.util.models.UtilJavaModel;
 import com.br.util.models.UtilKDMModel;
 
@@ -165,6 +166,7 @@ public class PullDownMethodClass implements IObjectActionDelegate {
 								
 								openEditor(fileToOpen);
 								
+								PersisteTraceLogRefactoring.saveTrace(activeProjectName, "PullDownMethod", "Rafael Durelli");
 								
 							}
 							

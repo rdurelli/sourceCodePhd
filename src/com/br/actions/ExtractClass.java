@@ -35,6 +35,7 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 import com.br.gui.refactoring.WizardExtract;
+import com.br.trace.refactoring.PersisteTraceLogRefactoring;
 import com.br.util.models.UtilJavaModel;
 import com.br.util.models.UtilKDMModel;
 
@@ -139,6 +140,8 @@ public class ExtractClass implements IObjectActionDelegate {
 						Model model = utilJavaModel.getModelToPersiste(classDeclaration);
 						
 						utilJavaModel.save(model, URIProject);
+						
+						PersisteTraceLogRefactoring.saveTrace(activeProjectName, "ExtractClass", "Rafael Durelli");
 						
 					} else {
 						

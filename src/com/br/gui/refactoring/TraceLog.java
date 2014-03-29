@@ -1,5 +1,7 @@
 package com.br.gui.refactoring;
 
+import java.util.ArrayList;
+
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.swt.SWT;
@@ -9,6 +11,9 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TableItem;
+
+import com.br.trace.refactoring.PersisteTraceLogRefactoring;
+import com.br.trace.refactoring.TrackLog;
 
 public class TraceLog extends ViewPart {
 
@@ -43,6 +48,8 @@ public class TraceLog extends ViewPart {
 		tblclmnChanges.setWidth(314);
 		tblclmnChanges.setText("Changes");
 		
+		populateTableOfTraces(table);
+		
 		TableItem tableItem = new TableItem(table, SWT.NONE);
 		tableItem.setText(new String[] {"Rafael", "Legacy_System_To_Test", "Move Field"});
 		
@@ -70,6 +77,20 @@ public class TraceLog extends ViewPart {
 		initializeMenu();
 	}
 
+	
+	private void populateTableOfTraces (Table table) {
+		
+		ArrayList<TrackLog> trackLogs = PersisteTraceLogRefactoring.getAllTraces();
+		
+		for (TrackLog trackLog : trackLogs) {
+			TableItem tableItem = new TableItem(table, SWT.NONE);
+			tableItem.setText(new String[] {trackLog.getAuthor(), trackLog.getProject(), trackLog.getChange_refactoring()});
+		}
+
+		
+		
+	}
+	
 	/**
 	 * Create the actions.
 	 */

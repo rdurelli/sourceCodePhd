@@ -46,6 +46,7 @@ import com.br.gui.refactoring.PullUpFieldInfo;
 import com.br.gui.refactoring.PullUpFieldInfoJavaModel;
 import com.br.gui.refactoring.WizardExtractSuperClass;
 import com.br.gui.refactoring.WizardPullUpField;
+import com.br.trace.refactoring.PersisteTraceLogRefactoring;
 import com.br.util.models.UtilJavaModel;
 import com.br.util.models.UtilKDMModel;
 
@@ -291,6 +292,8 @@ public class PullUpFieldClass implements IObjectActionDelegate {
 					Model model = utilJavaModel.getModelToPersiste(classesSelectedJavaModel.get(0));
 					
 					utilJavaModel.save(model, URIProject);
+					
+					PersisteTraceLogRefactoring.saveTrace(activeProjectName, "PullUpField", "Rafael Durelli");
 					
 					}
 					

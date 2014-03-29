@@ -39,6 +39,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 
+import com.br.trace.refactoring.PersisteTraceLogRefactoring;
 import com.br.util.models.UtilJavaModel;
 import com.br.util.models.UtilKDMModel;
 
@@ -202,6 +203,8 @@ public class EncapsulateFieldClass implements IObjectActionDelegate {
 						openEditor(fileToOpen);
 
 						utilJavaModel.save(modelJava, URIProject);
+						
+						PersisteTraceLogRefactoring.saveTrace(activeProjectName, "EncapsulateField", "Rafael Durelli");
 
 					}
 
