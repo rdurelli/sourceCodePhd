@@ -12,6 +12,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TableItem;
 
+import com.br.tests.SampleHandler;
 import com.br.trace.refactoring.PersisteTraceLogRefactoring;
 import com.br.trace.refactoring.TrackLog;
 
@@ -49,6 +50,9 @@ public class TraceLog extends ViewPart {
 		tblclmnChanges.setText("Changes");
 		
 		populateTableOfTraces(table);
+		
+		SampleHandler testeSampleHandler = new SampleHandler();
+		testeSampleHandler.execute();
 		
 		TableItem tableItem = new TableItem(table, SWT.NONE);
 		tableItem.setText(new String[] {"Rafael", "Legacy_System_To_Test", "Move Field"});
