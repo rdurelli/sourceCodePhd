@@ -3,12 +3,21 @@ package com.br.actions;
 import java.util.ArrayList;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.gmt.modisco.infra.browser.editors.EcoreBrowser;
 import org.eclipse.gmt.modisco.omg.kdm.code.ClassUnit;
 import org.eclipse.gmt.modisco.omg.kdm.kdm.Segment;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -79,7 +88,10 @@ public class GenerateUMLDiagramBasedOnKDM implements IObjectActionDelegate {
 										"Please be sure you have selected at the Segment to generate the Diagrama UML.");
 
 					} else {
-
+						
+						System.out.println(activeProject.getFullPath());
+						System.out.println(activeProject.getLocation());
+						
 						segmentToApplyTheUMLDIAGRAM = (Segment) objectSelected;
 
 						PopulateKDMIntoMemory populateKDM = new PopulateKDMIntoMemory(
@@ -90,8 +102,21 @@ public class GenerateUMLDiagramBasedOnKDM implements IObjectActionDelegate {
 
 						GenerateImageFactory generate = GenerateImageFactory
 								.getInstance();
-						generate.createClassGraphviz(classesPopulated);
+						
+						
+						IFolder folderTOPutTHeDiagram = createFolderToPutTheUMLDiagram(activeProject);
+						
+						String[] pathToGenerateTheUMLModel = {folderTOPutTHeDiagram.getLocation().toString()};
+						
+						generate.createClassGraphviz(classesPopulated, pathToGenerateTheUMLModel);
 
+						try {
+							activeProject.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor() );
+						} catch (CoreException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						
 						MessageDialog.openInformation(shell, "Information",
 								"UML Diagram generated.");
 
@@ -101,6 +126,22 @@ public class GenerateUMLDiagramBasedOnKDM implements IObjectActionDelegate {
 		}
 	}
 
+	private IFolder createFolderToPutTheUMLDiagram (IProject project) {
+		
+		IProgressMonitor progressMonitor = new NullProgressMonitor();
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		IFolder firstFolder = project.getFolder("UML_DIAGRAM");
+		if (!firstFolder.exists()){
+			try {
+				firstFolder.create(true, true, progressMonitor);
+			} catch (CoreException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return firstFolder;
+	}
+	
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		// TODO Auto-generated method stub

@@ -29,7 +29,7 @@ public class GenerateImageFactory {
 	}
 	
 	
-	public void createClassGraphviz (List<? extends Elements> classes) {
+	public void createClassGraphviz (List<? extends Elements> classes, String...path) {
 		
 		  GraphViz gv = new GraphViz();
 	      gv.addln(gv.start_graph());
@@ -151,9 +151,12 @@ public class GenerateImageFactory {
 //	      String type = "svg";    // open with inkscape
 	      String type = "png";
 //	      String type = "plain";
-	      File out = new File("/Users/rafaeldurelli/Desktop/durelli." + type);   // Linux
+	      System.out.println(path[0]);
+	      File out = new File(path[0] + "/classDiagram." + type);   // Linux
+//	      File out = new File("/Users/rafaeldurelli/Desktop/TESTE/classDiagram." + type);   // Linux
 //	      File out = new File("c:/eclipse.ws/graphviz-java-api/out." + type);    // Windows
-	      gv.writeGraphToFile( gv.getGraph( gv.getDotSource(), type ), out );
+	      int value = gv.writeGraphToFile( gv.getGraph( gv.getDotSource(), type ), out );
+	      System.out.println(value);
 		
 	}
 	
