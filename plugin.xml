@@ -151,6 +151,13 @@
              label="Modernize2DAO"
              menubarPath="TestePlugin.menu3/content">
        </action>
+       <action
+             class="com.br.actions.ApplyAllRefactoringToTheSourceCode"
+             enablesFor="1"
+             id="com.actions.newActionRefactoring"
+             label="Apply Refactoring To Source-Code"
+             menubarPath="TestePlugin.menu3/content">
+       </action>
     </objectContribution>
  </extension>
  <extension

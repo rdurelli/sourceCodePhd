@@ -77,6 +77,28 @@ public class Generation {
 				System.out.println("Gerou");
 	}
 	
+	//this method is used to generate source-code based on the Java model as input.
+		public void generate(String pathToPutTheNewSourceCodeRefactored, String javaModelPath) throws IOException {
+			
+			
+			XMIResourceFactoryImpl xmiResourceFactoryImpl = new XMIResourceFactoryImpl() {
+				public Resource createResource(URI uri) {
+					XMIResource xmiResource = new XMIResourceImpl(uri);
+					return xmiResource;
+				}
+			};
+
+			Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put(
+					"xmi", xmiResourceFactoryImpl);
+			
+			
+			GenerateJavaExtended javaGenerator = new GenerateJavaExtended(URI.createFileURI(javaModelPath),
+					new File(pathToPutTheNewSourceCodeRefactored), new ArrayList<Object>()); 
+		
+					
+					javaGenerator.doGenerate(null);
+		}
+	
 	
 	public void save(Model model)  {
 		
