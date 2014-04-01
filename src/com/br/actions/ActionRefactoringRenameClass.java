@@ -36,6 +36,8 @@ import org.eclipse.gmt.modisco.omg.kdm.code.Package;
 import org.eclipse.gmt.modisco.omg.kdm.code.StorableUnit;
 import org.eclipse.gmt.modisco.omg.kdm.core.KDMEntity;
 import org.eclipse.gmt.modisco.omg.kdm.kdm.Segment;
+import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.ITextSelection;
@@ -64,6 +66,7 @@ import com.br.gui.refactoring.WizardExtract;
 import com.br.gui.refactoring.WizardExtractClass;
 import com.br.models.graphviz.Elements;
 import com.br.models.graphviz.generate.image.GenerateImageFactory;
+import com.br.util.models.UtilASTJDTModel;
 import com.br.util.models.UtilJavaModel;
 import com.br.util.models.UtilKDMModel;
 import com.restphone.jrubyeclipse.Activator;
@@ -157,10 +160,27 @@ public class ActionRefactoringRenameClass implements IObjectActionDelegate {
 							
 							
 							
+							
 							ClassUnit classUnit = (ClassUnit)offset.getFirstElement();	
 						
 							
+							
 							String[] packageComplete  = getCompletePackageName(classUnit);
+							
+							
+							UtilASTJDTModel astJDTModel = new UtilASTJDTModel();
+							
+							try {
+								ICompilationUnit iCompilation = astJDTModel.getClassByClassUnit(classUnit, activeProject, packageComplete);
+								System.out.println(iCompilation);
+							} catch (JavaModelException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							} catch (CoreException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+							
 							
 							NamedElement classDeclaration = getClassDeclaration(classUnit, packageComplete, modelJava);
 							
