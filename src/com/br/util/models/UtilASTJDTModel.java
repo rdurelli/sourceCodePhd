@@ -6,11 +6,14 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.gmt.modisco.omg.kdm.code.ClassUnit;
 import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IPackageDeclaration;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.text.Document;
@@ -111,6 +114,115 @@ public class UtilASTJDTModel {
 		}
 		return classToBeRetorned;
 	}
+	
+	public ArrayList<IField> getAllField (ICompilationUnit iCompilationUnit) throws JavaModelException {
+		
+		ArrayList<IField> allFields = new ArrayList<IField>();
+		
+		IType[] allTypes = iCompilationUnit.getAllTypes();
+		
+		for (int i = 0; i < allTypes.length; i++) {
+			printIFieldDetails(allTypes[i], allFields);
+		}
+		
+		
+		return allFields;
+	}
+	
+	public ArrayList<IMethod> getAllMethod (ICompilationUnit iCompilationUnit) throws JavaModelException {
+		
+		ArrayList<IMethod> allMethods = new ArrayList<IMethod>();
+		
+		IType[] allTypes = iCompilationUnit.getAllTypes();
+		
+		for (int i = 0; i < allTypes.length; i++) {
+			printIMethodDetails(allTypes[i], allMethods);
+		}
+		
+		
+		return allMethods;
+	}
+	
+	public IMethod getIMethodByName (ICompilationUnit iCompilationUnit, String methodName) throws JavaModelException {
+		
+		ArrayList<IMethod> allMethods = this.getAllMethod(iCompilationUnit);
+		
+		for (IMethod iMethod : allMethods) {
+			
+			if (iMethod.getElementName().equals(methodName)) {
+				
+				return iMethod;
+			}
+			
+		}
+		
+		return null;
+		
+	}
+	
+	public Integer getNumberSourceLinesOfCodeOfAClass(ICompilationUnit iCompilationUnit)
+			throws JavaModelException {
+
+		Integer lineOfCode = 0;
+
+		if (iCompilationUnit != null) {
+
+			Document document = new Document(iCompilationUnit.getSource());
+
+			lineOfCode = document.getNumberOfLines();
+
+		}
+
+		return lineOfCode;
+	}
+	
+	public Integer getNumberSourceLinesOfAMethod(IMethod method)
+			throws JavaModelException {
+
+		Integer lineOfCode = 0;
+
+		if (method != null) {
+
+			Document document = new Document(method.getSource());
+
+			lineOfCode = document.getNumberOfLines();
+
+		}
+
+		return lineOfCode;
+
+	}
+	
+	private void printIMethodDetails(IType type, ArrayList<IMethod> methodToGet) throws JavaModelException {
+	    IMethod[] methods = type.getMethods();
+	    for (IMethod method : methods) {
+	    	
+	    	methodToGet.add(method);
+	    	
+//	    Document doc = new Document(method.getSource());
+//	    System.out.println("Numero de linha do metodo " + doc.getNumberOfLines());
+//	      System.out.println("Method name " + method.getElementName());
+//	      System.out.println("Signature " + method.getSignature());
+//	      System.out.println("Return Type " + method.getReturnType());
+
+	    }
+	  }
+	
+	private void printIFieldDetails(IType type, ArrayList<IField> fieldToGet) throws JavaModelException {
+	    IField[] fields = type.getFields();
+	   
+	    for (IField field : fields) {
+	    	
+	    	fieldToGet.add(field);
+	    	
+//	    Document doc = new Document(method.getSource());
+//	    System.out.println("Numero de linha do metodo " + doc.getNumberOfLines());
+//	      System.out.println("Method name " + method.getElementName());
+//	      System.out.println("Signature " + method.getSignature());
+//	      System.out.println("Return Type " + method.getReturnType());
+
+	    }
+	  }
 
 	private void printPackageInfos(IJavaProject javaProject)
 			throws JavaModelException {

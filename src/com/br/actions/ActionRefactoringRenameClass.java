@@ -37,6 +37,8 @@ import org.eclipse.gmt.modisco.omg.kdm.code.StorableUnit;
 import org.eclipse.gmt.modisco.omg.kdm.core.KDMEntity;
 import org.eclipse.gmt.modisco.omg.kdm.kdm.Segment;
 import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IField;
+import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -167,11 +169,31 @@ public class ActionRefactoringRenameClass implements IObjectActionDelegate {
 							
 							String[] packageComplete  = getCompletePackageName(classUnit);
 							
-							
+							/**
+							 * -------------------------------------------------------------------------------------
+							 * */
 							UtilASTJDTModel astJDTModel = new UtilASTJDTModel();
 							
 							try {
 								ICompilationUnit iCompilation = astJDTModel.getClassByClassUnit(classUnit, activeProject, packageComplete);
+								ArrayList<IMethod> allMethods = astJDTModel.getAllMethod(iCompilation);
+								ArrayList<IField> allFields = astJDTModel.getAllField(iCompilation);
+								
+								UtilKDMModel utilKDM = new UtilKDMModel();
+								
+								MethodUnit methodUnits = utilKDM.getMethodsUnitByName(classUnit, "getName");
+								
+								IMethod methodReturned = astJDTModel.getIMethodByName(iCompilation, methodUnits.getName());
+								
+								System.out.println(methodReturned);
+								
+								System.out.println(astJDTModel.getNumberSourceLinesOfAMethod(methodReturned));
+								
+								System.out.println(allMethods.size());
+								
+								System.out.println(allFields.size());
+								
+								
 								System.out.println(iCompilation);
 							} catch (JavaModelException e) {
 								// TODO Auto-generated catch block
@@ -181,6 +203,9 @@ public class ActionRefactoringRenameClass implements IObjectActionDelegate {
 								e.printStackTrace();
 							}
 							
+							/**
+							 * -------------------------------------------------------------------------------------
+							 * */
 							
 							NamedElement classDeclaration = getClassDeclaration(classUnit, packageComplete, modelJava);
 							

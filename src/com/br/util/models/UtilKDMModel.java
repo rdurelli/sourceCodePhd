@@ -962,7 +962,9 @@ public Segment load(String KDMModelFullPath){
 	
 	
 	/**
-	 * Metodo utilizado para obter um objeto do tipo MethodUnit passando o nome e a ClassUnit
+	 * Metodo utilizado para obter um objeto do tipo MethodUnit passando o nome e a ClassUnit. 
+	 * Para utilizar esse metodo nao precisa passar o nome do metodo completo, ou seja, sem os parametos e parenteses. Por exemplo: 
+	 * Para obter um metodo getName() apenas escreva getName
 	 *
 	 * @author rafaeldurelli
 	 * @param ClassUnit classUnit
