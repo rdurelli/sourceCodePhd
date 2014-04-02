@@ -115,6 +115,12 @@ public class UtilASTJDTModel {
 		return classToBeRetorned;
 	}
 	
+	
+	/***
+	 * @author rafaeldurelli
+	 * Esse metodo é utilizado para obter todos os attributos de uma determinada classe.
+	 * 
+	 * */
 	public ArrayList<IField> getAllField (ICompilationUnit iCompilationUnit) throws JavaModelException {
 		
 		ArrayList<IField> allFields = new ArrayList<IField>();
@@ -129,6 +135,12 @@ public class UtilASTJDTModel {
 		return allFields;
 	}
 	
+	
+	/***
+	 * @author rafaeldurelli
+	 * Esse metodo é utilizado para obter todos os methods de uma determinada classe.
+	 * 
+	 * */
 	public ArrayList<IMethod> getAllMethod (ICompilationUnit iCompilationUnit) throws JavaModelException {
 		
 		ArrayList<IMethod> allMethods = new ArrayList<IMethod>();
@@ -143,6 +155,13 @@ public class UtilASTJDTModel {
 		return allMethods;
 	}
 	
+	
+	/***
+	 * @author rafaeldurelli
+	 * Esse metodo é utilizado para obter um determinado IMehod passando a classe e o nome desse método. 
+	 * Por exemplo, se o método a ser recuparado é o getName(), apenas passe como string getName, sem o parenteses.
+	 * 
+	 * */
 	public IMethod getIMethodByName (ICompilationUnit iCompilationUnit, String methodName) throws JavaModelException {
 		
 		ArrayList<IMethod> allMethods = this.getAllMethod(iCompilationUnit);
@@ -160,6 +179,11 @@ public class UtilASTJDTModel {
 		
 	}
 	
+	/***
+	 * @author rafaeldurelli
+	 * Esse metodo é utilizado para obter o número que linhas que uma determinada classe tem.
+	 * 
+	 * */
 	public Integer getNumberSourceLinesOfCodeOfAClass(ICompilationUnit iCompilationUnit)
 			throws JavaModelException {
 
@@ -176,6 +200,12 @@ public class UtilASTJDTModel {
 		return lineOfCode;
 	}
 	
+	
+	/***
+	 * @author rafaeldurelli
+	 * Esse metodo é utilizado para obter o número que linhas que um determinado método tem.
+	 * 
+	 * */
 	public Integer getNumberSourceLinesOfAMethod(IMethod method)
 			throws JavaModelException {
 

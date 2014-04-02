@@ -179,6 +179,9 @@ public class ActionRefactoringRenameClass implements IObjectActionDelegate {
 								ArrayList<IMethod> allMethods = astJDTModel.getAllMethod(iCompilation);
 								ArrayList<IField> allFields = astJDTModel.getAllField(iCompilation);
 								
+								
+								System.out.println(astJDTModel.getNumberSourceLinesOfCodeOfAClass(iCompilation));
+								
 								UtilKDMModel utilKDM = new UtilKDMModel();
 								
 								MethodUnit methodUnits = utilKDM.getMethodsUnitByName(classUnit, "getName");
