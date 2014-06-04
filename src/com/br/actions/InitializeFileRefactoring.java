@@ -71,18 +71,8 @@ public class InitializeFileRefactoring implements IObjectActionDelegate {
 					
 				} else {
 					
-//					ArrayList<Class> allClasses = new ArrayList<Class>();
 					CreateModelRefactoringProgrammatically modelProgrammatically = new CreateModelRefactoringProgrammatically();
 					
-//					for (String fileJavaClass : javaFiles) {
-//					
-//						modelProgrammatically.callParserToGetAllClasses(fileJavaClass, allClasses);
-//						
-//					}
-					
-//					Model model = RefactoringFactory.eINSTANCE.createModel();
-//					model.setName("projectName");
-//			
 					StringBuffer contents = new StringBuffer();
 					contents.append("model");
 					contents.append(" "+ this.file.getProject().getName());
@@ -92,7 +82,7 @@ public class InitializeFileRefactoring implements IObjectActionDelegate {
 					
 					for (String fileJavaClass : javaFiles) {
 						
-//						modelProgrammatically.callParser(fileJavaClass, model, allClasses);
+
 						modelProgrammatically.callParserIFile(fileToCreate, fileJavaClass, contents);
 						
 					}
@@ -103,65 +93,13 @@ public class InitializeFileRefactoring implements IObjectActionDelegate {
 					try {
 						fileToCreate.create(source, false, null);
 					} catch (CoreException e1) {
-//						// TODO Auto-generated catch block
+	
 						e1.printStackTrace();
 					}
-					
-//					System.out.println(model.getName());
-//					System.out.println(model.getContains().size());
-//					
-//					
-//					EList<Type> allTypes = model.getContains();
-//					
-//					System.out.println(allTypes);
-					
-//					Class classToTest = null;
-					
-//					for (Type type : allTypes) {
-//						if (type instanceof Class)
-//							classToTest = (Class) type;
-//							
-//						System.out.println("Referencia da calsse " + classToTest);
-//						
-//							EList<Attribute> attributes = classToTest.getAttributes();
-//							
-//							EList<Method> methods = classToTest.getMethods();
-//							
-//							for (Attribute attribute : attributes) {
-//								
-//								System.out.println("NOme do attribute "+ attribute.getName());
-//								System.out.println("Type "+ attribute.getElementType().toString());
-//								
-//								if (attribute.getElementType() instanceof ClassType) {
-//									
-//									ClassType classType = (ClassType) attribute.getElementType();
-//									System.out.println("ClassType name " + classType.getClassType().getName());
-//									System.out.println("Todos os atributos" +classType.getClassType().getAttributes());
-//								}
-//								
-//							}
-//							
-//							for (Method method : methods) {
-//								
-//								System.out.println("Method Nome "+ method.getName());
-//								
-//							}
-//					}
-					
-//					modelProgrammatically.saveXText(model);
-					
-
-						
-//					modelProgrammatically.saveIFile(this.file.getProject(), contents, className, attributes, methods)
-					
-							
-//					System.out.println(model);
-					
 					
 				}
 				
 			}catch (Exception e) {
-				// TODO: handle exception
 			}
 			
 		}
