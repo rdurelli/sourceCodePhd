@@ -178,6 +178,16 @@
           id="com.br.gui.refactoring.TraceLog"
           name="Changes Log">
     </view>
+    <view
+          class="com.br.tests.TesteTablejFace"
+          id="com.br.tests.TesteTablejFace"
+          name="New ViewPart">
+    </view>
+    <view
+          class="com.br.gui.refactoring.BadSmellView"
+          id="com.br.gui.refactoring.BadSmellView"
+          name="Bad SmellView">
+    </view>
  </extension>
  <extension
        point="org.eclipse.ui.popupMenus">
@@ -360,6 +370,22 @@
              enablesFor="1"
              id="com.actions.newActionKDMModel"
              label="List of changes"
+             menubarPath="TestePlugin.menu2/content">
+       </action>
+    </objectContribution>
+ </extension>
+ <extension
+       point="org.eclipse.ui.popupMenus">
+    <objectContribution
+          adaptable="false"
+          id="TestePlugin.contribution6"
+          objectClass="org.eclipse.jdt.core.IJavaProject">
+       <action
+             class="com.br.actions.InitializeFileRefactoring"
+             enablesFor="1"
+             icon="icons/1401835565_list.png"
+             id="com.actions.newAction"
+             label="Initialize Refactoring"
              menubarPath="TestePlugin.menu2/content">
        </action>
     </objectContribution>

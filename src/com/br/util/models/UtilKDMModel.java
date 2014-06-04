@@ -1329,7 +1329,8 @@ public Segment load(String KDMModelFullPath){
 					
 					codeItem.add(methodNew);
 					
-					this.createStorableUnitInAClassUnit(classesUnits, methodUnit.getName(), methodUnit.getType());
+					this.moveMethodUnitToClassUnit(classToRemoveTheMethodUnit, methodNew);
+//					this.createStorableUnitInAClassUnit(classesUnits, methodUnit.getName(), methodUnit.getType());
 					
 				}
 				

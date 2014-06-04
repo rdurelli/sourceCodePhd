@@ -1,5 +1,7 @@
 package com.br.actions;
 
+import java.util.ArrayList;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -16,6 +18,9 @@ import org.eclipse.gmt.modisco.java.ClassDeclaration;
 import org.eclipse.gmt.modisco.java.Model;
 import org.eclipse.gmt.modisco.omg.kdm.code.ClassUnit;
 import org.eclipse.gmt.modisco.omg.kdm.kdm.Segment;
+import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IField;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
@@ -36,6 +41,7 @@ import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 import com.br.gui.refactoring.WizardExtract;
 import com.br.trace.refactoring.PersisteTraceLogRefactoring;
+import com.br.util.models.UtilASTJDTModel;
 import com.br.util.models.UtilJavaModel;
 import com.br.util.models.UtilKDMModel;
 
@@ -81,6 +87,9 @@ public class ExtractClass implements IObjectActionDelegate {
 					IProject activeProject = file.getProject();
 					String activeProjectName = activeProject.getName();
 
+					
+					
+					
 					String URIProject = activeProject.getLocationURI()
 							.toString();
 

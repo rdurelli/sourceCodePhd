@@ -184,18 +184,18 @@ public class ActionRefactoringRenameClass implements IObjectActionDelegate {
 								
 								UtilKDMModel utilKDM = new UtilKDMModel();
 								
-								MethodUnit methodUnits = utilKDM.getMethodsUnitByName(classUnit, "getName");
-								
-								IMethod methodReturned = astJDTModel.getIMethodByName(iCompilation, methodUnits.getName());
-								
-								System.out.println(methodReturned);
-								
-								System.out.println(astJDTModel.getNumberSourceLinesOfAMethod(methodReturned));
-								
-								System.out.println(allMethods.size());
-								
-								System.out.println(allFields.size());
-								
+//								MethodUnit methodUnits = utilKDM.getMethodsUnitByName(classUnit, "getName");
+//								
+//								IMethod methodReturned = astJDTModel.getIMethodByName(iCompilation, methodUnits.getName());
+//								
+//								System.out.println(methodReturned);
+//								
+//								System.out.println(astJDTModel.getNumberSourceLinesOfAMethod(methodReturned));
+//								
+//								System.out.println(allMethods.size());
+//								
+//								System.out.println(allFields.size());
+//								
 								
 								System.out.println(iCompilation);
 							} catch (JavaModelException e) {

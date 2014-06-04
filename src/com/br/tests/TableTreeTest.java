@@ -61,7 +61,7 @@ public class TableTreeTest {
       for (int j = 0; j < NUM; j++) {
         // Create a child item and add data to the columns
         TableTreeItem child = new TableTreeItem(parent, SWT.NONE|SWT.CHECK);
-        child.setText(0, "Child " + (j + 1));
+//        child.setText(0, "Child " + (j + 1));
         child.setText(1, "Some child data");
         child.setText(2, "More child data");
       }

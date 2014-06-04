@@ -180,7 +180,7 @@ public class PullUpFieldClass implements IObjectActionDelegate {
 					
 					if (classesSelectedJavaModel.size() == 1) {
 						
-						MessageDialog.openError(shell, "Error", "Please be sure you have selected at least two ClassUnits to realize the Super Extract Class.");
+						MessageDialog.openError(shell, "Error", "Please be sure you have selected at least two ClassUnits to realize the Pull Up Field.");
 						
 					} else {
 						

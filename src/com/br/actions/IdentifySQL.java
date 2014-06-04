@@ -61,7 +61,7 @@ public class IdentifySQL implements IObjectActionDelegate {
 	private IJavaProject file;
 
 	public IdentifySQL() {
-		// TODO Auto-generated constructor stub
+
 
 	}
 
