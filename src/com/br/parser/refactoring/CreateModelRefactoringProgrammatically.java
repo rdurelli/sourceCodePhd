@@ -1,8 +1,8 @@
 package com.br.parser.refactoring;
 
-import java.io.ByteArrayInputStream;
+
 import java.io.IOException;
-import java.io.InputStream;
+
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -11,8 +11,6 @@ import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.TokenStream;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -34,15 +32,12 @@ import com.google.inject.Injector;
 public class CreateModelRefactoringProgrammatically {
 
 	public static void main(String[] args) {
-		// CharStream stream = new
-		// ANTLRStringStream("package a.b.c;import org.antlr.runtime.ANTLRStringStream;import org.antlr.runtimeCharStream; public class TesteParserJava { private String nameDurelli; private String nameDurelli2; public void getName(){}}");
-
+	
 		CharStream stream = null;
 		try {
 			stream = new org.antlr.runtime.ANTLRFileStream(
 					"/Users/rafaeldurelli/Documents/workspace/ANTLR Java Tester/antlr-generated/a/b/c/Person.java");
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 
@@ -87,12 +82,12 @@ public class CreateModelRefactoringProgrammatically {
 
 			// System.out.println(parser.getImports());
 		} catch (RecognitionException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		}
 	}
 
-	//primeiroDeve chamar esse metodo 
+	//primeiroDeve chamar esse metodo (NOT used anymore, it was used when I was using the xtext API.)
 	public void callParserToGetAllClasses(String fileJavaLocation,
 			ArrayList<Class> allClasses) {
 
@@ -100,7 +95,7 @@ public class CreateModelRefactoringProgrammatically {
 		try {
 			stream = new org.antlr.runtime.ANTLRFileStream(fileJavaLocation);
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
+			
 			e1.printStackTrace();
 		}
 
@@ -123,7 +118,7 @@ public class CreateModelRefactoringProgrammatically {
 	
 
 		} catch (RecognitionException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		}
 
@@ -135,7 +130,7 @@ public class CreateModelRefactoringProgrammatically {
 		try {
 			stream = new org.antlr.runtime.ANTLRFileStream(fileJavaLocation);
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
+
 			e1.printStackTrace();
 		}
 
@@ -158,11 +153,8 @@ public class CreateModelRefactoringProgrammatically {
 					
 			createModel(model, "StringAMudar", "tambemAMudar", className, allClasses, attributes, methods);
 			
-			
-			
-			// System.out.println(parser.getImports());
 		} catch (RecognitionException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		}
 
@@ -344,7 +336,7 @@ public class CreateModelRefactoringProgrammatically {
 		try {
 			stream = new org.antlr.runtime.ANTLRFileStream(fileJavaLocation);
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
+
 			e1.printStackTrace();
 		}
 
@@ -367,14 +359,8 @@ public class CreateModelRefactoringProgrammatically {
 					
 			
 			saveIFile(fileToCreate, contents, className, attributes, methods);
-			
-//			createModel(model, "StringAMudar", "tambemAMudar", className, allClasses, attributes, methods);
-			
-			
-			
-			// System.out.println(parser.getImports());
+	
 		} catch (RecognitionException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -383,14 +369,6 @@ public class CreateModelRefactoringProgrammatically {
 	public void saveIFile (IFile fileToCreate, StringBuffer contents, String className, ArrayList<AttributeModelRefactoring> attributes,
 			ArrayList<MethodModelRefactoring> methods ) {
 		
-//		IProject project = this.fileRightClicked.getProject();
-//		
-//		IFile fileToCreate = project.getFile("/src/testePrograma.refactoring"); // such as file.exists() == false
-//		
-		
-//		contents.append("model");
-//		contents.append(" modelName");
-//		
 		contents.append("\n\nClass ");
 		contents.append( className+ " {");
 		createAttributeIFile(contents, attributes);
@@ -399,7 +377,6 @@ public class CreateModelRefactoringProgrammatically {
 			createMethodIFile(contents, methods);
 		}
 		contents.append("\n}");
-		
 		
 		
 	}
@@ -501,6 +478,7 @@ public class CreateModelRefactoringProgrammatically {
 		
 	}
 	
+	//Not used, I have tried save the file by using the API of Xtext programmatically, but it seems not to work..In fact, it worked well, but not for cross reference...
 	public void saveXText(Model model) {
 		
 		DslStandaloneSetup.doSetup();
@@ -520,7 +498,7 @@ public class CreateModelRefactoringProgrammatically {
 		try {
 			resource.save(Collections.EMPTY_MAP);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		}
 		
