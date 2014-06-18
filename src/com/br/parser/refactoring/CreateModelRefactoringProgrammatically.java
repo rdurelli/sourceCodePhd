@@ -366,6 +366,7 @@ public class CreateModelRefactoringProgrammatically {
 
 	}
 	
+	//herein it is create the file to application.refactoring.
 	public void saveIFile (IFile fileToCreate, StringBuffer contents, String className, ArrayList<AttributeModelRefactoring> attributes,
 			ArrayList<MethodModelRefactoring> methods ) {
 		
@@ -478,7 +479,7 @@ public class CreateModelRefactoringProgrammatically {
 		
 	}
 	
-	//Not used, I have tried save the file by using the API of Xtext programmatically, but it seems not to work..In fact, it worked well, but not for cross reference...
+	//Not used, I have tried save the file by using the API of Xtext programmatically, but it seems not to work..In fact, it worked well, but not for cross reference..
 	public void saveXText(Model model) {
 		
 		DslStandaloneSetup.doSetup();
