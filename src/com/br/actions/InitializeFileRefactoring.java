@@ -70,7 +70,7 @@ public class InitializeFileRefactoring implements IObjectActionDelegate {
 					contents.append(" "+ this.file.getProject().getName());
 				
 					
-					IFile fileToCreate = this.file.getProject().getFile("/src/testePrograma.refactoring"); // such as file.exists() == false
+					IFile fileToCreate = this.file.getProject().getFile("/src/application.refactoring"); // such as file.exists() == false
 					
 					for (String fileJavaClass : javaFiles) {
 						
