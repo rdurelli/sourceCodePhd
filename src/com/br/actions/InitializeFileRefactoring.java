@@ -10,7 +10,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.action.IAction;
@@ -22,13 +21,6 @@ import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 
 import com.br.parser.refactoring.CreateModelRefactoringProgrammatically;
-import com.br.refactoring.dsl.refactoring.Attribute;
-import com.br.refactoring.dsl.refactoring.Class;
-import com.br.refactoring.dsl.refactoring.ClassType;
-import com.br.refactoring.dsl.refactoring.Method;
-import com.br.refactoring.dsl.refactoring.Model;
-import com.br.refactoring.dsl.refactoring.RefactoringFactory;
-import com.br.refactoring.dsl.refactoring.Type;
 
 public class InitializeFileRefactoring implements IObjectActionDelegate {
 
@@ -51,11 +43,11 @@ public class InitializeFileRefactoring implements IObjectActionDelegate {
 
 			String locationURIoFTheProject = this.file.getResource().getLocationURI().toString();
 			
-			System.out.println("Name of Project " + nameOfProject);
+//			System.out.println("Name of Project " + nameOfProject);
 
 			IFolder folderSRC = this.file.getProject().getFolder("src");
 
-			System.out.println("Name of the FOLDER " + folderSRC.getName());
+//			System.out.println("Name of the FOLDER " + folderSRC.getName());
 
 			try {
 				IResource member[] = folderSRC.members();
@@ -71,7 +63,7 @@ public class InitializeFileRefactoring implements IObjectActionDelegate {
 					
 				} else {
 					
-					CreateModelRefactoringProgrammatically modelProgrammatically = new CreateModelRefactoringProgrammatically();
+					CreateModelRefactoringProgrammatically createModelRefactoringProgrammatically = new CreateModelRefactoringProgrammatically();
 					
 					StringBuffer contents = new StringBuffer();
 					contents.append("model");
@@ -83,7 +75,7 @@ public class InitializeFileRefactoring implements IObjectActionDelegate {
 					for (String fileJavaClass : javaFiles) {
 						
 
-						modelProgrammatically.callParserIFile(fileToCreate, fileJavaClass, contents);
+						createModelRefactoringProgrammatically.callParserIFile(fileToCreate, fileJavaClass, contents);
 						
 					}
 					
