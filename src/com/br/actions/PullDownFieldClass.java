@@ -115,6 +115,8 @@ public class PullDownFieldClass implements IObjectActionDelegate {
 								
 						String [] packageKDM = utilKDMMODEL.getCompletePackageName(classesSelectedToApplyThePullDownField);
 						
+					
+						
 						ClassDeclaration classDeclaration = utilJavaModel.getClassDeclaration(classesSelectedToApplyThePullDownField, packageKDM, modelJava);
 						
 						Segment segment = utilKDMMODEL.getSegmentToPersiste(classesSelectedToApplyThePullDownField);

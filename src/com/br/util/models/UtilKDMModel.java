@@ -12,7 +12,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -22,6 +25,7 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.XMIResource;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
+import org.eclipse.gmt.modisco.java.FieldDeclaration;
 import org.eclipse.gmt.modisco.java.Model;
 import org.eclipse.gmt.modisco.java.emf.JavaPackage;
 import org.eclipse.gmt.modisco.java.generation.files.GenerateJavaExtended;
@@ -62,15 +66,31 @@ import org.eclipse.gmt.modisco.omg.kdm.kdm.KDMModel;
 import org.eclipse.gmt.modisco.omg.kdm.kdm.KdmFactory;
 import org.eclipse.gmt.modisco.omg.kdm.kdm.KdmPackage;
 import org.eclipse.gmt.modisco.omg.kdm.kdm.Segment;
+import org.eclipse.gmt.modisco.omg.kdm.source.AbstractInventoryElement;
+import org.eclipse.gmt.modisco.omg.kdm.source.InventoryModel;
 import org.eclipse.gmt.modisco.omg.kdm.source.SourceFactory;
 import org.eclipse.gmt.modisco.omg.kdm.source.SourceFile;
 import org.eclipse.gmt.modisco.omg.kdm.source.SourceRef;
 import org.eclipse.gmt.modisco.omg.kdm.source.SourceRegion;
+import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IField;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.ASTParser;
+import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.text.Document;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.omg.IOP.CodecFactory;
 
+import com.br.constraint.ConstraintClassUnit;
 import com.br.databaseDDL.Column;
 import com.br.gui.refactoring.ExtractSuperClassInfo;
 import com.br.gui.refactoring.PullUpFieldInfo;
@@ -80,7 +100,11 @@ import com.br.utils.ProjectSelectedToModernize;
 public class UtilKDMModel {
 
 	
-public Segment load(String KDMModelFullPath){
+	private Integer numberOfTheLine;
+	
+	private UtilASTJDTModel utilASTJDTModel = new UtilASTJDTModel();
+	
+	public Segment load(String KDMModelFullPath){
 
 		
 		KdmPackage.eINSTANCE.eClass();
@@ -1350,6 +1374,57 @@ public Segment load(String KDMModelFullPath){
 		
 	}
 	
+	public void actionInLineClass (ClassUnit classUnitSelectedToInline1, ClassUnit classUnitSelectedToInline2, Package packageToRemoveTheClass, StorableUnit storableUnitToRemove, Segment segment) {
+		
+		List<StorableUnit> storableUnits = this.getStorablesUnit(classUnitSelectedToInline2);
+		
+		String nameOFTheClasseToDelete = classUnitSelectedToInline2.getName();
+		
+		for (StorableUnit storableUnit : storableUnits) {
+			
+			this.moveStorableUnitToClassUnit(classUnitSelectedToInline1, storableUnit);//move all storableUnit
+			
+		}
+		
+		List<MethodUnit> methodUnits = this.getMethodsUnit(classUnitSelectedToInline2);
+		
+		for (MethodUnit methodUnit : methodUnits) {
+			this.moveMethodUnitToClassUnit(classUnitSelectedToInline1, methodUnit);
+		}
+		
+		classUnitSelectedToInline1.getCodeElement().remove(storableUnitToRemove);
+		
+		EList<AbstractCodeElement> allClasses = packageToRemoveTheClass.getCodeElement();
+		allClasses.remove(classUnitSelectedToInline2);
+		
+		//remove the SourceFile of the deleted ClassUnit
+		
+		EList<KDMModel> kdmMOdels = segment.getModel();
+		InventoryModel inventory = null;
+		for (KDMModel kdmModel : kdmMOdels) {
+			if (kdmModel instanceof InventoryModel) {
+				
+				inventory = (InventoryModel) kdmModel;
+				break;
+			}
+		}
+		
+		if (inventory != null) {
+			
+			EList<AbstractInventoryElement> allInvetory = inventory.getInventoryElement();
+			
+			for (AbstractInventoryElement abstractInventoryElement : allInvetory) {
+				if (abstractInventoryElement.getName().equals(nameOFTheClasseToDelete+".java")) {
+					
+					allInvetory.remove(abstractInventoryElement);
+					break;
+				}
+			}
+			
+		}
+		
+	}
+	
 	public void actionPullUpField(LinkedHashSet<PullUpFieldInfo> pullUpFieldInfo) {
 
 		ClassUnit superClass = null;
@@ -1498,6 +1573,27 @@ public Segment load(String KDMModelFullPath){
 		
 	}
 	
+	
+	public ClassUnit getClassUnit (Segment segment, String name) {
+		
+		ArrayList<ClassUnit> allClasses = this.getAllClasses(segment);
+		
+		ClassUnit classToReturn = null;
+		
+		for (ClassUnit classUnit : allClasses) {
+			if (classUnit.getName().equals(name)) {
+				
+				classToReturn = classUnit;
+				break;
+				
+			}
+		}
+		
+		
+		return classToReturn;
+		
+	}
+	
 	public ArrayList<ClassUnit> getAllClasses (Segment segment) {
 		
 		ArrayList<ClassUnit> allClasses = new ArrayList<ClassUnit>();
@@ -1586,5 +1682,187 @@ public Segment load(String KDMModelFullPath){
 		return relationShipInheritancePassingTheSuper ;
 				
 	}
+	
+	public void verifyConstraintForClassUnit(Segment segment, String projectName, ClassUnit classUnitToVerifyTheConstraint, IProject currentProject) {
+		
+		
+		ArrayList<ClassUnit> allClassOfTheSystem = null;
+		
+		EList<KDMModel> kdmModels = segment.getModel();
+		
+		CodeModel codeModelThatRepresentTheSystem = null;
+		
+		for (KDMModel kdmModel : kdmModels) {
+			if (kdmModel instanceof CodeModel) {
+				
+				CodeModel temp = (CodeModel) kdmModel;
+				
+				if (temp.getName().equals(projectName)) {
+					
+					codeModelThatRepresentTheSystem = temp;
+					break;
+				}
+				
+			}
+		}
+		
+		allClassOfTheSystem = this.getAllClasses(segment);
+		
+		for (ClassUnit classesToVerify : allClassOfTheSystem) {
+			
+			List<StorableUnit> storablesUnits = this.getStorablesUnit(classesToVerify);
+			
+			for (StorableUnit storableUnit : storablesUnits) {
+				this.verifyStorableUnitBeforeRemoveAClassUnit(storableUnit, classUnitToVerifyTheConstraint, currentProject);
+			}
+			
+		}
+			
+	}
+	
+	private void verifyStorableUnitBeforeRemoveAClassUnit (StorableUnit storableUnitToVerify, ClassUnit classUnitThatWillBeRemoved, IProject currentProject) {
+		
+		
+		ClassUnit classUnitThatContainsTheStorableUnit = (ClassUnit) storableUnitToVerify.eContainer();
+		
+		String[] packageString = this.getCompletePackageName(classUnitThatContainsTheStorableUnit);
+		
+		String[] packageOfTheClassThatWillBeRemoved = this.getCompletePackageName(classUnitThatWillBeRemoved);
+		
+		if (storableUnitToVerify.getType() instanceof ClassUnit) {
+			
+			ClassUnit toVerify = (ClassUnit) storableUnitToVerify.getType();
+			
+			String[] packageOfTheClassUnitThatContainsTheStorableUnit = this.getCompletePackageName(toVerify);
+			
+			boolean thePackagesAreEquals = Arrays.deepEquals(packageOfTheClassUnitThatContainsTheStorableUnit, packageOfTheClassThatWillBeRemoved);
+			
+			if ( ( thePackagesAreEquals) && ( toVerify.getName().equals(classUnitThatWillBeRemoved.getName() ) ) ) {
+				
+				ConstraintClassUnit constraint = new ConstraintClassUnit(storableUnitToVerify, null, classUnitThatWillBeRemoved.getName());
+				
+				Integer numberOfTheLine = 0;
+				
+				try {
+					ICompilationUnit  iCompilationUnitThatRepresentTheClassUnit = utilASTJDTModel.getClassByClassUnit(classUnitThatContainsTheStorableUnit, currentProject, packageString);
+					
+					final IField field = utilASTJDTModel.getIFieldByName(iCompilationUnitThatRepresentTheClassUnit, storableUnitToVerify.getName());
+					
+					this.getTheLineNumberOfAIField(iCompilationUnitThatRepresentTheClassUnit, field);
+					
+					final ASTParser p = ASTParser.newParser(AST.JLS4);
+					p.setKind(ASTParser.K_COMPILATION_UNIT);
+					p.setResolveBindings(true); 
+					p.setSource(field.getTypeRoot());				
+					
+//					ASTNode unitNode = p.createAST(new NullProgressMonitor());
+					final org.eclipse.jdt.core.dom.CompilationUnit comp = (CompilationUnit) p.createAST(null);
+					
+					comp.accept(new ASTVisitor() {
+				        @Override
+				        public boolean visit(VariableDeclarationFragment node) {
+				            IJavaElement element = node.resolveBinding().getJavaElement();
+				            if (field.equals(element)) {
+				                org.eclipse.jdt.core.dom.FieldDeclaration fieldDeclaration = (org.eclipse.jdt.core.dom.FieldDeclaration)node.getParent();
+				                
+				                
+				                System.out.println(comp.getLineNumber(fieldDeclaration.getStartPosition() - 1));
+				                
+				                System.out.println(fieldDeclaration.getStartPosition());
+				                
+				                
+				                
+				                System.out.println(fieldDeclaration); 
+				                
+				            }
+				            return false;
+				        }
+				    });
+					
+//					
+					
+					
+					
+					
+					
+									
+//					System.out.println(field.getKey());
+//					
+//					ASTNode node = comp.findDeclaringNode(field.getKey());
+//					
+//					int lineNumber = comp.getLineNumber(node.getStartPosition()) - 1;
+					
+					
+//					System.out.println(" O numero do attributo Ž " + lineNumber);
+					
+//					Document doc = new Document(field.getSource());
+//					
+//					System.out.println(doc.);
+					
+//					field.get
+					
+//					teste.findDeclaringNode(field.getKey());
+//
+//					int lineNumber = compilationUnit.getLineNumber(node.getStartPosition()) - 1;
+					
+					System.out.println(field);
+					
+				} catch (JavaModelException e) {
+					
+					e.printStackTrace();
+				} catch (CoreException e) {
+					
+					e.printStackTrace();
+				}
+				
+				System.out.println("The Class "+ classUnitThatContainsTheStorableUnit.getName() + " contains an attribute of the type " + classUnitThatWillBeRemoved.getName());
+				
+			}
+			
+		}
+	}
+
+
+
+	private Integer getTheLineNumberOfAIField(
+			ICompilationUnit iCompilationUnitThatRepresentTheClassUnit,
+			final IField field) {
+		 
+		
+		final ASTParser p = ASTParser.newParser(AST.JLS4);
+		p.setKind(ASTParser.K_COMPILATION_UNIT);
+		p.setResolveBindings(true); 
+		p.setSource(field.getTypeRoot());				
+		
+//		ASTNode unitNode = p.createAST(new NullProgressMonitor());
+		final org.eclipse.jdt.core.dom.CompilationUnit comp = (CompilationUnit) p.createAST(null);
+		
+		comp.accept(new ASTVisitor() {
+	        @Override
+	        public boolean visit(VariableDeclarationFragment node) {
+	            IJavaElement element = node.resolveBinding().getJavaElement();
+	            if (field.equals(element)) {
+	                org.eclipse.jdt.core.dom.FieldDeclaration fieldDeclaration = (org.eclipse.jdt.core.dom.FieldDeclaration)node.getParent();
+	                
+	                numberOfTheLine = comp.getLineNumber(fieldDeclaration.getStartPosition() - 1);
+	                
+	                System.out.println(comp.getLineNumber(fieldDeclaration.getStartPosition() - 1));
+	                
+	                System.out.println(fieldDeclaration.getStartPosition());
+	                
+	                System.out.println(fieldDeclaration); 
+	                
+	            }
+	            return false;
+	        }
+	    });
+		
+		
+		
+		return this.numberOfTheLine;
+		
+		
+	}
+	
 	
 }

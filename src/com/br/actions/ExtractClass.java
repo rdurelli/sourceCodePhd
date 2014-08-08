@@ -44,6 +44,7 @@ import com.br.trace.refactoring.PersisteTraceLogRefactoring;
 import com.br.util.models.UtilASTJDTModel;
 import com.br.util.models.UtilJavaModel;
 import com.br.util.models.UtilKDMModel;
+import com.br.utils.ReadRefactoringCatalogueFile;
 
 public class ExtractClass implements IObjectActionDelegate {
 
@@ -56,6 +57,11 @@ public class ExtractClass implements IObjectActionDelegate {
 	@Override
 	public void run(IAction action) {
 
+		
+		
+		
+		ReadRefactoringCatalogueFile.read();
+		
 		IEditorPart editorPart = org.eclipse.modisco.kdm.source.extension.Activator
 				.getDefault().getWorkbench().getActiveWorkbenchWindow()
 				.getActivePage().getActiveEditor();

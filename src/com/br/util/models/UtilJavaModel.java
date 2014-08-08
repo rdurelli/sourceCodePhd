@@ -69,7 +69,10 @@ import org.eclipse.gmt.modisco.omg.kdm.code.Datatype;
 import org.eclipse.gmt.modisco.omg.kdm.code.Extends;
 import org.eclipse.gmt.modisco.omg.kdm.code.MethodUnit;
 import org.eclipse.gmt.modisco.omg.kdm.code.StorableUnit;
+import org.eclipse.gmt.modisco.omg.kdm.kdm.KDMModel;
 import org.eclipse.gmt.modisco.omg.kdm.kdm.Segment;
+import org.eclipse.gmt.modisco.omg.kdm.source.AbstractInventoryElement;
+import org.eclipse.gmt.modisco.omg.kdm.source.InventoryModel;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
@@ -1337,6 +1340,46 @@ public class UtilJavaModel {
 			
 		}
 		
+		
+	}
+	
+	
+	public void actionInLineClass (ClassDeclaration classDeclarationSelectedToInline1, ClassDeclaration classDeclarationSelectedToInline2, Package packageToRemoveTheClass, FieldDeclaration fieldDeclarationLinkToRemove, Model model) {
+		
+		List<FieldDeclaration> fieldDeclaration = this.getFieldDeclarations(classDeclarationSelectedToInline2);
+		
+		String nameOFTheClasseToDelete = classDeclarationSelectedToInline2.getName();
+		
+	
+		for (FieldDeclaration fieldDeclarationLocal : fieldDeclaration) {
+			
+			this.moveFieldDeclarationToClassDeclaration(classDeclarationSelectedToInline1, fieldDeclarationLocal);//move all fieldDeclaration
+			
+		}
+		
+		List<MethodDeclaration> methodDeclarations = this.getMethodDeclarations(classDeclarationSelectedToInline2);
+		
+		for (MethodDeclaration methodDeclaration : methodDeclarations) {
+			this.moveMethodDeclarationToClassDeclaration(classDeclarationSelectedToInline1, methodDeclaration);
+		}
+		
+		
+		classDeclarationSelectedToInline1.getBodyDeclarations().remove(fieldDeclarationLinkToRemove);
+		EList<AbstractTypeDeclaration> allClasses = packageToRemoveTheClass.getOwnedElements();
+		allClasses.remove(classDeclarationSelectedToInline2);
+		
+		//remove the SourceFile of the deleted ClassDeclaration
+		
+		EList<CompilationUnit> allCompilationUnits = model.getCompilationUnits();
+		
+		for (CompilationUnit compilationUnit : allCompilationUnits) {
+			if (compilationUnit.getName().equals(nameOFTheClasseToDelete+".java")) {
+				allCompilationUnits.remove(compilationUnit);
+				break;
+			}
+		}
+		
+	
 		
 	}
 	

@@ -21,7 +21,6 @@ public class CreateUMLModelBasedOnKDMModel {
 	
 	public static void createModel () {
 		
-		
 		String projectName = ProjectSelectedToModernize.projectSelected.getProject().getName();
 		
 		String kdmModelLocation = ProjectSelectedToModernize.projectSelected.getProject().getLocationURI().toString();
@@ -53,9 +52,6 @@ public class CreateUMLModelBasedOnKDMModel {
 		
 		System.out.println("Localization of KDM Model" + kdmModelLocation);
 		
-		
-		
-		
 //		System.out.println("O nome do arquivo Ž " + file.getName());
 		
 		try {
@@ -67,11 +63,41 @@ public class CreateUMLModelBasedOnKDMModel {
 			UML.save(Collections.EMPTY_MAP);
 			
 		} catch (DiscoveryException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
+			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
+		}	
+	}
+	
+	public static void createModel (String projectName, String kdmModelLocation) {
+		
+		DiscoverUmlModelFromKdmModel discover = new DiscoverUmlModelFromKdmModel();
+		
+		IResource resrouce = ProjectSelectedToModernize.projectSelected.getProject().findMember("/MODELS_PIM/KDMMODEL_NEW.xmi");
+		
+		IFile fileToBeRead = (IFile) resrouce;
+		
+		try {
+			
+			discover.discoverElement(fileToBeRead, new NullProgressMonitor());
+			
+			Resource UML = discover.getTargetModel();
+			
+			UML.setURI(URI.createURI(kdmModelLocation+"/MODELS_PSM_TO_BE/"+projectName+".uml"));
+			
+			UML.save(Collections.EMPTY_MAP);
+			
+		} catch (DiscoveryException e) {
+			
+			e.printStackTrace();
+			
+		} catch (IOException e) {
+			
+			e.printStackTrace();
+			
 		}
 		
 		

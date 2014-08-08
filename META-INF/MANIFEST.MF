@@ -42,7 +42,10 @@ Require-Bundle: org.eclipse.core.runtime,
  com.br.refactoring.dsl.tests;bundle-version="1.0.0",
  com.br.refactoring.xtext.dsl;bundle-version="1.0.0",
  com.br.refactoring.xtext.dsl.tests;bundle-version="1.0.0",
- com.br.refactoring.xtext.dsl.ui;bundle-version="1.0.0"
+ com.br.refactoring.xtext.dsl.ui;bundle-version="1.0.0",
+ org.modelgoon.pluginteste;bundle-version="4.4.2",
+ org.modelgoon.plugin;bundle-version="4.4.1",
+ org.eclipse.jdt;bundle-version="3.7.2"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ClassPath: .,
  libs/jruby.jar,

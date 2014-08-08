@@ -235,6 +235,12 @@
              menubarPath="TestePlugin.menu5/content">
        </action>
        <action
+             class="com.br.actions.GETUMLTeste"
+             id="com.actions.newActionUML"
+             label="TESTE UML Get"
+             menubarPath="TestePlugin.menu5/content">
+       </action>
+       <action
              class="com.br.actions.PullUpFieldClass"
              id="com.actions.newActionPullUpField"
              label="Move Method"
@@ -253,7 +259,7 @@
              menubarPath="TestePlugin.menu4/content">
        </action>
        <action
-             class="com.br.actions.PullUpFieldClass"
+             class="com.br.actions.InLineClass"
              id="com.actions.newActionPullUpField"
              label="InLine Class"
              menubarPath="TestePlugin.menu4/content">

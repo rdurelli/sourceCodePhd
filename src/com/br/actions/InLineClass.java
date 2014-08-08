@@ -1,11 +1,8 @@
 package com.br.actions;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -15,15 +12,12 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.gmt.modisco.infra.browser.editors.EcoreBrowser;
-import org.eclipse.gmt.modisco.java.AbstractTypeDeclaration;
 import org.eclipse.gmt.modisco.java.ClassDeclaration;
 import org.eclipse.gmt.modisco.java.FieldDeclaration;
 import org.eclipse.gmt.modisco.java.Model;
 import org.eclipse.gmt.modisco.omg.kdm.code.ClassUnit;
-import org.eclipse.gmt.modisco.omg.kdm.code.CodeItem;
 import org.eclipse.gmt.modisco.omg.kdm.code.Package;
 import org.eclipse.gmt.modisco.omg.kdm.code.StorableUnit;
 import org.eclipse.gmt.modisco.omg.kdm.core.KDMEntity;
@@ -48,49 +42,32 @@ import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 import com.br.gui.refactoring.ExtractSuperClassInfo;
 import com.br.gui.refactoring.ExtractSuperClassInfoJavaModel;
-import com.br.gui.refactoring.WizardExtract;
+import com.br.gui.refactoring.PullUpFieldInfo;
+import com.br.gui.refactoring.PullUpFieldInfoJavaModel;
 import com.br.gui.refactoring.WizardExtractSuperClass;
+import com.br.gui.refactoring.WizardInLineClass;
+import com.br.gui.refactoring.WizardPullUpField;
 import com.br.trace.refactoring.PersisteTraceLogRefactoring;
 import com.br.util.models.UtilJavaModel;
 import com.br.util.models.UtilKDMModel;
 
-public class ExtractSuperClass implements IObjectActionDelegate {
+public class InLineClass implements IObjectActionDelegate {
 
 	private Shell shell;
 	
-	
-
-	public ExtractSuperClass() {
-		// TODO Auto-generated constructor stub
-	}
 
 	@Override
 	public void run(IAction action) {
-
-		LinkedHashSet<ExtractSuperClassInfo> extractSuperClassInfo = new LinkedHashSet<ExtractSuperClassInfo>();
-		LinkedHashSet<ExtractSuperClassInfoJavaModel> extractSuperClassInfoJAVAMODEL = new LinkedHashSet<ExtractSuperClassInfoJavaModel>();
-		
 		
 		UtilKDMModel utilKDMMODEL = new UtilKDMModel();
 		UtilJavaModel utilJavaModel =  new UtilJavaModel();
-		
-		
-		
 		
 		
 		IEditorPart editorPart = org.eclipse.modisco.kdm.source.extension.Activator
 				.getDefault().getWorkbench().getActiveWorkbenchWindow()
 				.getActivePage().getActiveEditor();
 
-		System.out.println(editorPart.getTitle());
-
-		System.out.println(editorPart);
-
-		System.out.println(editorPart.getClass());
-
 		if (editorPart instanceof AbstractTextEditor) {
-
-			System.out.println("Sim....");
 
 		} else if (editorPart instanceof EcoreBrowser) {
 
@@ -123,127 +100,102 @@ public class ExtractSuperClass implements IObjectActionDelegate {
 					// offset
 					offset = ((StructuredSelection) iSelection);
 					
-					List<?> classesSelectedToSuperExtract = offset.toList();
+					List<?> classesSelectedToInLine = offset.toList();
 					
-					if (classesSelectedToSuperExtract.size() == 1) {
+					if (classesSelectedToInLine.size() == 1) {
 						
-						MessageDialog.openError(shell, "Error", "Please be sure you have selected at least two ClassUnits to realize the Super Extract Class.");
+						MessageDialog.openError(shell, "Error", "Please be sure you have selected at least two ClassUnits to realize the InLine Class.");
 						
 					} else {
 					
-					for (int i = 0; i < classesSelectedToSuperExtract.size(); i++) {
+					Segment segment = utilKDMMODEL.getSegmentToPersiste((KDMEntity)classesSelectedToInLine.get(0));
 						
-						ClassUnit classUnitSelected = (ClassUnit) classesSelectedToSuperExtract.get(i);
+					ClassUnit classUnitSelectedToInline = (ClassUnit) classesSelectedToInLine.get(0);	
+					List<StorableUnit> storablesOfClassUnitSelectedToInLine1 = utilKDMMODEL.getStorablesUnit(classUnitSelectedToInline);
+					
+					boolean hasALink = false;
+					
+					ClassUnit classUnitSelectedToInline2 = (ClassUnit) classesSelectedToInLine.get(1);
+					
+					Package packageToRemoveTheClass = (Package)classUnitSelectedToInline2.eContainer();
+					
+					StorableUnit storableUnitToRemoveLink = null;
+					
+					FieldDeclaration fieldDeclarationLink = null;
+					
+					
+					
+					for (StorableUnit storableUnit : storablesOfClassUnitSelectedToInLine1) {
 						
-						List<StorableUnit>  storables = utilKDMMODEL.getStorablesUnit(classUnitSelected);
-						
-						if (storables.size() > 0) {
+						if (storableUnit.getType().getName().equals(classUnitSelectedToInline2.getName())) {
 							
-							for (int j = 0; j < classesSelectedToSuperExtract.size(); j++) {
-								
-								ClassUnit classUnitSelected2 = (ClassUnit) classesSelectedToSuperExtract.get(j);
-								
-								if (classUnitSelected != classUnitSelected2) {
-								
-									List<StorableUnit> storables2 = utilKDMMODEL.getStorablesUnit(classUnitSelected2);
-								
-									
-									for (StorableUnit storableUnit : storables) {
-										
-										
-										for (StorableUnit storableUnit2 : storables2) {
-											
-											if (storableUnit.getName().equals(storableUnit2.getName()) && (storableUnit.getType().getName().equals(storableUnit2.getType().getName()))) {
-												
-//												extractSuperClassInfo
-												
-												ExtractSuperClassInfo superClassInfo = new ExtractSuperClassInfo();
-												
-												superClassInfo.setTo(classUnitSelected);
-												superClassInfo.setFrom(classUnitSelected2);
-												superClassInfo.setAttributeToExtract(storableUnit.getName());
-												superClassInfo.setStorableUnitTo(storableUnit);
-												superClassInfo.setStorableUnitFROM(storableUnit2);
-												extractSuperClassInfo.add(superClassInfo);
-												
-//												System.out.println("Sim somos iguais :" +classUnitSelected.getName() +" tem "+storableUnit.getName());
-//												System.out.println("Sim somos iguais :" +classUnitSelected2.getName() +" tem "+storableUnit2.getName());
-//												
-											}
-											
-										}
-										
-									}
-									
-//									System.out.println(storables);
-//									System.out.println(storables2);
-//								
-								}
-								
-							}
+							storableUnitToRemoveLink = storableUnit;
+							hasALink = true;
+							break;
 							
 						}
 						
-						
-						
-						
 					}
+					
+					if (!hasALink) {
+						
+						MessageDialog.openError(shell, "Error", "Not possible to apply the refactoring InLine Class once the two selected classes does not have none association.");
+					} 
+						else {
+						
+						
+						
+					} 
+					
+					utilKDMMODEL.verifyConstraintForClassUnit(segment, activeProjectName, classUnitSelectedToInline2, activeProject);
 					
 					Model modelJava = utilJavaModel.load(activeProject.getLocationURI().toString()+"/MODELS_PIM_modificado/JavaModelRefactoring.javaxmi");
 					
-					List<ClassDeclaration> classesSelectedJavaModel = this.getAllClassDeclaration(classesSelectedToSuperExtract, utilKDMMODEL, utilJavaModel, modelJava);
+					List<ClassDeclaration> classesSelectedJavaModel = this.getAllClassDeclaration(classesSelectedToInLine, utilKDMMODEL, utilJavaModel, modelJava);
+					
+					if (classesSelectedJavaModel.size() == 1) {
+						
+						MessageDialog.openError(shell, "Error", "Please be sure you have selected at least two ClassUnits to realize the InLine Class.");
+						
+					} else  {
+					
+					ClassDeclaration classDeclarationSelectedToInline = null;
+					ClassDeclaration classDeclarationSelectedToInline2 = null;
+				
 					
 					
-					//colocar aqui depois em um método, na verdade passar arrumando tudo e melhorar essa classe...
-					
-					for (int i = 0; i < classesSelectedJavaModel.size(); i++) {
-						
-						ClassDeclaration classDeclarationSelected = classesSelectedJavaModel.get(i);
-						
-						List<FieldDeclaration> fields = utilJavaModel.getFieldDeclarations(classDeclarationSelected);
-						
-						if (fields.size() > 0) {
+					for (ClassDeclaration classDeclaration : classesSelectedJavaModel) {
+						if (classDeclaration.getName().equals(classUnitSelectedToInline.getName())) {
 							
-							for (int j = 0; j < classesSelectedJavaModel.size(); j++) {
-								
-								ClassDeclaration classDeclarationSelected2 = classesSelectedJavaModel.get(j);
-								
-								if (classDeclarationSelected != classDeclarationSelected2) {
-									
-									List<FieldDeclaration> fields2 = utilJavaModel.getFieldDeclarations(classDeclarationSelected2);
-									
-									for (FieldDeclaration fieldDeclaration : fields) {
-										
-										for (FieldDeclaration fieldDeclaration2 : fields2) {
-											
-											if (fieldDeclaration.getFragments().get(0).getName().equals(fieldDeclaration2.getFragments().get(0).getName()) && 
-													fieldDeclaration.getType().getType().getName().equals(fieldDeclaration2.getType().getType().getName())) {
-												
-												ExtractSuperClassInfoJavaModel superClassInfoJavaModel = new ExtractSuperClassInfoJavaModel();
-												
-												superClassInfoJavaModel.setTo(classDeclarationSelected);
-												superClassInfoJavaModel.setFrom(classDeclarationSelected2);
-												superClassInfoJavaModel.setAttributeToExtract(fieldDeclaration.getFragments().get(0).getName());
-												superClassInfoJavaModel.setStorableUnitTo(fieldDeclaration);
-												superClassInfoJavaModel.setStorableUnitFROM(fieldDeclaration2);
-												
-												extractSuperClassInfoJAVAMODEL.add(superClassInfoJavaModel);
-												
-												
-											}
-											
-										}
-										
-									}
-									
-								}
-								
-								
-							}
+							classDeclarationSelectedToInline = classDeclaration;
+							
+						}
+						else if (classDeclaration.getName().equals(classUnitSelectedToInline2.getName())) {
+							
+							classDeclarationSelectedToInline2 = classDeclaration;
 							
 						}
 						
 					}
+					
+					List<FieldDeclaration> fieldDeclarationOfClassDeclarationSelectedToInLine1 = utilJavaModel.getFieldDeclarations(classDeclarationSelectedToInline);
+					
+					for (FieldDeclaration fieldDeclaration : fieldDeclarationOfClassDeclarationSelectedToInLine1) {
+						
+						if (fieldDeclaration.getType().getType().getName().equals(classDeclarationSelectedToInline2.getName())) {
+							
+							fieldDeclarationLink = fieldDeclaration;
+							break;
+							
+						}
+						
+					}
+					
+					
+					System.out.println(classDeclarationSelectedToInline.getName());
+					System.out.println(classDeclarationSelectedToInline2.getName());
+					
+					 
 					
 					
 					
@@ -251,21 +203,22 @@ public class ExtractSuperClass implements IObjectActionDelegate {
 					
 //					ClassUnit superClassExtractedCreated = utilKDMMODEL.createClassUnit("SuperClassExtracted", ((Package)((ClassUnit)classesSelectedToSuperExtract.get(0)).eContainer()));
 					
-					for (ExtractSuperClassInfo info : extractSuperClassInfo) {
-						
-						System.out.println(info.getTo().getName() + " has similar feature with " + info.getFrom().getName() + " ( "+ info.getAttributeToExtract()+" )");
-						
-					}
-					
-					Package packageToPuTTheNewClass = ((Package)((ClassUnit)classesSelectedToSuperExtract.get(0)).eContainer());
-					
-					WizardDialog wizard = new WizardDialog(shell, new WizardExtractSuperClass(extractSuperClassInfo, extractSuperClassInfoJAVAMODEL, packageToPuTTheNewClass, packageToPutTheNewClassJavaModel, modelJava, URIProject ));
+					org.eclipse.gmt.modisco.java.Package packageToRemoveTheClassJava = (org.eclipse.gmt.modisco.java.Package) classDeclarationSelectedToInline2.eContainer();
 
+					System.out.println(packageToRemoveTheClassJava.getName());
+					
+					
+					
+					WizardDialog wizard = new WizardDialog(shell, new WizardInLineClass(classUnitSelectedToInline, classUnitSelectedToInline2, classDeclarationSelectedToInline, classDeclarationSelectedToInline2, modelJava, URIProject, packageToRemoveTheClass, packageToRemoveTheClassJava, storableUnitToRemoveLink, fieldDeclarationLink, segment));
+//					
 					wizard.open();
+//					WizardDialog wizard = new WizardDialog(shell, new WizardInLineClass(extractSuperClassInfo, extractSuperClassInfoJAVAMODEL, packageToPuTTheNewClass, packageToPutTheNewClassJavaModel, modelJava, URIProject ));
+//
+//					wizard.open();
 					
 					UtilKDMModel utilKDM = new UtilKDMModel();
 					
-					Segment segment = utilKDM.getSegmentToPersiste((KDMEntity)classesSelectedToSuperExtract.get(0));
+					
 					
 					Resource resource = utilKDM.save(segment, offset.toString(), URIProject);
 					
@@ -288,7 +241,8 @@ public class ExtractSuperClass implements IObjectActionDelegate {
 					
 					utilJavaModel.save(model, URIProject);
 					
-					PersisteTraceLogRefactoring.saveTrace(activeProjectName, "ExtractSuperClass", "Rafael Durelli");
+					PersisteTraceLogRefactoring.saveTrace(activeProjectName, "InLine Class", "Rafael Durelli");
+					
 					
 					
 
@@ -297,7 +251,7 @@ public class ExtractSuperClass implements IObjectActionDelegate {
 				}
 			}
 		}
-
+		}
 	}
 	
 	private void closeEditor (IEditorPart editorPart) {
@@ -314,7 +268,7 @@ public class ExtractSuperClass implements IObjectActionDelegate {
 			try {
 				IDE.openEditor(page, fileToOpen);
 			} catch (PartInitException e) {
-				
+				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		
@@ -326,7 +280,7 @@ public class ExtractSuperClass implements IObjectActionDelegate {
 		try {
 			ResourcesPlugin.getWorkspace().getRoot().getProject(project.getName()).refreshLocal(IResource.DEPTH_INFINITE, null);
 		} catch (CoreException e1) {
-		
+			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}					
 		
@@ -367,4 +321,3 @@ public class ExtractSuperClass implements IObjectActionDelegate {
 	}
 
 }
-

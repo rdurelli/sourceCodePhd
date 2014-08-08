@@ -181,6 +181,30 @@ public class UtilASTJDTModel {
 	
 	/***
 	 * @author rafaeldurelli
+	 * Esse metodo é utilizado para obter um determinado IMehod passando a classe e o nome desse método. 
+	 * Por exemplo, se o método a ser recuparado é o getName(), apenas passe como string getName, sem o parenteses.
+	 * 
+	 * */
+	public IField getIFieldByName (ICompilationUnit iCompilationUnit, String fieldName) throws JavaModelException {
+		
+		ArrayList<IField> allField = this.getAllField(iCompilationUnit);
+		
+		for (IField ifi : allField) {
+			
+			if (ifi.getElementName().equals(fieldName)) {
+				
+				return ifi;
+			}
+			
+		}
+		
+		return null;
+		
+	}
+	
+	
+	/***
+	 * @author rafaeldurelli
 	 * Esse metodo é utilizado para obter o número que linhas que uma determinada classe tem.
 	 * 
 	 * */
