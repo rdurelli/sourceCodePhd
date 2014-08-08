@@ -90,7 +90,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.omg.IOP.CodecFactory;
 
-import com.br.constraint.ConstraintClassUnit;
+import com.br.constraint.ConstraintAfterToRemoveAClassUnitOnStorableUnit;
+import com.br.constraint.GenericConstraint;
 import com.br.databaseDDL.Column;
 import com.br.gui.refactoring.ExtractSuperClassInfo;
 import com.br.gui.refactoring.PullUpFieldInfo;
@@ -1690,6 +1691,8 @@ public class UtilKDMModel {
 		
 		EList<KDMModel> kdmModels = segment.getModel();
 		
+		List<GenericConstraint> allConstraintRelatedToRemoveAClassUnit = new ArrayList<GenericConstraint>();
+		
 		CodeModel codeModelThatRepresentTheSystem = null;
 		
 		for (KDMModel kdmModel : kdmModels) {
@@ -1713,15 +1716,14 @@ public class UtilKDMModel {
 			List<StorableUnit> storablesUnits = this.getStorablesUnit(classesToVerify);
 			
 			for (StorableUnit storableUnit : storablesUnits) {
-				this.verifyStorableUnitBeforeRemoveAClassUnit(storableUnit, classUnitToVerifyTheConstraint, currentProject);
+				this.verifyStorableUnitBeforeRemoveAClassUnit(storableUnit, classUnitToVerifyTheConstraint, currentProject, allConstraintRelatedToRemoveAClassUnit);
 			}
 			
 		}
 			
 	}
 	
-	private void verifyStorableUnitBeforeRemoveAClassUnit (StorableUnit storableUnitToVerify, ClassUnit classUnitThatWillBeRemoved, IProject currentProject) {
-		
+	private void verifyStorableUnitBeforeRemoveAClassUnit (StorableUnit storableUnitToVerify, ClassUnit classUnitThatWillBeRemoved, IProject currentProject, List<GenericConstraint> allConstraintRelatedToRemoveAClassUnit) {
 		
 		ClassUnit classUnitThatContainsTheStorableUnit = (ClassUnit) storableUnitToVerify.eContainer();
 		
@@ -1739,73 +1741,14 @@ public class UtilKDMModel {
 			
 			if ( ( thePackagesAreEquals) && ( toVerify.getName().equals(classUnitThatWillBeRemoved.getName() ) ) ) {
 				
-				ConstraintClassUnit constraint = new ConstraintClassUnit(storableUnitToVerify, null, classUnitThatWillBeRemoved.getName());
-				
-				Integer numberOfTheLine = 0;
-				
+				ConstraintAfterToRemoveAClassUnitOnStorableUnit constraint = new ConstraintAfterToRemoveAClassUnitOnStorableUnit();
+	
 				try {
 					ICompilationUnit  iCompilationUnitThatRepresentTheClassUnit = utilASTJDTModel.getClassByClassUnit(classUnitThatContainsTheStorableUnit, currentProject, packageString);
 					
 					final IField field = utilASTJDTModel.getIFieldByName(iCompilationUnitThatRepresentTheClassUnit, storableUnitToVerify.getName());
 					
-					this.getTheLineNumberOfAIField(iCompilationUnitThatRepresentTheClassUnit, field);
-					
-					final ASTParser p = ASTParser.newParser(AST.JLS4);
-					p.setKind(ASTParser.K_COMPILATION_UNIT);
-					p.setResolveBindings(true); 
-					p.setSource(field.getTypeRoot());				
-					
-//					ASTNode unitNode = p.createAST(new NullProgressMonitor());
-					final org.eclipse.jdt.core.dom.CompilationUnit comp = (CompilationUnit) p.createAST(null);
-					
-					comp.accept(new ASTVisitor() {
-				        @Override
-				        public boolean visit(VariableDeclarationFragment node) {
-				            IJavaElement element = node.resolveBinding().getJavaElement();
-				            if (field.equals(element)) {
-				                org.eclipse.jdt.core.dom.FieldDeclaration fieldDeclaration = (org.eclipse.jdt.core.dom.FieldDeclaration)node.getParent();
-				                
-				                
-				                System.out.println(comp.getLineNumber(fieldDeclaration.getStartPosition() - 1));
-				                
-				                System.out.println(fieldDeclaration.getStartPosition());
-				                
-				                
-				                
-				                System.out.println(fieldDeclaration); 
-				                
-				            }
-				            return false;
-				        }
-				    });
-					
-//					
-					
-					
-					
-					
-					
-									
-//					System.out.println(field.getKey());
-//					
-//					ASTNode node = comp.findDeclaringNode(field.getKey());
-//					
-//					int lineNumber = comp.getLineNumber(node.getStartPosition()) - 1;
-					
-					
-//					System.out.println(" O numero do attributo Ž " + lineNumber);
-					
-//					Document doc = new Document(field.getSource());
-//					
-//					System.out.println(doc.);
-					
-//					field.get
-					
-//					teste.findDeclaringNode(field.getKey());
-//
-//					int lineNumber = compilationUnit.getLineNumber(node.getStartPosition()) - 1;
-					
-					System.out.println(field);
+					this.getTheLineNumberOfAIField(iCompilationUnitThatRepresentTheClassUnit, field);//atribui o valor para o atributo numberOfLine
 					
 				} catch (JavaModelException e) {
 					
@@ -1814,6 +1757,13 @@ public class UtilKDMModel {
 					
 					e.printStackTrace();
 				}
+				
+				constraint.setClassUnitThatWasRemoved(classUnitThatWillBeRemoved.getName());
+				constraint.setClassThatOwnsTheIrregularStorableUnit(classUnitThatContainsTheStorableUnit);
+				constraint.setNumberOfTheLine(this.numberOfTheLine);
+				constraint.setStorableUnit(storableUnitToVerify);
+				
+				allConstraintRelatedToRemoveAClassUnit.add(constraint);
 				
 				System.out.println("The Class "+ classUnitThatContainsTheStorableUnit.getName() + " contains an attribute of the type " + classUnitThatWillBeRemoved.getName());
 				
