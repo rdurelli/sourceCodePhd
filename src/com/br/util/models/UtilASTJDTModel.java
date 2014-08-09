@@ -1,6 +1,7 @@
 package com.br.util.models;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -171,6 +172,33 @@ public class UtilASTJDTModel {
 			if (iMethod.getElementName().equals(methodName)) {
 				
 				return iMethod;
+			}
+			
+		}
+		
+		return null;
+		
+	}
+	
+	/***
+	 * @author rafaeldurelli
+	 * Esse metodo é utilizado para obter um determinado IMehod passando a classe, nome desse método, a quantidade de parametro e os nomes desses parametros. 
+	 * Por exemplo, se o método a ser recuparado é o getName(), apenas passe como string getName, sem o parenteses.
+	 * 
+	 * */
+	public IMethod getIMethodByNameAndPararameter (ICompilationUnit iCompilationUnit, String methodName, String[] parameterNames, int numberOfParameter) throws JavaModelException {
+		
+		ArrayList<IMethod> allMethods = this.getAllMethod(iCompilationUnit);
+		
+		for (IMethod iMethod : allMethods) {
+			
+			if (iMethod.getParameterNames().length == numberOfParameter) {
+				
+				boolean theyAreEquals = Arrays.deepEquals(parameterNames, iMethod.getParameterNames());
+				
+				if ( ( theyAreEquals ) && ( iMethod.getElementName( ).equals( methodName) ) ) {
+						return iMethod;
+				}
 			}
 			
 		}
