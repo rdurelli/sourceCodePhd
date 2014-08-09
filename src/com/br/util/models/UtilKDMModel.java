@@ -1942,10 +1942,6 @@ public class UtilKDMModel {
 	        		
 	        		VariableDeclaration variableDeclaration = (VariableDeclaration) parameter.get(i);
 	        		String parameterName = variableDeclaration.getStructuralProperty(SingleVariableDeclaration.TYPE_PROPERTY).toString();
-	        		
-	        		System.out.println(variableDeclaration.getNameProperty());
-	        		
-	        		System.out.println(variableDeclaration.getName());
 					
 	        		parameterNamesToVerify[i] = variableDeclaration.getName().toString();
 	        		
@@ -1958,37 +1954,7 @@ public class UtilKDMModel {
 	        		numberOfTheLine = comp.getLineNumber(node.getStartPosition());
 	        		System.out.println(numberOfTheLine);
 	        		
-	        	}
-	        	
-	        	
-//	        	for (Object parameter : node.parameters()) { 
-//	        		
-//	        		VariableDeclaration variableDeclaration = (VariableDeclaration) parameter;
-//	        		String parameterName = variableDeclaration.getStructuralProperty(SingleVariableDeclaration.TYPE_PROPERTY).toString();
-//	        		
-//	        		System.out.println(variableDeclaration.getNameProperty());
-//	        		
-//	        		System.out.println(variableDeclaration.getName());
-//	        		
-//	        		parameterNamesToVerify
-//	        		
-//	        		
-//	        		System.out.println(parameterName);
-//	        		
-//	        	}
-	        	
-	        	if (node.getName().toString().equals(method.getElementName())) {
-	        		
-	        		System.out.println("Aqui numero da linha " + comp.getLineNumber(node.getStartPosition()));
-		        	
-		        	System.out.println("AQUI numero da coluna " + comp.getColumnNumber(node.getStartPosition()));
-		        	
-		        	numberOfTheLine = comp.getLineNumber(node.getStartPosition()) - 1;
-		   
-	        		
-	        	}
-	        	
-	        	     	
+	        	}     	
 	            return true;
 	        }
 	    });
