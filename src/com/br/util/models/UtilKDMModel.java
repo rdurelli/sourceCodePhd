@@ -42,6 +42,7 @@ import org.eclipse.gmt.modisco.omg.kdm.code.ClassUnit;
 import org.eclipse.gmt.modisco.omg.kdm.code.CodeFactory;
 import org.eclipse.gmt.modisco.omg.kdm.code.CodeItem;
 import org.eclipse.gmt.modisco.omg.kdm.code.CodeModel;
+import org.eclipse.gmt.modisco.omg.kdm.code.ControlElement;
 import org.eclipse.gmt.modisco.omg.kdm.code.Datatype;
 import org.eclipse.gmt.modisco.omg.kdm.code.ExportKind;
 import org.eclipse.gmt.modisco.omg.kdm.code.Extends;
@@ -94,6 +95,7 @@ import org.eclipse.ui.PlatformUI;
 import org.modelgoon.classes.model.Method;
 import org.omg.IOP.CodecFactory;
 
+import com.br.constraint.ConstraintAfterToRemoveAClassUnitOnMethodUnit;
 import com.br.constraint.ConstraintAfterToRemoveAClassUnitOnStorableUnit;
 import com.br.constraint.GenericConstraint;
 import com.br.databaseDDL.Column;
@@ -966,6 +968,34 @@ public class UtilKDMModel {
 		
 	}
 	
+//	public List<ControlElement> getControlElements (ClassUnit classUnit) {
+//		
+//		EList<CodeItem> codeElements = classUnit.getCodeElement();
+//		
+//		List<ControlElement> controlElements = new ArrayList<ControlElement>();
+//		
+//		for (CodeItem element : codeElements) {
+//			
+//			if (element instanceof ControlElement ) {
+//				
+//				ControlElement controlElement = (ControlElement) element;
+//				
+//				if (controlElement.getAttribute().size()!=0) {
+//					
+//					controlElements.add((ControlElement)element);
+//					
+//				}
+//				
+//				
+//				
+//			}
+//			
+//		}
+//		return controlElements;
+//		
+//		
+//	}
+	
 	public StorableUnit getStorablesUnitByName (ClassUnit classUnit, String name) {
 		
 		EList<CodeItem> codeElements = classUnit.getCodeElement();
@@ -1721,19 +1751,63 @@ public class UtilKDMModel {
 			
 			List<MethodUnit> methodUnits = this.getMethodsUnit(classesToVerify);
 			
+//			List<ControlElement> controlElements = this.getControlElements(classesToVerify);
+			
 			for (MethodUnit methodUnit : methodUnits) {
 				this.verifyMethodUnitBeforeRemoveAClassUnit(methodUnit, classUnitToVerifyTheConstraint, currentProject, allConstraintRelatedToRemoveAClassUnit);
 			}
 			
 			for (StorableUnit storableUnit : storablesUnits) {
-			//TODO	this.verifyStorableUnitBeforeRemoveAClassUnit(storableUnit, classUnitToVerifyTheConstraint, currentProject, allConstraintRelatedToRemoveAClassUnit);
+				this.verifyStorableUnitBeforeRemoveAClassUnit(storableUnit, classUnitToVerifyTheConstraint, currentProject, allConstraintRelatedToRemoveAClassUnit);
 			}
 			
-		}
+//			for (ControlElement controlElement : controlElements) {
+//				this.verifyControlElementBeforeRemoveAClassUnit(controlElement, classUnitToVerifyTheConstraint, currentProject, allConstraintRelatedToRemoveAClassUnit);
+//			}
 			
+		}
+		
+		System.out.println(allConstraintRelatedToRemoveAClassUnit.size());
 	}
 	
 	
+//	private void verifyControlElementBeforeRemoveAClassUnit(ControlElement controlElementToVerify, ClassUnit classUnitThatWillBeRemoved, IProject currentProject, List<GenericConstraint> allConstraintRelatedToRemoveAClassUnit) {
+//		
+//		ClassUnit classUnitThatContainsTheControlElement = (ClassUnit) controlElementToVerify.eContainer();
+//		
+//		String[] packageString = this.getCompletePackageName(classUnitThatContainsTheControlElement);
+//		
+//		String[] packageOfTheClassThatWillBeRemoved = this.getCompletePackageName(classUnitThatWillBeRemoved);
+//		
+//		EList<AbstractCodeElement> allElements = controlElementToVerify.getCodeElement();
+//		
+//		for (AbstractCodeElement abstractCodeElement : allElements) {
+//			if (abstractCodeElement instanceof ActionElement) {
+//				
+//				ActionElement actionElement  = (ActionElement) abstractCodeElement;
+//				
+//				EList<AbstractCodeElement> allElementsOfActionElement  = actionElement.getCodeElement();
+//				
+//				for (AbstractCodeElement abstractCodeElement2 : allElementsOfActionElement) {
+//					
+//					if (abstractCodeElement2 instanceof StorableUnit) {
+//						
+//						StorableUnit storableUnitToVerify = (StorableUnit) abstractCodeElement2;
+//						
+//						this.verifyStorableUnitBeforeRemoveAClassUnit(storableUnitToVerify, classUnitThatWillBeRemoved, currentProject, allConstraintRelatedToRemoveAClassUnit);
+//						
+//					}
+//					
+//				}
+//				
+//			}
+//		}
+//		
+//		
+//	}
+
+
+
 	private void verifyMethodUnitBeforeRemoveAClassUnit (MethodUnit methodUnitToVerify, ClassUnit classUnitThatWillBeRemoved, IProject currentProject, List<GenericConstraint> allConstraintRelatedToRemoveAClassUnit) {
 		
 		ClassUnit classUnitThatContainsTheStorableUnit = (ClassUnit) methodUnitToVerify.eContainer();
@@ -1778,6 +1852,8 @@ public class UtilKDMModel {
 						
 						if ( ( thePackagesAreEquals) && ( toVerify.getName().equals(classUnitThatWillBeRemoved.getName() ) ) ) {
 							
+							ConstraintAfterToRemoveAClassUnitOnMethodUnit constraint = new ConstraintAfterToRemoveAClassUnitOnMethodUnit();
+							
 //							ConstraintAfterToRemoveAClassUnitOnStorableUnit constraint = new ConstraintAfterToRemoveAClassUnitOnStorableUnit(); criar uma aqui para METHOD
 							
 							try {
@@ -1785,9 +1861,7 @@ public class UtilKDMModel {
 								
 								final IMethod method = utilASTJDTModel.getIMethodByNameAndPararameter(iCompilationUnitThatRepresentTheClassUnit, methodUnitToVerify.getName(), parameterNames, parameterNames.length);
 								
-								System.out.println(method);
-								
-								System.out.println(this.getTheLineNumberOfAIMethod(iCompilationUnitThatRepresentTheClassUnit, method, parameterNames, parameterNames.length));
+								this.getTheLineNumberOfAIMethodConstructor(iCompilationUnitThatRepresentTheClassUnit, method, parameterNames, parameterNames.length);
 								
 //								final IField field = utilASTJDTModel.getIFieldByName(iCompilationUnitThatRepresentTheClassUnit, storableUnitToVerify.getName());
 								
@@ -1804,6 +1878,94 @@ public class UtilKDMModel {
 								e.printStackTrace();
 							}
 							
+							
+							constraint.setClassUnitThatWasRemoved(classUnitThatWillBeRemoved.getName());
+							constraint.setClassThatOwnsTheIrregularMethodUnit(classUnitThatContainsTheStorableUnit);
+							constraint.setNumberOfTheLine(this.numberOfTheLine);
+							constraint.setMethodUnit(methodUnitToVerify);
+							constraint.setIsConstructor(true);
+							allConstraintRelatedToRemoveAClassUnit.add(constraint);
+							
+						}
+						
+					}
+					
+				}
+							
+			}
+			
+		} else if (methodUnitToVerify.getType() instanceof Signature && methodUnitToVerify.getKind().equals(MethodKind.METHOD)) {
+			
+			Signature signatureOfTheMethod = (Signature) methodUnitToVerify.getType();
+			
+			if (methodUnitToVerify.getName().equals("teste")) {
+				
+				System.out.println("AQUI");
+			}
+			
+			EList<ParameterUnit> parameters = signatureOfTheMethod.getParameterUnit();
+			
+			String[] parameterNames = new String[parameters.size()];
+			
+			if (parameters.size() != 0) {
+			
+				for (int i = 0; i < parameters.size(); i++) {
+				
+					if (!(parameters.get(i).getKind().equals(ParameterKind.RETURN))) {
+					
+						parameterNames[i] = parameters.get(i).getName();//pega todos os nomes do parametro
+						
+					}
+					
+				}
+				
+				parameterNames = clean(parameterNames);
+				
+				for (ParameterUnit parameter : parameters) {
+					
+					if (parameter.getType() instanceof ClassUnit) {
+						
+						ClassUnit toVerify = (ClassUnit) parameter.getType();
+						
+						String[] packageOfTheClassUnitThatContainsTheMethodUnit = this.getCompletePackageName(toVerify);
+						
+						boolean thePackagesAreEquals = Arrays.deepEquals(packageOfTheClassUnitThatContainsTheMethodUnit, packageOfTheClassThatWillBeRemoved);
+						
+						if ( ( thePackagesAreEquals) && ( toVerify.getName().equals(classUnitThatWillBeRemoved.getName() ) ) ) {
+							
+							ConstraintAfterToRemoveAClassUnitOnMethodUnit constraint = new ConstraintAfterToRemoveAClassUnitOnMethodUnit();
+							
+//							ConstraintAfterToRemoveAClassUnitOnStorableUnit constraint = new ConstraintAfterToRemoveAClassUnitOnStorableUnit(); criar uma aqui para METHOD
+							
+							try {
+								ICompilationUnit  iCompilationUnitThatRepresentTheClassUnit = utilASTJDTModel.getClassByClassUnit(classUnitThatContainsTheStorableUnit, currentProject, packageString);
+								
+								final IMethod method = utilASTJDTModel.getIMethodByNameAndPararameter(iCompilationUnitThatRepresentTheClassUnit, methodUnitToVerify.getName(), parameterNames, parameterNames.length);
+								
+								this.getTheLineNumberOfAIMethod(iCompilationUnitThatRepresentTheClassUnit, method, parameterNames, parameterNames.length);
+								
+//								final IField field = utilASTJDTModel.getIFieldByName(iCompilationUnitThatRepresentTheClassUnit, storableUnitToVerify.getName());
+								
+//								List<IMethod> allMethods = utilASTJDTModel.getAllMethod(iCompilationUnitThatRepresentTheClassUnit);
+								
+								
+//								this.getTheLineNumberOfAIField(iCompilationUnitThatRepresentTheClassUnit, field);//atribui o valor para o atributo numberOfLine
+								
+							} catch (JavaModelException e) {
+								
+								e.printStackTrace();
+							} catch (CoreException e) {
+								
+								e.printStackTrace();
+							}
+							
+							
+							constraint.setClassUnitThatWasRemoved(classUnitThatWillBeRemoved.getName());
+							constraint.setClassThatOwnsTheIrregularMethodUnit(classUnitThatContainsTheStorableUnit);
+							constraint.setNumberOfTheLine(this.numberOfTheLine);
+							constraint.setMethodUnit(methodUnitToVerify);
+							constraint.setIsConstructor(false);
+							allConstraintRelatedToRemoveAClassUnit.add(constraint);
 							
 						}
 						
@@ -1893,12 +2055,7 @@ public class UtilKDMModel {
 	                org.eclipse.jdt.core.dom.FieldDeclaration fieldDeclaration = (org.eclipse.jdt.core.dom.FieldDeclaration)node.getParent();
 	                
 	                numberOfTheLine = comp.getLineNumber(fieldDeclaration.getStartPosition() - 1);
-	                
-	                System.out.println(comp.getLineNumber(fieldDeclaration.getStartPosition() - 1));
-	                
-	                System.out.println(fieldDeclaration.getStartPosition());
-	                
-	                System.out.println(fieldDeclaration); 
+	                 
 	                
 	            }
 	            return false;
@@ -1912,11 +2069,11 @@ public class UtilKDMModel {
 		
 	}
 	
-	private Integer getTheLineNumberOfAIMethod(
+	private Integer getTheLineNumberOfAIMethodConstructor(
 			ICompilationUnit iCompilationUnitThatRepresentTheClassUnit,
 			final IMethod method, final String[] parameterNames, final int numberOfParameter) throws JavaModelException {
 		 
-		final String[] parameterNamesToVerify = new String[numberOfParameter];
+		
 		
 		final ASTParser p = ASTParser.newParser(AST.JLS4);
 		p.setKind(ASTParser.K_COMPILATION_UNIT);
@@ -1937,6 +2094,64 @@ public class UtilKDMModel {
 	        	System.out.println(method.getElementName());
 	        	
 	        	List<Object> parameter = node.parameters();
+	        	
+	        	final String[] parameterNamesToVerify = new String[numberOfParameter];
+	        	
+	        	for (int i = 0; i < node.parameters().size(); i++) {
+	        		
+	        		VariableDeclaration variableDeclaration = (VariableDeclaration) parameter.get(i);
+	        		String parameterName = variableDeclaration.getStructuralProperty(SingleVariableDeclaration.TYPE_PROPERTY).toString();
+					
+	        		parameterNamesToVerify[i] = variableDeclaration.getName().toString();
+	        		
+				}
+	        	
+	        	final boolean theyAreEquals = Arrays.deepEquals(parameterNamesToVerify, parameterNames);
+	        	
+	        	if (theyAreEquals && node.isConstructor()) {
+	        		
+	        		numberOfTheLine = comp.getLineNumber(node.getStartPosition());
+	        		System.out.println(numberOfTheLine);
+	        		
+	        	}     	
+	            return true;
+	        }
+	    });
+		
+		
+		
+		return this.numberOfTheLine;
+		
+		
+	}
+	
+	private Integer getTheLineNumberOfAIMethod(
+			ICompilationUnit iCompilationUnitThatRepresentTheClassUnit,
+			final IMethod method, final String[] parameterNames, final int numberOfParameter) throws JavaModelException {
+		 
+		
+		
+		final ASTParser p = ASTParser.newParser(AST.JLS4);
+		p.setKind(ASTParser.K_COMPILATION_UNIT);
+		p.setResolveBindings(true); 
+		
+		p.setSource(method.getTypeRoot());
+				
+		
+//		ASTNode unitNode = p.createAST(new NullProgressMonitor());
+		final org.eclipse.jdt.core.dom.CompilationUnit comp = (CompilationUnit) p.createAST(null);
+		
+		comp.accept(new ASTVisitor() {
+	        @Override
+	        public boolean visit(MethodDeclaration node) {
+	            
+	        	System.out.println(node.getName());
+	        	
+	        	System.out.println(method.getElementName());
+	        	
+	        	List<Object> parameter = node.parameters();
+	        	
+	        	final String[] parameterNamesToVerify = new String[numberOfParameter];
 	        	
 	        	for (int i = 0; i < node.parameters().size(); i++) {
 	        		
@@ -1964,6 +2179,13 @@ public class UtilKDMModel {
 		return this.numberOfTheLine;
 		
 		
+	}
+	
+	
+	private static String[] clean(final String[] v) {
+	    List<String> list = new ArrayList<String>(Arrays.asList(v));
+	    list.removeAll(Collections.singleton(null));
+	    return list.toArray(new String[list.size()]);
 	}
 	
 	

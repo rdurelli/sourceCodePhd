@@ -396,4 +396,29 @@
        </action>
     </objectContribution>
  </extension>
+ <extension
+       point="org.eclipse.ui.popupMenus">
+    <objectContribution
+          adaptable="false"
+          id="DSLReading.contribution"
+          nameFilter="catalogueRefactoring.refactoring"
+          objectClass="org.eclipse.core.resources.IResource">
+       <menu
+             id="com.br.refactoring.dsl.readingData.menu1"
+             label="Process catalog of Refactoring">
+          <groupMarker
+                name="content">
+          </groupMarker>
+          <separator
+                name="additions">
+          </separator>
+       </menu>
+       <action
+             class="com.br.refactoring.dsl.readingdata.action.ReadDSL"
+             id="com.br.refactoring.dsl.readingData.action1"
+             label="Apply Refactorings"
+             menubarPath="com.br.refactoring.dsl.readingData.menu1/content">
+       </action>
+    </objectContribution>
+ </extension>
 </plugin>

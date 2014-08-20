@@ -182,7 +182,7 @@ public class UtilASTJDTModel {
 	
 	/***
 	 * @author rafaeldurelli
-	 * Esse metodo é utilizado para obter um determinado IMehod passando a classe, nome desse método, a quantidade de parametro e os nomes desses parametros. 
+	 * Esse metodo é utilizado para obter um determinado IMethod passando a classe, nome desse método, a quantidade de parametro e os nomes desses parametros. 
 	 * Por exemplo, se o método a ser recuparado é o getName(), apenas passe como string getName, sem o parenteses.
 	 * 
 	 * */
