@@ -1343,6 +1343,24 @@ public class UtilJavaModel {
 		
 	}
 	
+	public void actionRenameElement (NamedElement namedElement, String newName) {
+		
+		if (namedElement != null) {
+			
+			namedElement.setName(newName);
+			
+			if (namedElement instanceof ClassDeclaration) {
+				
+				ClassDeclaration classToChangeTheCompilationUnit = (ClassDeclaration) namedElement;
+				
+				classToChangeTheCompilationUnit.getOriginalCompilationUnit().setName(newName+".java");
+				
+			}
+			
+		}
+		
+	}
+	
 	
 	public void actionInLineClass (ClassDeclaration classDeclarationSelectedToInline1, ClassDeclaration classDeclarationSelectedToInline2, Package packageToRemoveTheClass, FieldDeclaration fieldDeclarationLinkToRemove, Model model) {
 		

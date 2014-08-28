@@ -7,6 +7,9 @@ import org.eclipse.gmt.modisco.omg.kdm.code.ClassUnit;
 import org.eclipse.gmt.modisco.omg.kdm.core.KDMEntity;
 import org.eclipse.jface.wizard.Wizard;
 
+import com.br.util.models.UtilJavaModel;
+import com.br.util.models.UtilKDMModel;
+
 public class RefactoringNameWizard extends Wizard {
 
 	private RenamingRefactoringPage page1 = null; 
@@ -18,6 +21,11 @@ public class RefactoringNameWizard extends Wizard {
 	private boolean isClass = false;
 	
 	private String oldName = null;
+	
+	private UtilKDMModel utilKDMMODEL = new UtilKDMModel();
+	
+	private UtilJavaModel utilJavaModel = new UtilJavaModel();
+	
 	
 	public RefactoringNameWizard(String nameClasse, KDMEntity entityUnitToSetTheName, NamedElement namedElementToRename, boolean isClassToBeRenamed) {
 		setWindowTitle("Rename");
@@ -39,25 +47,12 @@ public class RefactoringNameWizard extends Wizard {
 		
 		
 		if (!oldName.equals(page1.getNameClass())) {
-		
-			System.out.println("O valor que esta no campo Ž " + page1.getNameClass());
+						
+			String newName = page1.getNameClass();
 			
-			this.entityUnitToSetTheName.setName(page1.getNameClass());
+			utilKDMMODEL.actionRenameKDMEntity(this.entityUnitToSetTheName, newName);
 			
-			if (this.namedElementToRename != null) {
-				
-				this.namedElementToRename.setName(page1.getNameClass());
-				
-				if (isClass) {
-					
-					ClassDeclaration classToChangeTheCompilationUnit = (ClassDeclaration) this.namedElementToRename;
-					
-					classToChangeTheCompilationUnit.getOriginalCompilationUnit().setName(page1.getNameClass()+".java");
-					
-				}
-				
-				
-			}
+			utilJavaModel.actionRenameElement(this.namedElementToRename, newName);
 			
 			
 		}

@@ -79,35 +79,21 @@ public class ActionRefactoringRenameClass implements IObjectActionDelegate {
 	private Shell shell;
 	
 	public ActionRefactoringRenameClass() {
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public void run(IAction action) {
-	
-	      System.out.println("FEITO");
-		
-		
 			
 			IEditorPart editorPart = org.eclipse.modisco.kdm.source.extension.Activator.getDefault().getWorkbench()
 					.getActiveWorkbenchWindow().getActivePage()
 					.getActiveEditor();
-			
-			
-			System.out.println(editorPart.getTitle());
-			
-			System.out.println(editorPart);
-			
-			System.out.println(editorPart.getClass());
+		
 			
 			if (editorPart instanceof AbstractTextEditor) {
 				
-				
-				System.out.println("Sim....");
+			
 				
 			} else if (editorPart instanceof EcoreBrowser) {
-				
-				System.out.println("Chegou aqui mesmo");
 				
 				StructuredSelection offset = null;
 				IEditorSite iEditorSite = editorPart.getEditorSite();
@@ -116,9 +102,6 @@ public class ActionRefactoringRenameClass implements IObjectActionDelegate {
 					ISelectionProvider selectionProvider = iEditorSite
 							.getSelectionProvider();
 					if (selectionProvider != null) {
-						
-						
-						System.out.println("Chamou aqui");
 						
 						
 						 IFileEditorInput input = (IFileEditorInput)editorPart.getEditorInput() ;
@@ -143,81 +126,16 @@ public class ActionRefactoringRenameClass implements IObjectActionDelegate {
 						//offset
 						offset = ((StructuredSelection) iSelection);
 						
-						
-						if (offset.getFirstElement() instanceof KDMEntity) {
-							
-							KDMEntity kdmEntity = (KDMEntity)offset.getFirstElement();
-							
-							System.out.println("Ok você pode renomear o que vc quiser....");
-							
-							System.out.println("A classe é " + kdmEntity.toString());
-							
-							System.out.println("A classe é " + kdmEntity.getClass());
-							
-						}
-						
 									
 						if ( offset.getFirstElement() instanceof ClassUnit)  {
 							
 							
-							
-							
-							
 							ClassUnit classUnit = (ClassUnit)offset.getFirstElement();	
-						
-							
 							
 							String[] packageComplete  = getCompletePackageName(classUnit);
 							
-							/**
-							 * -------------------------------------------------------------------------------------
-							 * */
-							UtilASTJDTModel astJDTModel = new UtilASTJDTModel();
-							
-							try {
-								ICompilationUnit iCompilation = astJDTModel.getClassByClassUnit(classUnit, activeProject, packageComplete);
-								ArrayList<IMethod> allMethods = astJDTModel.getAllMethod(iCompilation);
-								ArrayList<IField> allFields = astJDTModel.getAllField(iCompilation);
-								
-								
-								System.out.println(astJDTModel.getNumberSourceLinesOfCodeOfAClass(iCompilation));
-								
-								UtilKDMModel utilKDM = new UtilKDMModel();
-								
-//								MethodUnit methodUnits = utilKDM.getMethodsUnitByName(classUnit, "getName");
-//								
-//								IMethod methodReturned = astJDTModel.getIMethodByName(iCompilation, methodUnits.getName());
-//								
-//								System.out.println(methodReturned);
-//								
-//								System.out.println(astJDTModel.getNumberSourceLinesOfAMethod(methodReturned));
-//								
-//								System.out.println(allMethods.size());
-//								
-//								System.out.println(allFields.size());
-//								
-								
-								System.out.println(iCompilation);
-							} catch (JavaModelException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							} catch (CoreException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-							
-							/**
-							 * -------------------------------------------------------------------------------------
-							 * */
-							
 							NamedElement classDeclaration = getClassDeclaration(classUnit, packageComplete, modelJava);
-							
-							
-//							NamedElement teste = JavaFactory.eINSTANCE.createMethodDeclaration();
-//							
-//							NamedElement teste1 = JavaFactory.eINSTANCE.createFieldDeclaration();
-//							
-							
+														
 							Segment segment = getSegmentToPersiste(classUnit);
 							
 							WizardDialog wizardDialog = new WizardDialog(shell, new RefactoringNameWizard(classUnit.getName(), classUnit, classDeclaration, true));
@@ -257,19 +175,19 @@ public class ActionRefactoringRenameClass implements IObjectActionDelegate {
 							
 							openEditor(fileToOpen);
 							
-							
-							Segment segmentToShow = utilKDM.load(fileToOpen.getFullPath().toOSString());
-							
-							System.out.println(segmentToShow);
-							
-							PopulateKDMIntoMemory populateKDMIntoMemory = new PopulateKDMIntoMemory(segmentToShow);
-							
-							ArrayList<Elements> elements = populateKDMIntoMemory.getClasses();
-							
-							System.out.println(elements.size());
-							
-							GenerateImageFactory generate = GenerateImageFactory.getInstance();
-							generate.createClassGraphviz(elements);
+							//aqui era utilizando para criar a imagem do Graphviz
+//							Segment segmentToShow = utilKDM.load(fileToOpen.getFullPath().toOSString());
+//							
+//							System.out.println(segmentToShow);
+//							
+//							PopulateKDMIntoMemory populateKDMIntoMemory = new PopulateKDMIntoMemory(segmentToShow);
+//							
+//							ArrayList<Elements> elements = populateKDMIntoMemory.getClasses();
+//							
+//							System.out.println(elements.size());
+//							
+//							GenerateImageFactory generate = GenerateImageFactory.getInstance();
+//							generate.createClassGraphviz(elements);
 							
 							
 						} else if (offset.getFirstElement() instanceof InterfaceUnit) {
@@ -391,11 +309,6 @@ public class ActionRefactoringRenameClass implements IObjectActionDelegate {
 							
 							
 						}
-							
-							
-							
-							
-							
 							
 							else {
 						

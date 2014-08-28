@@ -138,6 +138,19 @@ public class UtilKDMModel {
 
 
 	
+	public void actionRenameKDMEntity (KDMEntity kdmEntityToRename, String newName) {
+		
+		if (kdmEntityToRename != null){
+			
+			kdmEntityToRename.setName(newName);
+			
+		}
+		
+			
+		
+		
+	}
+	
 	/**
 	 * 
 	 * 
