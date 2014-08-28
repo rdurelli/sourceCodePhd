@@ -220,7 +220,7 @@ public class InLineClass implements IObjectActionDelegate {
 					
 					
 					
-					Resource resource = utilKDM.save(segment, offset.toString(), URIProject);
+					Resource resource = utilKDM.save(segment, URIProject);
 					
 					closeEditor(editorPart);
 					

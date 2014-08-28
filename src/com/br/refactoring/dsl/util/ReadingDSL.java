@@ -3,9 +3,16 @@ package com.br.refactoring.dsl.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.gmt.modisco.java.ClassDeclaration;
+import org.eclipse.gmt.modisco.java.FieldDeclaration;
 import org.eclipse.gmt.modisco.omg.kdm.code.ClassUnit;
 import org.eclipse.gmt.modisco.omg.kdm.code.MethodUnit;
 import org.eclipse.gmt.modisco.omg.kdm.code.StorableUnit;
@@ -38,6 +45,7 @@ import com.br.refactoring.xtext.DslStandaloneSetup;
 import com.br.util.models.UtilJavaModel;
 import com.br.util.models.UtilKDMModel;
 import com.google.inject.Injector;
+import com.kenai.jffi.Array;
 
 
 public class ReadingDSL {
@@ -47,9 +55,11 @@ public class ReadingDSL {
 	private static UtilJavaModel utilJavaModel = new UtilJavaModel();
 	
 	
-	public static void readXTextToApplyTheRefactoring(String applicationDslFileToBeRead, String catalogueRefactoringDslFileToBeRead, String pathToTheKDMFile, String pathToTheJavaModel) {
+	public static void readXTextToApplyTheRefactoring(String applicationDslFileToBeRead, String catalogueRefactoringDslFileToBeRead, String pathToTheKDMFile, String pathToTheJavaModel, String projectURI) {
 		
 		Segment segment = utilKDMModel.load(pathToTheKDMFile);
+		
+		utilJavaModel.setUtilKDMModel(utilKDMModel);//tive que fazer isso estava dando erro de mem—ria..
 		
 		org.eclipse.gmt.modisco.java.Model modelJava = utilJavaModel.load(pathToTheJavaModel);
 		
@@ -124,17 +134,34 @@ public class ReadingDSL {
 							
 							ClassUnit classUnitToExtract = utilKDMModel.getClassUnit(segment, extractClass.getSourceClass().getName());
 							
-							List<StorableUnit> storableUnits = new ArrayList<StorableUnit>();
+							String [] packageKDM = utilKDMModel.getCompletePackageName(classUnitToExtract); //method utilizado para obter o nome do Pacote, deve-se passar umq classUnit.
+							
+							ClassDeclaration classDeclarationToExtract = utilJavaModel.getClassDeclaration(classUnitToExtract, packageKDM, modelJava);
+							
+							String nameToTheNewClass = extractClass.getNewName();
+							
+							ArrayList<StorableUnit> storableUnits = new ArrayList<StorableUnit>();
+							
+							ArrayList<FieldDeclaration> fieldDeclarations = new ArrayList<FieldDeclaration>();
 							
 							EList<Attribute> allAttributes = extractClass.getAttributesToBeMoved();
 							
 							for (Attribute attribute : allAttributes) {
 							
 								StorableUnit storableToSetIntoTheList  = utilKDMModel.getStorablesUnitByName(classUnitToExtract, attribute.getName());
-								
+								FieldDeclaration fieldDeclaration = utilJavaModel.getFieldDeclarationByName(classDeclarationToExtract, attribute.getName());
+								fieldDeclarations.add(fieldDeclaration);
 								storableUnits.add(storableToSetIntoTheList);
 								
 							}
+							
+							
+							
+							System.out.println("OU");
+							
+							utilKDMModel.actionExtractClass(classUnitToExtract, storableUnits, nameToTheNewClass);
+							utilJavaModel.actionExtractClass(classDeclarationToExtract, fieldDeclarations, nameToTheNewClass, classUnitToExtract);
+							
 							
 						} else if (movingFeaturesBetweenObjects instanceof MoveAttribute) {
 							
@@ -282,6 +309,11 @@ public class ReadingDSL {
 				}
 				
 			}
+			
+			utilKDMModel.save(segment, projectURI);
+			
+			
+			utilJavaModel.save(modelJava, projectURI);
 			
 		}
 		

@@ -31,6 +31,10 @@ public class WizardExtract extends Wizard {
 	
 	private Package packageKDM;
 	
+	private UtilKDMModel utilKDMModel = new UtilKDMModel();
+	
+	private UtilJavaModel utilJavaModel = new UtilJavaModel();
+	
 	public WizardExtract(ClassUnit classUnitToExtract, ClassDeclaration classDeclarationToExtract) {
 		setWindowTitle("Extract ClassUnit");
 		this.classUnitToExtract = classUnitToExtract;
@@ -47,121 +51,127 @@ public class WizardExtract extends Wizard {
 	public boolean performFinish() {
 		
 		
-		boolean check = this.page1.getCreateGettersAndSetters().getSelection();
+		utilJavaModel.setUtilKDMModel(utilKDMModel);
+		
+//		boolean check = this.page1.getCreateGettersAndSetters().getSelection();
+		
+		String nameNewClass = this.page1.getNameNewClass().getText();
 		
 		//obtem o pacote para colocar as classes criadas.
-		this.packageKDM = (Package)this.classUnitToExtract.eContainer();
+//		this.packageKDM = (Package)this.classUnitToExtract.eContainer();
 		
 		//obtem todos os attributes selecionados na interface...
 		ArrayList<FieldDeclaration> fields = this.getSelectedFieldDeclaration();
 		//obtem todos os attributes selecionados na interface...
 		ArrayList<StorableUnit> storableUnit = this.getSelectedStorableUnit();
 		
+		utilKDMModel.actionExtractClass(classUnitToExtract, storableUnit, nameNewClass);
 		
+		utilJavaModel.actionExtractClass(classDeclarationToExtract, fields, nameNewClass, classUnitToExtract);
 		
-		ArrayList<MethodUnit> getAndSet = getMethodsGettersAndSetters(storableUnit);
-		
-		ArrayList<MethodDeclaration> getAndSetJavaModel =  getMethodsGettersAndSettersJavaMODEL(fields);
-		
-		
-		
-		
-		
-		//cria uma instância do UtilJavaModel para realizar criações de ClassDeclaration, MethodDeclaration, FieldDeclaraction, etc.
-		UtilJavaModel utilJavaModel = new UtilJavaModel();
-		
-		
-		//cria uma instânca do UtilKDMModel para realizar criação de ClassUnit, MethodUnit, storableUnit, etc..
-		UtilKDMModel utilKDM = new UtilKDMModel();
-		
-		//obtem o Model para depois persistir as mudanças realizadas..
-		Model model = utilJavaModel.getModelToPersiste(classDeclarationToExtract);
-		
-		String nameNewClass = this.page1.getNameNewClass().getText();
-		
-		//cria uma nova classeDeclaration (nivel de JavaModel)
-		ClassDeclaration classDeclarationCreated = utilJavaModel.createClassDeclaration(nameNewClass, classDeclarationToExtract.getPackage(), model);
-		
-		//cria uma nova ClassUnit (nivel de KDMModel)
-		ClassUnit newClassUnit = utilKDM.createClassUnit(nameNewClass, this.packageKDM);
-		
-		//obtem o pacote como um array..passando a classUnit selecionada na INTERFACE.
-		String []  packageName = utilKDM.getCompletePackageName(classUnitToExtract);
-		
-		//obtem a semelhante classe selecionada na INTERFACE só que em nível de JavaModel.
-		ClassDeclaration classDeclarationToRemoveTheAttributes = utilJavaModel.getClassDeclaration(classUnitToExtract, packageName, model);
-		
-		
-		//obtem o nome do fieldName da INTERFACE. será o nome do LINK
-		String fieldName = this.page1.getFieldName().getText();
-	
-		//cria um FieldDeclaration em uma determinada ClassDeclaration...
-		FieldDeclaration link =  utilJavaModel.createFieldDeclaration(fieldName, classDeclarationToRemoveTheAttributes, classDeclarationCreated, model);
-		
-		//cria um StorableUnit em uma determinada ClassUnit...
-		StorableUnit attributedCreated = utilKDM.createStorableUnitInAClassUnit(classUnitToExtract, fieldName, newClassUnit);
-		
-		//cria um methodDeclaration GET e coloca em uma determinada ClassDeclaration
-		utilJavaModel.createMethodDeclarationGET("get"+classDeclarationCreated.getName(), classDeclarationToRemoveTheAttributes, link, classDeclarationCreated.getName().toLowerCase(), classDeclarationCreated, model);
-		//cria um methodDeclaration GET e coloca em uma determinada ClassDeclaration
-		utilJavaModel.createMethodDeclarationSET("set"+classDeclarationCreated.getName(), classDeclarationToRemoveTheAttributes, link, classDeclarationCreated.getName().toLowerCase(), classDeclarationCreated, model);
-		
-		//obtem o segment para depois persistir.
-		Segment segment = utilKDM.getSegmentToPersiste(newClassUnit);
-		
-		
-		utilKDM.createMethodUnitGETInClassUnit(this.classUnitToExtract, "get"+newClassUnit.getName(), newClassUnit,  segment);
-		
-		utilKDM.createMethodUnitSETInClassUnit(this.classUnitToExtract, "set"+newClassUnit.getName(), utilKDM.getPrimitiveType(segment, "int"), attributedCreated, segment);
-		
-//		FieldDeclaration fieldCreated = utilJavaModel.createFieldDeclaration("attriCreated", classDeclarationToRemoveTheAttributes, utilJavaModel.getStringType(model), model);
-//		//cria o méthod get..
-//		utilJavaModel.createMethodDeclarationGET("getAttriCreated", classDeclarationToRemoveTheAttributes,fieldCreated, "attriCreated", utilJavaModel.getStringType(model),  model);
+//		ArrayList<MethodUnit> getAndSet = getMethodsGettersAndSetters(storableUnit);
 //		
-//		utilJavaModel.createMethodDeclarationSET("setAttriCreated", classDeclarationToRemoveTheAttributes, fieldCreated, "attriCreated", model);
-		
-		//move todos os FieldDeclaration para a nova classe criada..
-		for (FieldDeclaration field : fields) {
-			
-			utilJavaModel.moveFieldDeclarationToClassDeclaration(classDeclarationCreated, field);
-			
-		}
-		
-		
-		
-		if (check == true && getAndSetJavaModel.size() > 0) {
-			
-		for (MethodDeclaration method : getAndSetJavaModel) {
-			
-			utilJavaModel.moveMethodDeclarationToClassDeclaration(classDeclarationCreated, method);
-		} 
-			
-			
-			
-		} else if (check == true && getAndSetJavaModel.size() == 0 ){
-			
-			for (FieldDeclaration field : fields) {
-				
-				//cria um methodDeclaration GET e coloca em uma determinada ClassDeclaration
-				utilJavaModel.createMethodDeclarationGET("get"+field.getFragments().get(0).getName(), classDeclarationCreated, field, field.getFragments().get(0).getName(), field.getType().getType(), model);
-				utilJavaModel.createMethodDeclarationSET("set"+field.getFragments().get(0).getName(), classDeclarationCreated, field, field.getFragments().get(0).getName(), field.getType().getType(), model);
-			}
-			
-			
-			
-			
-		}
-		
-		//move todos os StorableUnit para a nova classe Criada..
-		addStorableUnitToTheNewClass(newClassUnit, storableUnit);
-		
-		
-		
-		addGetterAndSetterToTheNewClass(newClassUnit, getAndSet);
-		
-		System.out.println(getAndSet.size());
-		
-		System.out.println(storableUnit.size());
+//		ArrayList<MethodDeclaration> getAndSetJavaModel =  getMethodsGettersAndSettersJavaMODEL(fields);
+//		
+//		
+//		
+//		
+//		
+//		//cria uma instância do UtilJavaModel para realizar criações de ClassDeclaration, MethodDeclaration, FieldDeclaraction, etc.
+//		UtilJavaModel utilJavaModel = new UtilJavaModel();
+//		
+//		
+//		//cria uma instânca do UtilKDMModel para realizar criação de ClassUnit, MethodUnit, storableUnit, etc..
+//		UtilKDMModel utilKDM = new UtilKDMModel();
+//		
+//		//obtem o Model para depois persistir as mudanças realizadas..
+//		Model model = utilJavaModel.getModelToPersiste(classDeclarationToExtract);
+//		
+//		
+//		
+//		//cria uma nova classeDeclaration (nivel de JavaModel)
+//		ClassDeclaration classDeclarationCreated = utilJavaModel.createClassDeclaration(nameNewClass, classDeclarationToExtract.getPackage(), model);
+//		
+//		//cria uma nova ClassUnit (nivel de KDMModel)
+//		ClassUnit newClassUnit = utilKDM.createClassUnit(nameNewClass, this.packageKDM);
+//		
+//		//obtem o pacote como um array..passando a classUnit selecionada na INTERFACE.
+//		String []  packageName = utilKDM.getCompletePackageName(classUnitToExtract);
+//		
+//		//obtem a semelhante classe selecionada na INTERFACE só que em nível de JavaModel.
+//		ClassDeclaration classDeclarationToRemoveTheAttributes = utilJavaModel.getClassDeclaration(classUnitToExtract, packageName, model);
+//		
+//		
+//		//obtem o nome do fieldName da INTERFACE. será o nome do LINK
+//		String fieldName = this.page1.getFieldName().getText();
+//	
+//		//cria um FieldDeclaration em uma determinada ClassDeclaration...
+//		FieldDeclaration link =  utilJavaModel.createFieldDeclaration(fieldName, classDeclarationToRemoveTheAttributes, classDeclarationCreated, model);
+//		
+//		//cria um StorableUnit em uma determinada ClassUnit...
+//		StorableUnit attributedCreated = utilKDM.createStorableUnitInAClassUnit(classUnitToExtract, fieldName, newClassUnit);
+//		
+//		//cria um methodDeclaration GET e coloca em uma determinada ClassDeclaration
+//		utilJavaModel.createMethodDeclarationGET("get"+classDeclarationCreated.getName(), classDeclarationToRemoveTheAttributes, link, classDeclarationCreated.getName().toLowerCase(), classDeclarationCreated, model);
+//		//cria um methodDeclaration GET e coloca em uma determinada ClassDeclaration
+//		utilJavaModel.createMethodDeclarationSET("set"+classDeclarationCreated.getName(), classDeclarationToRemoveTheAttributes, link, classDeclarationCreated.getName().toLowerCase(), classDeclarationCreated, model);
+//		
+//		//obtem o segment para depois persistir.
+//		Segment segment = utilKDM.getSegmentToPersiste(newClassUnit);
+//		
+//		
+//		utilKDM.createMethodUnitGETInClassUnit(this.classUnitToExtract, "get"+newClassUnit.getName(), newClassUnit,  segment);
+//		
+//		utilKDM.createMethodUnitSETInClassUnit(this.classUnitToExtract, "set"+newClassUnit.getName(), utilKDM.getPrimitiveType(segment, "int"), attributedCreated, segment);
+//		
+////		FieldDeclaration fieldCreated = utilJavaModel.createFieldDeclaration("attriCreated", classDeclarationToRemoveTheAttributes, utilJavaModel.getStringType(model), model);
+////		//cria o méthod get..
+////		utilJavaModel.createMethodDeclarationGET("getAttriCreated", classDeclarationToRemoveTheAttributes,fieldCreated, "attriCreated", utilJavaModel.getStringType(model),  model);
+////		
+////		utilJavaModel.createMethodDeclarationSET("setAttriCreated", classDeclarationToRemoveTheAttributes, fieldCreated, "attriCreated", model);
+//		
+//		//move todos os FieldDeclaration para a nova classe criada..
+//		for (FieldDeclaration field : fields) {
+//			
+//			utilJavaModel.moveFieldDeclarationToClassDeclaration(classDeclarationCreated, field);
+//			
+//		}
+//		
+//		
+//		
+//		if (check == true && getAndSetJavaModel.size() > 0) {
+//			
+//		for (MethodDeclaration method : getAndSetJavaModel) {
+//			
+//			utilJavaModel.moveMethodDeclarationToClassDeclaration(classDeclarationCreated, method);
+//		} 
+//			
+//			
+//			
+//		} else if (check == true && getAndSetJavaModel.size() == 0 ){
+//			
+//			for (FieldDeclaration field : fields) {
+//				
+//				//cria um methodDeclaration GET e coloca em uma determinada ClassDeclaration
+//				utilJavaModel.createMethodDeclarationGET("get"+field.getFragments().get(0).getName(), classDeclarationCreated, field, field.getFragments().get(0).getName(), field.getType().getType(), model);
+//				utilJavaModel.createMethodDeclarationSET("set"+field.getFragments().get(0).getName(), classDeclarationCreated, field, field.getFragments().get(0).getName(), field.getType().getType(), model);
+//			}
+//			
+//			
+//			
+//			
+//		}
+//		
+//		//move todos os StorableUnit para a nova classe Criada..
+//		addStorableUnitToTheNewClass(newClassUnit, storableUnit);
+//		
+//		
+//		
+//		addGetterAndSetterToTheNewClass(newClassUnit, getAndSet);
+//		
+//		System.out.println(getAndSet.size());
+//		
+//		System.out.println(storableUnit.size());
 		
 		return true;
 	}

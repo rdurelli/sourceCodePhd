@@ -346,7 +346,7 @@ public class PullUpMethodClass implements IObjectActionDelegate {
 					
 					Segment segment = utilKDM.getSegmentToPersiste((KDMEntity)classesSelectedToSuperExtract.get(0));
 					
-					Resource resource = utilKDM.save(segment, offset.toString(), URIProject);
+					Resource resource = utilKDM.save(segment, URIProject);
 					
 					closeEditor(editorPart);
 					

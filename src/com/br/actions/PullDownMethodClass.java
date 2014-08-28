@@ -151,7 +151,7 @@ public class PullDownMethodClass implements IObjectActionDelegate {
 								
 								wizard.open();
 								
-								Resource resource = utilKDMMODEL.save(segment, offset.toString(), URIProject);
+								Resource resource = utilKDMMODEL.save(segment, URIProject);
 								
 								closeEditor(editorPart);
 								

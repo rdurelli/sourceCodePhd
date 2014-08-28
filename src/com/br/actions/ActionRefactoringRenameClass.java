@@ -159,7 +159,7 @@ public class ActionRefactoringRenameClass implements IObjectActionDelegate {
 							utilJavaModel.save(modelObtained, URIProject);
 							
 							
-							Resource resource = utilKDM.save(segment, offset.toString(), URIProject);
+							Resource resource = utilKDM.save(segment, URIProject);
 							
 							closeEditor(editorPart);
 							

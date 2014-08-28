@@ -135,7 +135,7 @@ public class ExtractClass implements IObjectActionDelegate {
 						
 						Segment segment = utilKDMMODEL.getSegmentToPersiste(classUnitToExtract);
 						
-						Resource resource = utilKDMMODEL.save(segment, offset.toString(), URIProject);
+						Resource resource = utilKDMMODEL.save(segment, URIProject);
 						
 						closeEditor(editorPart);
 						

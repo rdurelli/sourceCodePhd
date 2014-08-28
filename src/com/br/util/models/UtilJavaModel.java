@@ -89,6 +89,19 @@ public class UtilJavaModel {
 
 
 	
+	private UtilKDMModel utilKDMModel = null;
+	
+	
+	public UtilKDMModel getUtilKDMModel() {
+		return utilKDMModel;
+	}
+
+
+	public void setUtilKDMModel(UtilKDMModel utilKDMModel) {
+		this.utilKDMModel = utilKDMModel;
+	}
+
+
 	/**
 	 * Metodo utilizado para retornar um Model, maior objeto do JAVAModel.
 	 * 
@@ -1717,6 +1730,117 @@ public class UtilJavaModel {
 		}
 		
 		return fieldDeclaratioToReturn;
+		
+		
+	}
+
+
+private ArrayList<MethodDeclaration> getMethodsGettersAndSettersJavaMODEL(ArrayList<FieldDeclaration> fieldDeclaration, ClassDeclaration classDeclarationToExtract) {
+		
+		EList<BodyDeclaration> items = classDeclarationToExtract.getBodyDeclarations();
+		ArrayList<MethodDeclaration> gettersAndSetters = new ArrayList<MethodDeclaration>();
+		
+		for (BodyDeclaration item : items) {
+			
+			if (item instanceof MethodDeclaration) {
+				
+				MethodDeclaration methodToVerify = (MethodDeclaration) item;
+				
+				for (FieldDeclaration field : fieldDeclaration) {
+					
+					if ( ( methodToVerify.getName().equalsIgnoreCase("get"+field.getFragments().get(0).getName()) ) || ( methodToVerify.getName().equalsIgnoreCase("set"+field.getFragments().get(0).getName()) ) ) {
+						
+						
+						gettersAndSetters.add(methodToVerify);
+						
+					}
+					
+				}
+				
+				
+			}
+			
+		}
+		
+		return gettersAndSetters;
+		
+	}
+
+	
+	public void actionExtractClass(ClassDeclaration classDeclarationToExtract,
+			ArrayList<FieldDeclaration> fields, String nameNewClass, ClassUnit classUnitCreated) {
+
+		
+		boolean check = true;
+		
+		ArrayList<MethodDeclaration> getAndSetJavaModel =  getMethodsGettersAndSettersJavaMODEL(fields, classDeclarationToExtract);
+		
+		//obtem o Model para depois persistir as mudanas realizadas..
+		Model model = this.getModelToPersiste(classDeclarationToExtract);
+		
+		
+		
+		//cria uma nova classeDeclaration (nivel de JavaModel)
+		ClassDeclaration classDeclarationCreated = this.createClassDeclaration(nameNewClass, classDeclarationToExtract.getPackage(), model);
+
+		
+		//obtem o pacote como um array..passando a classUnit selecionada na INTERFACE.
+		String []  packageName = this.utilKDMModel.getCompletePackageName(classUnitCreated);
+		
+		//obtem a semelhante classe selecionada na INTERFACE s— que em n’vel de JavaModel.
+		ClassDeclaration classDeclarationToRemoveTheAttributes = this.getClassDeclaration(classUnitCreated, packageName, model);
+		
+		
+		//obtem o nome do fieldName da INTERFACE. ser‡ o nome do LINK
+		String fieldName = nameNewClass.toLowerCase();
+	
+		//cria um FieldDeclaration em uma determinada ClassDeclaration...
+		FieldDeclaration link =  this.createFieldDeclaration(fieldName, classDeclarationToRemoveTheAttributes, classDeclarationCreated, model);
+		
+		
+		//cria um methodDeclaration GET e coloca em uma determinada ClassDeclaration
+		this.createMethodDeclarationGET("get"+classDeclarationCreated.getName(), classDeclarationToRemoveTheAttributes, link, classDeclarationCreated.getName().toLowerCase(), classDeclarationCreated, model);
+		//cria um methodDeclaration GET e coloca em uma determinada ClassDeclaration
+		this.createMethodDeclarationSET("set"+classDeclarationCreated.getName(), classDeclarationToRemoveTheAttributes, link, classDeclarationCreated.getName().toLowerCase(), classDeclarationCreated, model);
+		
+		
+//		FieldDeclaration fieldCreated = utilJavaModel.createFieldDeclaration("attriCreated", classDeclarationToRemoveTheAttributes, utilJavaModel.getStringType(model), model);
+//		//cria o mŽthod get..
+//		utilJavaModel.createMethodDeclarationGET("getAttriCreated", classDeclarationToRemoveTheAttributes,fieldCreated, "attriCreated", utilJavaModel.getStringType(model),  model);
+//		
+//		utilJavaModel.createMethodDeclarationSET("setAttriCreated", classDeclarationToRemoveTheAttributes, fieldCreated, "attriCreated", model);
+		
+		//move todos os FieldDeclaration para a nova classe criada..
+		for (FieldDeclaration field : fields) {
+			
+			this.moveFieldDeclarationToClassDeclaration(classDeclarationCreated, field);
+			
+		}
+		
+		
+		
+		if (check == true && getAndSetJavaModel.size() > 0) {
+			
+		for (MethodDeclaration method : getAndSetJavaModel) {
+			
+			this.moveMethodDeclarationToClassDeclaration(classDeclarationCreated, method);
+		} 
+			
+			
+			
+		} else if (check == true && getAndSetJavaModel.size() == 0 ){
+			
+			for (FieldDeclaration field : fields) {
+				
+				//cria um methodDeclaration GET e coloca em uma determinada ClassDeclaration
+				this.createMethodDeclarationGET("get"+field.getFragments().get(0).getName(), classDeclarationCreated, field, field.getFragments().get(0).getName(), field.getType().getType(), model);
+				this.createMethodDeclarationSET("set"+field.getFragments().get(0).getName(), classDeclarationCreated, field, field.getFragments().get(0).getName(), field.getType().getType(), model);
+			}
+			
+			
+			
+			
+		}
 		
 		
 	}

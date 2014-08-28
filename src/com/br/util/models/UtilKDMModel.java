@@ -1195,6 +1195,51 @@ public class UtilKDMModel {
 		
 	}
 	
+	
+//	this method is used to save the JavaModel 
+	/**
+	 * @author rafaeldurelli
+	 * @param Segment Segment para salvar as alterações realizadas no KDMModel.
+	 * @param String name representa o nome 
+	 * @param String projectURI representa o caminho onde esta armazenado o KDMMOdel.
+	 * @return Resource - retorna um Objeto Resource 
+	 * */ 
+	public Resource save(Segment model, String projectURI)  {
+
+
+		KdmPackage.eINSTANCE.eClass();
+
+		Resource.Factory.Registry reg = Resource.Factory.Registry.INSTANCE;
+		Map<String, Object> m = reg.getExtensionToFactoryMap();
+		m.put("website", new XMIResourceFactoryImpl());
+
+		// Obtain a new resource set
+		ResourceSet resSet = new ResourceSetImpl();
+
+//		ProjectSelectedToModernize.projectSelected.getProject().getF
+		
+//		IResource resrouce = ProjectSelectedToModernize.projectSelected.getProject().findMember("/MODELS_PIM/KDMMODEL.xmi");
+//		
+//		IFile fileToBeRead = (IFile) resrouce;
+		
+//		String locationOfTheNewJAvaModelWithComment = ProjectSelectedToModernize.projectSelected.getProject().getLocationURI().toString();
+		
+		Resource resource = resSet.createResource(URI.createURI(projectURI+"/MODELS_PIM_modificado/KDMRefactoring.xmi"));
+
+		resource.getContents().add(model);
+
+		try {
+
+			resource.save(Collections.EMPTY_MAP);
+			
+		} catch (IOException e) {
+			// TODO: handle exception
+		}
+
+		return resource;
+		
+	}
+	
 	/**
 	 * 
 	 * 
@@ -2214,6 +2259,8 @@ public class UtilKDMModel {
 		
 		Attribute attributeStorableUnitToApplyTheEncapsulateField = storableUnitToApplyTheEncapsulateField.getAttribute().get(0);//utiliza esse Attribute para verificar se é private
 		
+		
+		
 		String [] packageKDM = this.getCompletePackageName(classThatContainTheStorableUnit); //obtem o nome completo dos pacotes.
 		
 		ClassDeclaration classDeclaration = this.utilJavaModel.getClassDeclaration(classThatContainTheStorableUnit, packageKDM, modelJava); //obtem uma instancia do ClassDeclaration equivalente ao ClassUnit.
@@ -2292,6 +2339,96 @@ public class UtilKDMModel {
 			utilJavaModel.createMethodDeclarationSET("set"+storableUnitToApplyTheEncapsulateField.getName().substring(0, 1).toUpperCase() + storableUnitToApplyTheEncapsulateField.getName().substring(1).toLowerCase(), classDeclaration, fieldDeclarationToApplyTheEncapsulateField, storableUnitToApplyTheEncapsulateField.getName().substring(0, 1).toUpperCase() + storableUnitToApplyTheEncapsulateField.getName().substring(1).toLowerCase(), fieldDeclarationToApplyTheEncapsulateField.getType().getType(), modelJava);
 		}
 		
+	}
+
+
+private ArrayList<MethodUnit> getMethodsGettersAndSetters(ArrayList<StorableUnit> storableUnit, ClassUnit classUnitToExtract) {
+		
+		EList<CodeItem> codeItems = classUnitToExtract.getCodeElement();
+		ArrayList<MethodUnit> gettersAndSetters = new ArrayList<MethodUnit>();
+		
+		for (CodeItem item : codeItems) {
+			
+			if (item instanceof MethodUnit) {
+				
+				MethodUnit methodToVerify = (MethodUnit) item;
+				
+				for (StorableUnit storable : storableUnit) {
+					
+					if ( ( methodToVerify.getName().equalsIgnoreCase("get"+storable.getName()) ) || ( methodToVerify.getName().equalsIgnoreCase("set"+storable.getName()) ) ) {
+						
+						
+						gettersAndSetters.add(methodToVerify);
+						
+					}
+					
+				}
+				
+				
+			}
+			
+		}
+		
+		return gettersAndSetters;
+		
+	}
+
+	public void actionExtractClass(ClassUnit classUnitToExtract,
+			ArrayList<StorableUnit> storableUnit, String nameNewClass) {
+		Package packageKDM = null;
+
+		// obtem o pacote para colocar as classes criadas.
+		packageKDM = (Package) classUnitToExtract.eContainer();
+
+		ArrayList<MethodUnit> getAndSet = this.getMethodsGettersAndSetters(
+				storableUnit, classUnitToExtract);
+
+		// cria uma nova ClassUnit (nivel de KDMModel)
+		ClassUnit newClassUnit = this.createClassUnit(nameNewClass, packageKDM);
+
+		// obtem o nome do fieldName da INTERFACE. será o nome do LINK
+		String fieldName = nameNewClass.toLowerCase();
+
+		// cria um StorableUnit em uma determinada ClassUnit...
+		StorableUnit attributedCreated = this.createStorableUnitInAClassUnit(
+				classUnitToExtract, fieldName, newClassUnit);
+
+		// obtem o segment para depois persistir.
+		Segment segment = this.getSegmentToPersiste(newClassUnit);
+
+		this.createMethodUnitGETInClassUnit(classUnitToExtract, "get"
+				+ newClassUnit.getName(), newClassUnit, segment);
+
+		this.createMethodUnitSETInClassUnit(classUnitToExtract, "set"
+				+ newClassUnit.getName(),
+				this.getPrimitiveType(segment, "int"), attributedCreated,
+				segment);
+
+		// move todos os StorableUnit para a nova classe Criada..
+		addStorableUnitToTheNewClass(newClassUnit, storableUnit);
+
+		addGetterAndSetterToTheNewClass(newClassUnit, getAndSet);
+
+	}
+
+	private void addGetterAndSetterToTheNewClass(
+			ClassUnit classToPutTheGettersAndSetters,
+			ArrayList<MethodUnit> gettersAndSetters) {
+
+		for (MethodUnit methodUnit : gettersAndSetters) {
+			classToPutTheGettersAndSetters.getCodeElement().add(methodUnit);
+		}
+
+	}
+
+	private void addStorableUnitToTheNewClass(
+			ClassUnit classToPutTheStorableUnits,
+			ArrayList<StorableUnit> storableUnits) {
+
+		for (StorableUnit storableUnit : storableUnits) {
+			classToPutTheStorableUnits.getCodeElement().add(storableUnit);
+		}
+
 	}
 	
 	

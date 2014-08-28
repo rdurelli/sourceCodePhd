@@ -53,6 +53,8 @@ public class ReadDSL implements IObjectActionDelegate {
 		
 		System.out.println(this.fileRightClicked.getProject().getLocationURI());
 		
+		String projectURI = this.fileRightClicked.getProject().getLocationURI().toString();
+		
 		String catalogueRefactoringDslFileToBeRead = this.fileRightClicked.getRawLocationURI().toString();
 		
 		String applicationDslFileToBeRead = this.fileRightClicked.getProject().getLocationURI().toString()+"/src/application.refactoring";
@@ -61,7 +63,7 @@ public class ReadDSL implements IObjectActionDelegate {
 		
 		String pathJavaModel = this.fileRightClicked.getProject().getLocationURI().toString()+"/MODELS_PIM_modificado/JavaModelRefactoring.javaxmi";
 		
-		ReadingDSL.readXTextToApplyTheRefactoring(applicationDslFileToBeRead, catalogueRefactoringDslFileToBeRead, pathKDMModel, pathJavaModel);
+		ReadingDSL.readXTextToApplyTheRefactoring(applicationDslFileToBeRead, catalogueRefactoringDslFileToBeRead, pathKDMModel, pathJavaModel, projectURI);
 		
 //		ReadingDSL.read(this.fileRightClicked.getLocationURI().toString());
 		

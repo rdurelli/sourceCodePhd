@@ -91,13 +91,15 @@ public class ReadDSLByView implements  IObjectActionDelegate {
 						
 					String catalogueRefactoringDslFileToBeRead = this.file.getRawLocationURI().toString();
 					
+					String projectURI = this.file.getProject().getLocationURI().toString();
+					
 					String applicationDslFileToBeRead = this.file.getProject().getLocationURI().toString()+"/src/application.refactoring";
 					
 					String pathKDMModel = this.file.getProject().getLocationURI().toString()+"/MODELS_PIM_modificado/KDMRefactoring.xmi";
 					
 					String pathJavaModel = this.file.getProject().getLocationURI().toString()+"/MODELS_PIM_modificado/JavaModelRefactoring.javaxmi";
 					
-					ReadingDSL.readXTextToApplyTheRefactoring(applicationDslFileToBeRead, catalogueRefactoringDslFileToBeRead, pathKDMModel, pathJavaModel);
+					ReadingDSL.readXTextToApplyTheRefactoring(applicationDslFileToBeRead, catalogueRefactoringDslFileToBeRead, pathKDMModel, pathJavaModel, projectURI);
 					
 					
 				}
