@@ -100,91 +100,19 @@ public class EncapsulateFieldClass implements IObjectActionDelegate {
 						
 					} else {
 						
+						
+						
 						Model modelJava = utilJavaModel.load(activeProject.getLocationURI().toString()+"/MODELS_PIM_modificado/JavaModelRefactoring.javaxmi");
 						
 						storableUnitToApplyTheEncapsulateField = (StorableUnit) objectSelected;//caso o Objeto selecionado Ž um Object do tipo StorableUnit ent‹o faz o CAST
 						
-						Attribute attributeStorableUnitToApplyTheEncapsulateField = storableUnitToApplyTheEncapsulateField.getAttribute().get(0);//utiliza esse Attribute para verificar se Ž private
-						
 						ClassUnit classThatContainTheStorableUnit = (ClassUnit) storableUnitToApplyTheEncapsulateField.eContainer(); //Obtem a ClassUnit que possui um determinado StorableUnit
 						
-						String [] packageKDM = utilKDMMODEL.getCompletePackageName(classThatContainTheStorableUnit); //obtem o nome completo dos pacotes.
-						
-						ClassDeclaration classDeclaration = utilJavaModel.getClassDeclaration(classThatContainTheStorableUnit, packageKDM, modelJava); //obtem uma instancia do ClassDeclaration equivalente ao ClassUnit.
-						
-						FieldDeclaration fieldDeclarationToApplyTheEncapsulateField =  utilJavaModel.getFieldDeclarationByName(classDeclaration, storableUnitToApplyTheEncapsulateField.getName());
+						utilKDMMODEL.actionEncapsulateField(classThatContainTheStorableUnit, storableUnitToApplyTheEncapsulateField, modelJava);
 						
 						Segment segment = utilKDMMODEL.getSegmentToPersiste(classThatContainTheStorableUnit);
 						
-						if (attributeStorableUnitToApplyTheEncapsulateField.getValue().equals("private") && fieldDeclarationToApplyTheEncapsulateField.getModifier().getVisibility().equals(VisibilityKind.PRIVATE)) {
-							
-							boolean result = MessageDialog.openConfirm(shell, "Error", "The StorableUnit that you selected already is private. Would you like to check if it owns accessors?");
-							
-							if (result) {
-								
-								//verificar se tem get e set.
-								
-								System.out.println(storableUnitToApplyTheEncapsulateField.getName().substring(0, 1).toUpperCase() + storableUnitToApplyTheEncapsulateField.getName().substring(1).toLowerCase());
-								
-								MethodUnit methodGet = utilKDMMODEL.getMethodsUnitByName(classThatContainTheStorableUnit, "get"+storableUnitToApplyTheEncapsulateField.getName().substring(0, 1).toUpperCase() + storableUnitToApplyTheEncapsulateField.getName().substring(1).toLowerCase());
-								
-								MethodUnit methodSet = utilKDMMODEL.getMethodsUnitByName(classThatContainTheStorableUnit, "set"+storableUnitToApplyTheEncapsulateField.getName().substring(0, 1).toUpperCase() + storableUnitToApplyTheEncapsulateField.getName().substring(1).toLowerCase());
-								
-								MethodDeclaration methodDeclarationGET = utilJavaModel.getMethodDeclarationByName(classDeclaration, "get"+storableUnitToApplyTheEncapsulateField.getName().substring(0, 1).toUpperCase() + storableUnitToApplyTheEncapsulateField.getName().substring(1).toLowerCase());
-								
-								MethodDeclaration methodDeclarationSET = utilJavaModel.getMethodDeclarationByName(classDeclaration, "set"+storableUnitToApplyTheEncapsulateField.getName().substring(0, 1).toUpperCase() + storableUnitToApplyTheEncapsulateField.getName().substring(1).toLowerCase());
-
-								
-								if (methodGet != null && methodSet != null) {
-									
-									MessageDialog.openInformation(shell, "Error", "The StorableUnit that you selected already owns accessors");
-									
-								} else if (methodGet == null && methodSet != null) {
-									
-									boolean resultGET = MessageDialog.openConfirm(shell, "Error", "The StorableUnit that you selected already owns the accessor SET. Would you like to create the accerssor GET?");
-									
-									if (resultGET) {
-										
-										utilKDMMODEL.createMethodUnitGETInClassUnit(classThatContainTheStorableUnit, "get"+storableUnitToApplyTheEncapsulateField.getName().substring(0, 1).toUpperCase() + storableUnitToApplyTheEncapsulateField.getName().substring(1).toLowerCase(), storableUnitToApplyTheEncapsulateField.getType(), segment);
-										utilJavaModel.createMethodDeclarationGET("get"+storableUnitToApplyTheEncapsulateField.getName().substring(0, 1).toUpperCase() + storableUnitToApplyTheEncapsulateField.getName().substring(1).toLowerCase(), classDeclaration, fieldDeclarationToApplyTheEncapsulateField, storableUnitToApplyTheEncapsulateField.getName().substring(0, 1).toUpperCase() + storableUnitToApplyTheEncapsulateField.getName().substring(1).toLowerCase(), fieldDeclarationToApplyTheEncapsulateField.getType().getType(), modelJava);
-									}
-									
-								} else if (methodGet != null && methodSet == null) {
-									
-									boolean resultSET = MessageDialog.openConfirm(shell, "Error", "The StorableUnit that you selected already owns the accessor GET. Would you like to create the accerssor SET?");
-									
-									if (resultSET) {
-										
-										utilKDMMODEL.createMethodUnitSETInClassUnit(classThatContainTheStorableUnit, "set"+storableUnitToApplyTheEncapsulateField.getName().substring(0, 1).toUpperCase() + storableUnitToApplyTheEncapsulateField.getName().substring(1).toLowerCase(), storableUnitToApplyTheEncapsulateField.getType(), storableUnitToApplyTheEncapsulateField, segment);
-										utilJavaModel.createMethodDeclarationSET("set"+storableUnitToApplyTheEncapsulateField.getName().substring(0, 1).toUpperCase() + storableUnitToApplyTheEncapsulateField.getName().substring(1).toLowerCase(), classDeclaration, fieldDeclarationToApplyTheEncapsulateField, storableUnitToApplyTheEncapsulateField.getName().substring(0, 1).toUpperCase() + storableUnitToApplyTheEncapsulateField.getName().substring(1).toLowerCase(), fieldDeclarationToApplyTheEncapsulateField.getType().getType(), modelJava);
-									}
-									
-								} else if (methodGet == null && methodSet == null) {
-									
-									boolean resultSETandGET = MessageDialog.openConfirm(shell, "Error", "The StorableUnit that you selected does not owns the accessors. Would you like to create them?");
-									
-									if (resultSETandGET) {
-										
-										utilKDMMODEL.createMethodUnitGETInClassUnit(classThatContainTheStorableUnit, "get"+storableUnitToApplyTheEncapsulateField.getName().substring(0, 1).toUpperCase() + storableUnitToApplyTheEncapsulateField.getName().substring(1).toLowerCase(), storableUnitToApplyTheEncapsulateField.getType(), segment);
-										utilKDMMODEL.createMethodUnitSETInClassUnit(classThatContainTheStorableUnit, "set"+storableUnitToApplyTheEncapsulateField.getName().substring(0, 1).toUpperCase() + storableUnitToApplyTheEncapsulateField.getName().substring(1).toLowerCase(), storableUnitToApplyTheEncapsulateField.getType(), storableUnitToApplyTheEncapsulateField, segment);
-										
-										utilJavaModel.createMethodDeclarationGET("get"+storableUnitToApplyTheEncapsulateField.getName().substring(0, 1).toUpperCase() + storableUnitToApplyTheEncapsulateField.getName().substring(1).toLowerCase(), classDeclaration, fieldDeclarationToApplyTheEncapsulateField, storableUnitToApplyTheEncapsulateField.getName().substring(0, 1).toUpperCase() + storableUnitToApplyTheEncapsulateField.getName().substring(1).toLowerCase(), fieldDeclarationToApplyTheEncapsulateField.getType().getType(), modelJava);
-										utilJavaModel.createMethodDeclarationSET("set"+storableUnitToApplyTheEncapsulateField.getName().substring(0, 1).toUpperCase() + storableUnitToApplyTheEncapsulateField.getName().substring(1).toLowerCase(), classDeclaration, fieldDeclarationToApplyTheEncapsulateField, storableUnitToApplyTheEncapsulateField.getName().substring(0, 1).toUpperCase() + storableUnitToApplyTheEncapsulateField.getName().substring(1).toLowerCase(), fieldDeclarationToApplyTheEncapsulateField.getType().getType(), modelJava);
-									}
-									
-								}
-								System.out.println(methodGet);
-								
-							}
-							
-						} else if (attributeStorableUnitToApplyTheEncapsulateField.getValue().equals("public")) {
-							
-							utilKDMMODEL.createMethodUnitGETInClassUnit(classThatContainTheStorableUnit, "get"+storableUnitToApplyTheEncapsulateField.getName().substring(0, 1).toUpperCase() + storableUnitToApplyTheEncapsulateField.getName().substring(1).toLowerCase(), storableUnitToApplyTheEncapsulateField.getType(), segment);
-							utilKDMMODEL.createMethodUnitSETInClassUnit(classThatContainTheStorableUnit, "set"+storableUnitToApplyTheEncapsulateField.getName().substring(0, 1).toUpperCase() + storableUnitToApplyTheEncapsulateField.getName().substring(1).toLowerCase(), storableUnitToApplyTheEncapsulateField.getType(), storableUnitToApplyTheEncapsulateField, segment);
-							
-							utilJavaModel.createMethodDeclarationGET("get"+storableUnitToApplyTheEncapsulateField.getName().substring(0, 1).toUpperCase() + storableUnitToApplyTheEncapsulateField.getName().substring(1).toLowerCase(), classDeclaration, fieldDeclarationToApplyTheEncapsulateField, storableUnitToApplyTheEncapsulateField.getName().substring(0, 1).toUpperCase() + storableUnitToApplyTheEncapsulateField.getName().substring(1).toLowerCase(), fieldDeclarationToApplyTheEncapsulateField.getType().getType(), modelJava);
-							utilJavaModel.createMethodDeclarationSET("set"+storableUnitToApplyTheEncapsulateField.getName().substring(0, 1).toUpperCase() + storableUnitToApplyTheEncapsulateField.getName().substring(1).toLowerCase(), classDeclaration, fieldDeclarationToApplyTheEncapsulateField, storableUnitToApplyTheEncapsulateField.getName().substring(0, 1).toUpperCase() + storableUnitToApplyTheEncapsulateField.getName().substring(1).toLowerCase(), fieldDeclarationToApplyTheEncapsulateField.getType().getType(), modelJava);
-						}
+						
 						
 						Resource resource = utilKDMMODEL.save(segment,
 								offset.toString(), URIProject);

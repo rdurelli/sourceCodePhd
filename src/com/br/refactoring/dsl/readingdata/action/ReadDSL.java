@@ -59,7 +59,9 @@ public class ReadDSL implements IObjectActionDelegate {
 		
 		String pathKDMModel = this.fileRightClicked.getProject().getLocationURI().toString()+"/MODELS_PIM_modificado/KDMRefactoring.xmi";
 		
-		ReadingDSL.readXTextToApplyTheRefactoring(applicationDslFileToBeRead, catalogueRefactoringDslFileToBeRead, pathKDMModel);
+		String pathJavaModel = this.fileRightClicked.getProject().getLocationURI().toString()+"/MODELS_PIM_modificado/JavaModelRefactoring.javaxmi";
+		
+		ReadingDSL.readXTextToApplyTheRefactoring(applicationDslFileToBeRead, catalogueRefactoringDslFileToBeRead, pathKDMModel, pathJavaModel);
 		
 //		ReadingDSL.read(this.fileRightClicked.getLocationURI().toString());
 		

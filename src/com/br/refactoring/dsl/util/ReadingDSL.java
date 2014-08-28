@@ -35,6 +35,7 @@ import com.br.refactoring.dsl.refactoring.RenameMethod;
 import com.br.refactoring.dsl.refactoring.ReplaceDataValueWithObject;
 import com.br.refactoring.dsl.refactoring.Type;
 import com.br.refactoring.xtext.DslStandaloneSetup;
+import com.br.util.models.UtilJavaModel;
 import com.br.util.models.UtilKDMModel;
 import com.google.inject.Injector;
 
@@ -43,10 +44,14 @@ public class ReadingDSL {
 
 	private static UtilKDMModel utilKDMModel = new UtilKDMModel();
 	
+	private static UtilJavaModel utilJavaModel = new UtilJavaModel();
 	
-	public static void readXTextToApplyTheRefactoring(String applicationDslFileToBeRead, String catalogueRefactoringDslFileToBeRead, String pathToTheKDMFile) {
+	
+	public static void readXTextToApplyTheRefactoring(String applicationDslFileToBeRead, String catalogueRefactoringDslFileToBeRead, String pathToTheKDMFile, String pathToTheJavaModel) {
 		
 		Segment segment = utilKDMModel.load(pathToTheKDMFile);
+		
+		org.eclipse.gmt.modisco.java.Model modelJava = utilJavaModel.load(pathToTheJavaModel);
 		
 		new org.eclipse.emf.mwe.utils.StandaloneSetup().setPlatformUri("../");
 		Injector injector = new DslStandaloneSetup().createInjectorAndDoEMFRegistration();
@@ -264,6 +269,8 @@ public class ReadingDSL {
 							ClassUnit sourceClass = utilKDMModel.getClassUnit(segment, encapsulateField.getSourceClass().getName());
 							
 							StorableUnit attributeToEncapsulate = utilKDMModel.getStorablesUnitByName(sourceClass, encapsulateField.getAttributeToEncapsulate().getName());
+						
+							utilKDMModel.actionEncapsulateField(sourceClass, attributeToEncapsulate, modelJava);
 							
 							//fazer alguma coisa aqui tenho que colocar todos os refactorings na class UTILKDMMOdel dai Ž s— chamar...
 							
