@@ -1098,7 +1098,7 @@ public class UtilKDMModel {
 
 
 	
-//	this method is used to save the JavaModel 
+//	this method is used to save the KDMModel 
 	public void save(Segment model)  {
 
 

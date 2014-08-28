@@ -336,6 +336,22 @@
              label="Pull Up Field"
              menubarPath="TestePlugin.menu4/content">
        </action>
+       <menu
+             id="TestePlugin.menu7"
+             label="Process catalog of Refactoring">
+          <groupMarker
+                name="content">
+          </groupMarker>
+          <separator
+                name="additions">
+          </separator>
+       </menu>
+       <action
+             class="com.br.refactoring.dsl.readingdata.action.ReadDSLByView"
+             id="com.actions.newActionPullUpFieldTest"
+             label="Apply Refactoring"
+             menubarPath="TestePlugin.menu7/content">
+       </action>
     </objectContribution>
  </extension>
  <extension
