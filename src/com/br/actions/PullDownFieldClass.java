@@ -137,7 +137,6 @@ public class PullDownFieldClass implements IObjectActionDelegate {
 							
 						} else {
 							
-							
 							List<StorableUnit> storablesUnits = utilKDMMODEL.getStorablesUnit(classesSelectedToApplyThePullDownField);
 							
 							if (storablesUnits.size() == 0) {
@@ -145,8 +144,6 @@ public class PullDownFieldClass implements IObjectActionDelegate {
 								MessageDialog.openInformation(shell, "Error", "There is none StorableUnit (Attributes) to apply the Pull Down Field.");
 								
 							} else {
-								
-								
 								
 //								List<ClassDeclaration> classesSelectedJavaModel = this.getAllClassDeclaration(classesSelectedToSuperExtract, utilKDMMODEL, utilJavaModel, modelJava);
 //								org.eclipse.gmt.modisco.java.Package packageToPutTheNewClassJavaModel = (org.eclipse.gmt.modisco.java.Package)classesSelectedJavaModel.get(0).eContainer();

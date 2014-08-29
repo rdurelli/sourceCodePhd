@@ -17,9 +17,13 @@ import org.eclipse.gmt.modisco.omg.kdm.code.ClassUnit;
 import org.eclipse.gmt.modisco.omg.kdm.code.MethodUnit;
 import org.eclipse.gmt.modisco.omg.kdm.code.StorableUnit;
 import org.eclipse.gmt.modisco.omg.kdm.kdm.Segment;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.resource.XtextResourceSet;
 
+import com.br.gui.refactoring.WizardPushDownField;
 import com.br.refactoring.dsl.refactoring.Attribute;
 import com.br.refactoring.dsl.refactoring.DealingWithGeneralization;
 import com.br.refactoring.dsl.refactoring.EncapsulateField;
@@ -232,7 +236,58 @@ public class ReadingDSL {
 							
 							StorableUnit attributeToPushDown = utilKDMModel.getStorablesUnitByName(sourceClass, pushDownAttribute.getAttributeToBePushed().getName());
 							
-							//fazer alguma coisa aqui tenho que colocar todos os refactorings na class UTILKDMMOdel dai Ž s— chamar...
+							String [] packageKDM = utilKDMModel.getCompletePackageName(sourceClass);
+												
+							
+							ClassDeclaration classDeclaration = utilJavaModel.getClassDeclaration(sourceClass, packageKDM, modelJava);
+						
+							FieldDeclaration fieldToPushDown = utilJavaModel.getFieldDeclarationByName(classDeclaration, pushDownAttribute.getAttributeToBePushed().getName());
+							
+							ArrayList<ClassUnit> allClassUnits = utilKDMModel.getAllClasses(segment);			
+							
+							ArrayList<ClassDeclaration> allClassDeclarations = utilJavaModel.getAllClasses(modelJava);
+							
+							ArrayList<ClassUnit> inheritanceSubClasses = utilKDMModel.getRelationShipInheritancePassingTheSuper(sourceClass, allClassUnits);
+							
+							ArrayList<ClassDeclaration> inheritanceSubClassesJavaModel = utilJavaModel.getRelationShipInheritancePassingTheSuper(classDeclaration, allClassDeclarations);
+							
+							if (inheritanceSubClasses.size() == 0) {
+								
+								MessageDialog.openInformation(null, "Error", "Push Down is not allowed on type " + sourceClass.getName() + ", since it does not have subclasses to which members could be pushed down.");
+								
+							} else {
+								
+								List<StorableUnit> storablesUnits = utilKDMModel.getStorablesUnit(sourceClass);
+								
+								if (storablesUnits.size() == 0) {
+									
+									MessageDialog.openInformation(null, "Error", "There is none StorableUnit (Attributes) to apply the Pull Down Field.");
+									
+								} else {
+									
+									
+									List<StorableUnit> selectedStorableUnit = new ArrayList<StorableUnit>();
+									
+									selectedStorableUnit.add(attributeToPushDown);
+									
+									List<FieldDeclaration> selectedFieldDeclaration = new ArrayList<FieldDeclaration>();
+									
+									selectedFieldDeclaration.add(fieldToPushDown);
+																		
+									if (selectedStorableUnit.size() != 0 && selectedFieldDeclaration.size() != 0) {
+										
+										
+										utilKDMModel.actionPullDownField(sourceClass, inheritanceSubClasses, selectedStorableUnit);
+										utilJavaModel.actionPullDownField(classDeclaration, inheritanceSubClassesJavaModel, selectedFieldDeclaration);
+										
+									} else {
+										
+										MessageDialog.openError(null, "Error", "Please be sure you have selected at least a StorableUnit to realize the Pull Down Field.");
+										
+									}
+							
+								}
+							}
 							
 							
 						} else if (dealingWithGeneralization instanceof PushDownMethod) {
@@ -347,8 +402,6 @@ public class ReadingDSL {
 						}
 						
 					}
-					
-					
 					
 				}
 				if (type instanceof MovingFeaturesBetweenObjects) {
