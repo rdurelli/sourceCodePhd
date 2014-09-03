@@ -351,6 +351,16 @@ public class CreateModelRefactoringProgrammatically {
 
 			String className = parser.getClassModelName();
 			
+			String packageName = parser.getPackageModelName();//COLOCAR AQUI para pegar o nome do pacote.
+			
+			if (packageName.equals("")) {
+				packageName = "default_package";
+			} else {
+				
+				packageName = packageName.replace(".", "_");
+				
+			}
+			
 			ArrayList<AttributeModelRefactoring> attributes = parser
 					.getAttributesInfo();
 
@@ -358,7 +368,7 @@ public class CreateModelRefactoringProgrammatically {
 					.getMethodName();
 					
 			
-			saveIFile(fileToCreate, contents, className, attributes, methods);
+			saveIFile(fileToCreate, contents, packageName, className, attributes, methods);
 	
 		} catch (RecognitionException e) {
 			e.printStackTrace();
@@ -367,10 +377,13 @@ public class CreateModelRefactoringProgrammatically {
 	}
 	
 	//herein it is create the file to application.refactoring.
-	public void saveIFile (IFile fileToCreate, StringBuffer contents, String className, ArrayList<AttributeModelRefactoring> attributes,
+	public void saveIFile (IFile fileToCreate, StringBuffer contents, String packageName, String className, ArrayList<AttributeModelRefactoring> attributes,
 			ArrayList<MethodModelRefactoring> methods ) {
 		
-		contents.append("\n\nClass ");
+		contents.append("\n\npackage ");
+		contents.append( packageName);
+		contents.append("\n");
+		contents.append("Class ");
 		contents.append( className+ " {");
 		createAttributeIFile(contents, attributes);
 		if (methods != null) {

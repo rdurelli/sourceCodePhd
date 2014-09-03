@@ -235,7 +235,7 @@ public class ReadingDSL {
 							ClassUnit targetClass = utilKDMModel.getClassUnit(segment, pushDownAttribute.getTargetClass().getName());
 							
 							StorableUnit attributeToPushDown = utilKDMModel.getStorablesUnitByName(sourceClass, pushDownAttribute.getAttributeToBePushed().getName());
-							
+//							TODO verificar sempre antes de fazer qualquer action se as classesUnits n‹o s‹o Nulls. Se foram, diparar uma mensagem..
 							String [] packageKDM = utilKDMModel.getCompletePackageName(sourceClass);
 												
 							
